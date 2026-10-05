@@ -64,6 +64,7 @@
   --hero-fg: #f6ecd6; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
   font-family: var(--font-body); font-size: 15px; line-height: 1.65;
@@ -147,7 +148,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .cam-play:hover .circle { transform: scale(1.07); }
 .cam-play .circle svg { width: 24px; height: 24px; margin-left: 4px; fill: #fff; }
 .cam-play span { font-size: 13px; font-weight: 700; }
-.cam-links { padding: 12px 16px 14px; display: grid; gap: 6px; font-size: 13px; }
+.cam-links { padding: 12px 16px 8px; display: grid; gap: 6px; font-size: 13px; }
 .cam-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .jma { padding: 18px; display: grid; gap: 14px; }
 .jma-day { display: grid; gap: 4px; }
@@ -184,6 +185,45 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .day-gear { display: flex; align-items: center; gap: 10px; background: var(--bg); border-radius: 12px; padding: 4px 10px; font-size: 13px; }
 .day-gear .icons { display: flex; gap: 2px; }
 
+/* beginner guide */
+.guide { padding: 0; overflow: hidden; }
+.tabs { display: flex; gap: 6px; padding: 12px 12px 0; background: var(--bg); flex-wrap: wrap; }
+.tabs button { border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 14px; padding: 9px 16px; border-radius: 12px 12px 0 0; }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--accent); }
+.tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.pane { padding: 20px 22px 24px; display: grid; gap: 16px; }
+.wind-demo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.wind-demo figure { margin: 0; display: grid; gap: 6px; background: var(--bg); border-radius: 14px; padding: 12px; }
+.wind-demo svg { width: 100%; height: auto; display: block; }
+.wind-demo figcaption { font-size: 13px; }
+.filter { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); font-weight: 700; flex-wrap: wrap; }
+.filter input { font: inherit; font-weight: 400; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; min-width: 0; width: min(260px, 100%); }
+.filter input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.words { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin: 0; }
+.words > div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.words dt { font-weight: 700; color: var(--sea); }
+.words dd { margin: 2px 0 0; font-size: 13px; }
+.lead, .tip { margin: 0; font-size: 14px; }
+.tip { background: var(--bg); border-radius: 12px; padding: 10px 14px; }
+.steps { list-style: none; counter-reset: st; margin: 0; padding: 0; display: grid; gap: 12px; }
+.steps li { counter-increment: st; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 2px 12px; }
+.steps li::before { content: counter(st); grid-row: span 2; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-display); display: grid; place-items: center; font-size: 15px; }
+.steps b { font-size: 15px; }
+.steps span { font-size: 13.5px; color: var(--muted); }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.rule { background: var(--bg); border-radius: 14px; padding: 14px 16px; }
+.rule h3 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 16px; }
+.rule.rip h3 { color: var(--bad); }
+.rule ul { margin: 0; padding-left: 1.1em; display: grid; gap: 5px; font-size: 13px; }
+.beginner { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; background: var(--bg); border-radius: 12px; padding: 8px 12px; }
+.beginner .mark { font-family: var(--font-display); font-size: 18px; line-height: 1.1; }
+.beginner a { white-space: nowrap; }
+.cam-list { list-style: none; margin: 0; padding: 16px; display: grid; gap: 10px; }
+.cam-list a { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; background: var(--bg); text-decoration: none; color: var(--fg); font-weight: 700; }
+.cam-list a:hover { outline: 2px solid var(--accent); }
+.cam-list small { font-weight: 400; color: var(--muted); font-size: 12px; display: block; }
+.cam-list .go { color: var(--accent); font-size: 13px; white-space: nowrap; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -209,6 +249,8 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
   .gear-temp { border-right: 0; padding-right: 0; border-bottom: 2px dashed var(--line); padding-bottom: 10px; grid-auto-flow: column; align-items: baseline; justify-content: start; gap: 12px; }
   .meta { justify-items: start; }
   .news a { grid-template-columns: minmax(0, 1fr); }
+  .wind-demo { grid-template-columns: minmax(0, 1fr); }
+  .pane { padding: 16px; }
   .news .dt { grid-row: auto; grid-column: 1; }
 }
 </style>
@@ -281,6 +323,109 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 
   <div id="forecast"></div>
 
+  <section id="guide">
+    <h2>はじめての人へ <small>用語・乗り方・安全とマナー</small></h2>
+    <div class="panel guide">
+      <div class="tabs" role="tablist" aria-label="初心者ガイド">
+        <button type="button" role="tab" id="tab-words" aria-controls="pane-words" aria-selected="true">用語集</button>
+        <button type="button" role="tab" id="tab-ride" aria-controls="pane-ride" aria-selected="false">乗り方の流れ</button>
+        <button type="button" role="tab" id="tab-safe" aria-controls="pane-safe" aria-selected="false">安全とマナー</button>
+      </div>
+
+      <div class="pane" id="pane-words" role="tabpanel" aria-labelledby="tab-words">
+        <div class="wind-demo">
+          <figure>
+            <svg viewBox="0 0 260 120" aria-hidden="true">
+              <rect x="0" y="86" width="260" height="34" fill="var(--sea1)" opacity=".35"/>
+              <path d="M0,96 L70,96 C110,96 128,60 150,40 C162,30 176,32 182,44 C170,40 160,48 162,62 C166,80 190,92 260,94 L260,120 L0,120Z" fill="var(--sea)"/>
+              <path d="M150,40 C162,30 176,32 182,44" stroke="var(--foam)" stroke-width="3" fill="none"/>
+              <g fill="var(--foam)" opacity=".8"><circle cx="196" cy="30" r="2"/><circle cx="204" cy="24" r="1.6"/><circle cx="211" cy="20" r="1.2"/></g>
+              <g stroke="var(--good)" stroke-width="3" fill="var(--good)"><line x1="250" y1="18" x2="200" y2="18"/><path d="M196,18 l9,-6 v12z"/></g>
+              <text x="256" y="12" text-anchor="end" fill="var(--good)" font-size="11" font-weight="700">陸からの風</text>
+            </svg>
+            <figcaption><b class="pill good">オフショア</b> 陸から海へ吹く風。波の面が整い、きれいに崩れる。サーフィンにいちばん良い風。</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 260 120" aria-hidden="true">
+              <rect x="0" y="86" width="260" height="34" fill="var(--sea1)" opacity=".35"/>
+              <path d="M0,96 L60,96 C100,92 120,70 140,64 C150,58 160,66 168,62 C176,58 184,70 196,74 C214,82 230,92 260,94 L260,120 L0,120Z" fill="var(--sea)"/>
+              <path d="M140,64 C150,58 160,66 168,62 C176,58 184,70 196,74" stroke="var(--foam)" stroke-width="3" fill="none" stroke-dasharray="5 4"/>
+              <g stroke="var(--bad)" stroke-width="3" fill="var(--bad)"><line x1="10" y1="30" x2="60" y2="30"/><path d="M64,30 l-9,-6 v12z"/></g>
+              <text x="4" y="22" fill="var(--bad)" font-size="11" font-weight="700">海からの風</text>
+            </svg>
+            <figcaption><b class="pill bad">オンショア</b> 海から陸へ吹く風。波の面がガタガタに乱れ、すぐ崩れる。強いと乗りにくい。</figcaption>
+          </figure>
+        </div>
+        <label class="filter" for="wordFilter"><span>用語をさがす</span><input id="wordFilter" type="search" placeholder="例：うねり、テイクオフ"></label>
+        <dl class="words" id="words">
+          <div><dt>サイドショア</dt><dd>海岸と平行に吹く風。弱ければ問題ないが、強いと流されやすい。</dd></div>
+          <div><dt>グラッシー</dt><dd>ほぼ無風で、海面がガラスのようにツルツルの状態。朝に多い。</dd></div>
+          <div><dt>うねり（スウェル）</dt><dd>遠くの低気圧や台風で生まれ、長い距離を旅してきた波。まとまりがあり、サーフィン向き。</dd></div>
+          <div><dt>風波（かぜなみ）</dt><dd>近くで吹いている風が作る波。周期が短く、崩れ方がまばら。</dd></div>
+          <div><dt>周期（ピリオド）</dt><dd>波と波の間隔（秒）。10秒以上だと力強いうねり、7秒以下は風波が中心。</dd></div>
+          <div><dt>波高（有義波高）</dt><dd>予報で使う波の高さ。大きい方から3分の1の波の平均で、ときどきこれより大きい波も来る。</dd></div>
+          <div><dt>ひざ・腰・胸・頭</dt><dd>波の大きさを、人の体のどこまであるかで表す言い方。頭を超えると「頭オーバー」、2倍で「ダブル」。</dd></div>
+          <div><dt>セット</dt><dd>数本まとまってやってくる大きめの波。セットの合間は静かになる。</dd></div>
+          <div><dt>ブレイク</dt><dd>波が崩れること、または崩れる場所。</dd></div>
+          <div><dt>ピーク</dt><dd>波がいちばん最初に崩れ始める場所。ここに近い人が優先して乗れる。</dd></div>
+          <div><dt>ショルダー</dt><dd>ピークの横の、まだ崩れていない斜面の部分。ここを横に滑っていく。</dd></div>
+          <div><dt>ダンパー（クローズアウト）</dt><dd>横一直線に一気に崩れる波。横に滑れないので乗りにくい。</dd></div>
+          <div><dt>スープ</dt><dd>崩れたあとの白く泡立った波。初心者のテイクオフ練習にちょうどいい。</dd></div>
+          <div><dt>インサイド／アウト</dt><dd>岸に近い浅い場所がインサイド、波が崩れ始める沖側がアウト。</dd></div>
+          <div><dt>ゲッティングアウト</dt><dd>崩れる波を越えて、沖の波待ちの場所まで出ていくこと。</dd></div>
+          <div><dt>パドリング</dt><dd>ボードに腹ばいになり、両腕で水をかいて進むこと。</dd></div>
+          <div><dt>テイクオフ</dt><dd>波に押されてボードが走り出した瞬間に立ち上がること。</dd></div>
+          <div><dt>ドルフィンスルー</dt><dd>ボードごと水中に潜って波をくぐり抜ける技。主にショートボードで使う。</dd></div>
+          <div><dt>リーシュコード</dt><dd>ボードと足首をつなぐコード。ボードを流さないための必需品。</dd></div>
+          <div><dt>前乗り（ドロップイン）</dt><dd>ピーク寄りの人がすでに乗っている波に、横から割り込むこと。いちばん嫌われるマナー違反。</dd></div>
+          <div><dt>離岸流（カレント）</dt><dd>岸から沖へ向かう強い流れ。波が割れていない、濁っている所に多い。</dd></div>
+          <div><dt>大潮・小潮</dt><dd>月の満ち欠けで変わる潮の動きの大きさ。大潮は満潮と干潮の差が大きく、流れも強くなりやすい。</dd></div>
+          <div><dt>上げ潮・下げ潮</dt><dd>満潮に向かうのが上げ潮、干潮に向かうのが下げ潮。上げ始めは波が良くなることが多いと言われる。</dd></div>
+          <div><dt>ソフトボード／ロングボード</dt><dd>ソフトボードは表面が柔らかく安全。ロングボードは浮力があり波に乗りやすい。初心者はこのどちらかから。</dd></div>
+        </dl>
+      </div>
+
+      <div class="pane" id="pane-ride" role="tabpanel" aria-labelledby="tab-ride" hidden>
+        <p class="lead">はじめは<b>サーフスクール</b>に入るのがいちばんの近道です。ボードは浮力の大きい<b>ソフトボードかロングボード</b>を選びましょう。</p>
+        <ol class="steps">
+          <li><b>海に入る前に</b><span>波・風・潮をこのページでチェック。準備運動をして、リーシュコードを後ろ足の足首に付けます。しばらく浜から波の崩れ方とほかの人の動きを観察しましょう。</span></li>
+          <li><b>パドリング</b><span>ボードの真ん中に腹ばいになり、つま先がボードの後ろの端に来る位置に。あごを少し上げ、腕を大きく交互に回して水をかきます。</span></li>
+          <li><b>ゲッティングアウト</b><span>白波が来たら、ボードを押して胸を浮かせ、体と板の間に波を通します（プッシュスルー）。波の小さい所や、波が割れていない場所を選んで沖へ。</span></li>
+          <li><b>波を待つ</b><span>ボードにまたがって沖を見ます。セットの間隔を数え、ピークのど真ん中ではなく、少し外れた場所で待つのが初心者の基本です。</span></li>
+          <li><b>波をつかまえる</b><span>うねりが近づいたら岸の方へ向き、全力でパドル。ボードがぐっと押される感覚が来てから、さらに2〜3かきします。</span></li>
+          <li><b>テイクオフ</b><span>両手を胸の横について上体を起こし、一気に足を引き込みます。前足は両手の間、目線は進む方向、ひざを曲げて低く構えます。</span></li>
+          <li><b>波から降りる・戻る</b><span>波が終わったら、ボードを前に飛ばさないよう後ろ側へ降ります。戻るときは、波に乗っている人の進路を横切らないようにパドルで回り込みます。</span></li>
+        </ol>
+        <p class="tip">最初はインサイドのスープで、「パドル→立つ」を何度も練習するのがおすすめ。立てるようになってから沖の波に挑戦しましょう。</p>
+      </div>
+
+      <div class="pane" id="pane-safe" role="tabpanel" aria-labelledby="tab-safe" hidden>
+        <div class="rules">
+          <div class="rule"><h3>マナー</h3><ul>
+            <li><b>前乗りしない。</b>ピークに近い人が優先。乗る前に左右を確認。</li>
+            <li><b>1本の波に1人。</b>乗っている人がいる波には乗らない。</li>
+            <li><b>ボードを手放さない。</b>流れたボードは周りの人に当たると大ケガのもと。</li>
+            <li><b>あいさつと順番。</b>ローカルの人を尊重し、混んでいる場所に無理に入らない。</li>
+            <li><b>駐車・ゴミ・着替え</b>は地域のルールを守る。</li>
+          </ul></div>
+          <div class="rule"><h3>安全</h3><ul>
+            <li><b>1人で入らない。</b>仲間かスクールと一緒に。</li>
+            <li><b>大きい日は入らない勇気を。</b>「腰〜胸」を超える日や台風のうねりは初心者は見学。</li>
+            <li><b>雷が鳴ったらすぐ上がる。</b>海の上はとても危険。</li>
+            <li><b>体が冷えたら早めに上がる。</b>水温に合ったウェットスーツを。</li>
+            <li><b>警報・注意報</b>（高波・強風）が出ていたら入らない。</li>
+          </ul></div>
+          <div class="rule rip"><h3>離岸流に流されたら</h3><ul>
+            <li><b>あわてず、ボードにつかまる。</b>ボードは浮き輪になる。</li>
+            <li><b>岸と平行に移動して流れから出る。</b>岸に向かってまっすぐ戻ろうとしない。</li>
+            <li><b>出られないときは手を大きく振って助けを呼ぶ。</b></li>
+            <li>緊急時は <b>118</b>（海上保安庁）へ。</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <h2>サーフィンニュース <small>THE SURF NEWS・SURFMEDIA</small></h2>
     <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
@@ -308,32 +453,41 @@ const SPOTS = [
   { id: "kou", name: "国府の浜", group: "三重", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120,
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
     cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
-      links: [["SpoLive（志摩市・ラスタ前）", "https://web.spo.live/event/PVhPiqHlIo"], ["MCTV 静止画（メイン〜テトラ前）", "https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3"],
-              ["BCM サーフパトロール", "https://www.bcm-surfpatrol.com/wave-detail/10/114/"], ["YouTube（マチスポ）", "https://www.youtube.com/@machispodev/streams"]] } },
+      links: [["ラスタ前", "https://web.spo.live/event/PVhPiqHlIo", "SpoLive（志摩市）・ライブ映像"], ["メイン〜テトラ前", "https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3", "MCTV・静止画"],
+              ["テトラ前", "https://www.bcm-surfpatrol.com/wave-detail/10/114/", "BCM サーフパトロール"], ["ラスタ前（YouTube）", "https://www.youtube.com/@machispodev/streams", "マチスポ"]] } },
   { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190,
-    jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" } },
+    jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" },
+    cam: { title: "御前崎のカメラ", links: [["御前埼灯台", "https://camera.mics.kaiho.mlit.go.jp/camstream/omaesaki_lt/", "海上保安庁・ライブ映像"], ["御前崎 坂下", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=96", "BCM・静止画"], ["御前崎 メイン", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=95", "BCM・静止画"]] } },
   { id: "shizunami", name: "静波", group: "東海（静岡・愛知）", place: "静岡県牧之原市", wx: [34.733, 138.232], marine: [34.733, 138.232], facing: 115, swell: 140,
-    jma: { office: "220000", officeName: "静岡地方気象台", area: "220010", areaName: "静岡県中部", city: "2222600", cityName: "牧之原市" } },
+    jma: { office: "220000", officeName: "静岡地方気象台", area: "220010", areaName: "静岡県中部", city: "2222600", cityName: "牧之原市" },
+    cam: { title: "静波のカメラ", links: [["静波 新堤", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=106", "BCM・静止画"]] } },
   { id: "irago", name: "伊良湖ロングビーチ", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.600, 137.080], marine: [34.600, 137.080], facing: 180, swell: 170,
-    jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" } },
+    jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" },
+    cam: { title: "伊良湖のカメラ", links: [["伊良湖岬（伊勢湾海上交通センター）", "https://camera.mics.kaiho.mlit.go.jp/camstream/isewan_martis_no2/", "海上保安庁・ライブ映像"]] } },
   { id: "akabane", name: "赤羽根", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.603, 137.178], marine: [34.603, 137.178], facing: 175, swell: 170,
-    jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" } },
+    jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" },
+    cam: { title: "赤羽根のカメラ", links: [["赤羽根 ロングビーチ", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=9", "BCM・静止画"]] } },
   { id: "isonoura", name: "磯ノ浦", group: "関西（和歌山・京都）", place: "和歌山県和歌山市", wx: [34.260, 135.095], marine: [34.260, 135.095], facing: 285, swell: 210,
-    jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3020100", cityName: "和歌山市" } },
+    jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3020100", cityName: "和歌山市" },
+    cam: { title: "磯ノ浦のカメラ", links: [["磯ノ浦", "https://id.namiaru.com/isonoura.jpg", "なみある？・静止画"], ["磯ノ浦", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=52", "BCM・静止画"]] } },
   { id: "senri", name: "千里の浜", group: "関西（和歌山・京都）", place: "和歌山県みなべ町", wx: [33.785, 135.325], marine: [33.785, 135.325], facing: 215, swell: 200,
     jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3039100", cityName: "みなべ町" } },
   { id: "hacchohama", name: "八丁浜", group: "関西（和歌山・京都）", place: "京都府京丹後市網野町", wx: [35.689, 135.023], marine: [35.689, 135.023], facing: 350, swell: 340,
-    jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" } },
+    jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
+    cam: { title: "網野町のカメラ", links: [["京丹後市網野町", "https://weathernews.jp/onebox/livecam/kinki/kyoto/7CDDE90867A2/", "ウェザーニュース・ライブカメラ"]] } },
   { id: "shishikui", name: "宍喰", group: "四国（徳島・高知）", place: "徳島県海陽町", wx: [33.565, 134.318], marine: [33.565, 134.318], facing: 120, swell: 140,
-    jma: { office: "360000", officeName: "徳島地方気象台", area: "360020", areaName: "徳島県南部", city: "3638800", cityName: "海陽町" } },
+    jma: { office: "360000", officeName: "徳島地方気象台", area: "360020", areaName: "徳島県南部", city: "3638800", cityName: "海陽町" },
+    cam: { title: "宍喰のカメラ", links: [["宍喰ライブカメラ", "http://cam11.kaifu-intra.jp/local/cam11.html", "海陽町・ライブ映像"]] } },
   { id: "ikumi", name: "生見", group: "四国（徳島・高知）", place: "高知県東洋町", wx: [33.548, 134.290], marine: [33.548, 134.290], facing: 135, swell: 150,
-    jma: { office: "390000", officeName: "高知地方気象台", area: "390020", areaName: "高知県東部", city: "3930100", cityName: "東洋町" } },
+    jma: { office: "390000", officeName: "高知地方気象台", area: "390020", areaName: "高知県東部", city: "3930100", cityName: "東洋町" },
+    cam: { title: "生見のカメラ", links: [["生見ライブカメラ", "http://www.town.toyo.kochi.jp/webcam_toyo.html", "東洋町・ライブ映像"], ["生見ライブカメラ（操作できる映像）", "http://webcam.town.toyo.kochi.jp/viewer/live/index.html", "東洋町"], ["生見", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=58", "BCM・静止画"]] } },
   { id: "niyodo", name: "仁淀川河口", group: "四国（徳島・高知）", place: "高知県土佐市・高知市", wx: [33.497, 133.478], marine: [33.497, 133.478], facing: 170, swell: 170,
     jma: { office: "390000", officeName: "高知地方気象台", area: "390010", areaName: "高知県中部", city: "3920500", cityName: "土佐市" } },
   { id: "irino", name: "入野", group: "四国（徳島・高知）", place: "高知県黒潮町", wx: [33.021, 133.016], marine: [33.021, 133.016], facing: 160, swell: 180,
     jma: { office: "390000", officeName: "高知地方気象台", area: "390030", areaName: "高知県西部", city: "3942800", cityName: "黒潮町" } },
   { id: "ayukawa", name: "鮎川", group: "福井", place: "福井県福井市・越前海岸", wx: [36.135, 136.040], marine: [36.135, 136.040], facing: 300, swell: 310,
-    jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1820100", cityName: "福井市" } },
+    jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1820100", cityName: "福井市" },
+    cam: { title: "鮎川周辺のカメラ", links: [["鉾島（鮎川町）道路カメラ", "https://www.hozen.pref.fukui.lg.jp/hozen/yuki/assets/images/camera/365.jpg", "福井県・静止画"]] } },
   { id: "hamaji", name: "浜地", group: "福井", place: "福井県坂井市三国町", wx: [36.235, 136.135], marine: [36.235, 136.135], facing: 270, swell: 290,
     jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1821000", cityName: "坂井市" } },
 ];
@@ -549,7 +703,10 @@ function enrich(hours) {
     const lo = Math.min(...ts), hi = Math.max(...ts);
     list.forEach(h => h.tideFrac = hi > lo && h.tide != null ? (h.tide - lo) / (hi - lo) : 0.5);
   });
-  hours.forEach(h => { h.windI = windInfo(h.windDir, h.windSpeed); h.score = rate(h); h.stars = starsOf(h.score); });
+  hours.forEach(h => {
+    h.windI = windInfo(h.windDir, h.windSpeed); h.score = rate(h); h.stars = starsOf(h.score);
+    if (h.wave >= 2.2) h.stars = Math.min(h.stars, 3); // 大きすぎる日は上級者向けとして頭打ち
+  });
   return byDay;
 }
 
@@ -615,6 +772,7 @@ function render() {
       <div class="size-word">${sizeWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="verdict-text">${summaryText(cur, curWin)}</div>
+      ${beginnerHTML(cur)}
     </div>
     <div class="facts">
       <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m</span></div>
@@ -651,6 +809,17 @@ function render() {
   const box = document.getElementById("chartBox");
   box.scrollLeft = Math.max(0, hours.indexOf(cur) * HOUR_W - 120);
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
+}
+
+function beginnerLevel(h) {
+  if (h.wave >= 1.3 || h.windSpeed >= 10) return ["×", "var(--bad)", "入らずに浜から見学がおすすめ"];
+  if (h.wave < 0.3) return ["○", "var(--sea)", "波が小さめ。インサイドのスープでテイクオフ練習に"];
+  if (h.wave < 0.9 && !(h.windI.cls === "bad" && h.windSpeed >= 6)) return ["◎", "var(--good)", "楽しめるサイズ。スクールや仲間と一緒に"];
+  return ["△", "var(--ok)", "慣れた人向け。入るならインサイドで"];
+}
+function beginnerHTML(h) {
+  const [mark, col, text] = beginnerLevel(h);
+  return `<div class="beginner"><span class="mark" style="color:${col}">${mark}</span><span><b>初心者は：</b>${text} <a href="#guide" data-guide>はじめての人へ</a></span></div>`;
 }
 
 function tideTrend(cur, extremes) {
@@ -903,16 +1072,49 @@ function heroWave(id, y, amp, wl) {
 heroWave("wave1", 226, 7, 120);
 heroWave("wave2", 254, 10, 180);
 
+// --- beginner guide -------------------------------------------------------------
+(function setupGuide() {
+  const tabs = [...document.querySelectorAll('.tabs [role="tab"]')];
+  const show = tab => tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute("aria-selected", on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+  });
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => show(t));
+    t.addEventListener("keydown", e => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; show(n); n.focus(); }
+    });
+  });
+  show(tabs[0]);
+  document.getElementById("wordFilter").addEventListener("input", e => {
+    const q = e.target.value.trim();
+    document.querySelectorAll("#words > div").forEach(d => d.hidden = q && !d.textContent.includes(q));
+  });
+  // in-page link to the guide must not replace the spot hash
+  document.addEventListener("click", e => {
+    if (!e.target.closest("[data-guide]")) return;
+    e.preventDefault();
+    document.getElementById("guide").scrollIntoView({ behavior: "smooth" });
+  });
+})();
+
 // --- spot switching -----------------------------------------------------------
 function renderCam() {
   const el = document.getElementById("cam"), c = SPOT.cam;
   document.getElementById("camSub").textContent = c ? c.title : "";
+  const q = encodeURIComponent(`${SPOT.name} ${SPOT.place.split(/[・\s]/)[0]} ライブカメラ`);
+  const search = `<a class="btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">「${esc(SPOT.name)} ライブカメラ」を検索</a>`;
   if (!c) {
-    const q = encodeURIComponent(`${SPOT.name} ${SPOT.place.split(/[・\s]/)[0]} ライブカメラ`);
-    el.innerHTML = `<div class="cam-empty">
-        <p>このポイントのライブカメラはまだ登録していません。</p>
-        <a class="btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">「${esc(SPOT.name)} ライブカメラ」を検索</a>
-      </div>`;
+    el.innerHTML = `<div class="cam-empty"><p>このポイントで確認できたライブカメラはまだありません。</p>${search}</div>`;
+    return;
+  }
+  const list = (c.links || []).map(([t, u, note]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">
+      <span>${esc(t)}<small>${esc(note || "")}</small></span><span class="go">開く ↗</span></a></li>`).join("");
+  if (!c.embed) {
+    el.innerHTML = `<ul class="cam-list">${list}</ul>`;
     return;
   }
   el.innerHTML = `
@@ -922,8 +1124,7 @@ function renderCam() {
         <span>タップでライブ映像を再生</span>
       </button>
     </div>
-    ${c.links?.length ? `<div class="cam-links"><span class="label">ほかのカメラ・映像（別ページで開く）</span>
-      <ul>${c.links.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul></div>` : ""}`;
+    ${list ? `<div class="cam-links"><span class="label">ほかのカメラ（別ページで開く）</span></div><ul class="cam-list" style="padding-top:0">${list}</ul>` : ""}`;
   document.getElementById("camPlay").addEventListener("click", () => {
     document.getElementById("camFrame").innerHTML = `<iframe src="${esc(c.embed)}" title="${esc(c.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
   });
