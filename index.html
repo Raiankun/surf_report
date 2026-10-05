@@ -515,7 +515,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
       </section>
     </div>
     <section>
-      <h2>潮見表 <small>満潮・干潮・潮回り（7日間）</small></h2>
+      <h2>潮見表 <small id="tideSub">満潮・干潮・潮回り（7日間）</small></h2>
       <div class="panel tide-wrap" id="tideTable"><div class="status">潮汐データを取得しています…</div></div>
     </section>
     </div>
@@ -832,7 +832,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 
   <section class="notes">
     <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（波・風・潮位・水温、CC BY 4.0）、<a id="jmaLink" href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">気象庁</a>（地域の予報）、ニュースは各サイトのRSS。ライブ映像は各配信元のものです。</p>
-    <p>潮位は海洋モデルの海面高で、潮位表とは数十分・数十cmずれることがあります。月齢と潮名（大潮・小潮など）は計算による目安です。</p>
+    <p>満潮・干潮の時刻と潮位は、<a href="https://www.data.jma.go.jp/kaiyou/db/tide/suisan/index.php" target="_blank" rel="noopener">気象庁の潮位表</a>（ポイントに一番近い観測地点の推算値・潮位表基準面からの高さ）です。地点とポイントの距離ぶん、数分〜十数分ずれることがあります。取得できないときは海洋モデルの計算値を使います。月齢と潮名（大潮・小潮など）は計算による目安です。</p>
     <p>サイズ表現は沖の有義波高からの目安です。国府の浜以外のポイントの「ビーチの向き」は地図から読んだ推定値なので、実際の波と見比べながら調整してください（ポイントごとに保存されます）。危険な高波・離岸流に注意し、<a id="warnLink" href="https://www.jma.go.jp/bosai/warning/" target="_blank" rel="noopener">警報・注意報</a>も確認してください。</p>
   </section>
 </div>
@@ -843,44 +843,58 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 const SPOTS = [
   { id: "kou", name: "国府の浜", group: "三重", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120,
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
+    tide: { code: "TB", name: "鳥羽", km: 19 },
     cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
       links: [["ラスタ前", "https://web.spo.live/event/PVhPiqHlIo", "SpoLive（志摩市）・ライブ映像"], ["メイン〜テトラ前", "https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3", "MCTV・静止画"],
               ["テトラ前", "https://www.bcm-surfpatrol.com/wave-detail/10/114/", "BCM サーフパトロール"], ["ラスタ前（YouTube）", "https://www.youtube.com/@machispodev/streams", "マチスポ"]] } },
   { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190,
     jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" },
+    tide: { code: "OM", name: "御前崎", km: 2 },
     cam: { title: "御前崎のカメラ", links: [["御前埼灯台", "https://camera.mics.kaiho.mlit.go.jp/camstream/omaesaki_lt/", "海上保安庁・ライブ映像"], ["御前崎 坂下", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=96", "BCM・静止画"], ["御前崎 メイン", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=95", "BCM・静止画"]] } },
   { id: "shizunami", name: "静波", group: "東海（静岡・愛知）", place: "静岡県牧之原市", wx: [34.733, 138.232], marine: [34.733, 138.232], facing: 115, swell: 140,
     jma: { office: "220000", officeName: "静岡地方気象台", area: "220010", areaName: "静岡県中部", city: "2222600", cityName: "牧之原市" },
+    tide: { code: "OM", name: "御前崎", km: 13 },
     cam: { title: "静波のカメラ", links: [["静波 新堤", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=106", "BCM・静止画"]] } },
   { id: "irago", name: "伊良湖ロングビーチ", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.600, 137.080], marine: [34.600, 137.080], facing: 180, swell: 170,
     jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" },
+    tide: { code: "I4", name: "赤羽根", km: 9 },
     cam: { title: "伊良湖のカメラ", links: [["伊良湖岬（伊勢湾海上交通センター）", "https://camera.mics.kaiho.mlit.go.jp/camstream/isewan_martis_no2/", "海上保安庁・ライブ映像"]] } },
   { id: "akabane", name: "赤羽根", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.603, 137.178], marine: [34.603, 137.178], facing: 175, swell: 170,
     jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" },
+    tide: { code: "I4", name: "赤羽根", km: 1 },
     cam: { title: "赤羽根のカメラ", links: [["赤羽根 ロングビーチ", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=9", "BCM・静止画"]] } },
   { id: "isonoura", name: "磯ノ浦", group: "関西（和歌山・京都）", place: "和歌山県和歌山市", wx: [34.260, 135.095], marine: [34.260, 135.095], facing: 285, swell: 210,
     jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3020100", cityName: "和歌山市" },
+    tide: { code: "WY", name: "和歌山", km: 7 },
     cam: { title: "磯ノ浦のカメラ", links: [["磯ノ浦", "https://id.namiaru.com/isonoura.jpg", "なみある？・静止画"], ["磯ノ浦", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=52", "BCM・静止画"]] } },
   { id: "senri", name: "千里の浜", group: "関西（和歌山・京都）", place: "和歌山県みなべ町", wx: [33.785, 135.325], marine: [33.785, 135.325], facing: 215, swell: 200,
-    jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3039100", cityName: "みなべ町" } },
+    jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3039100", cityName: "みなべ町" },
+    tide: { code: "SR", name: "白浜", km: 13 } },
   { id: "hacchohama", name: "八丁浜", group: "関西（和歌山・京都）", place: "京都府京丹後市網野町", wx: [35.689, 135.023], marine: [35.689, 135.023], facing: 350, swell: 340,
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
+    tide: { code: "T6", name: "津居山", km: 18 },
     cam: { title: "網野町のカメラ", links: [["京丹後市網野町", "https://weathernews.jp/onebox/livecam/kinki/kyoto/7CDDE90867A2/", "ウェザーニュース・ライブカメラ"]] } },
   { id: "shishikui", name: "宍喰", group: "四国（徳島・高知）", place: "徳島県海陽町", wx: [33.565, 134.318], marine: [33.565, 134.318], facing: 120, swell: 140,
     jma: { office: "360000", officeName: "徳島地方気象台", area: "360020", areaName: "徳島県南部", city: "3638800", cityName: "海陽町" },
+    tide: { code: "L7", name: "甲浦", km: 2 },
     cam: { title: "宍喰のカメラ", links: [["宍喰ライブカメラ", "http://cam11.kaifu-intra.jp/local/cam11.html", "海陽町・ライブ映像"]] } },
   { id: "ikumi", name: "生見", group: "四国（徳島・高知）", place: "高知県東洋町", wx: [33.548, 134.290], marine: [33.548, 134.290], facing: 135, swell: 150,
     jma: { office: "390000", officeName: "高知地方気象台", area: "390020", areaName: "高知県東部", city: "3930100", cityName: "東洋町" },
+    tide: { code: "L7", name: "甲浦", km: 1 },
     cam: { title: "生見のカメラ", links: [["生見ライブカメラ", "http://www.town.toyo.kochi.jp/webcam_toyo.html", "東洋町・ライブ映像"], ["生見ライブカメラ（操作できる映像）", "http://webcam.town.toyo.kochi.jp/viewer/live/index.html", "東洋町"], ["生見", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=58", "BCM・静止画"]] } },
   { id: "niyodo", name: "仁淀川河口", group: "四国（徳島・高知）", place: "高知県土佐市・高知市", wx: [33.497, 133.478], marine: [33.497, 133.478], facing: 170, swell: 170,
-    jma: { office: "390000", officeName: "高知地方気象台", area: "390010", areaName: "高知県中部", city: "3920500", cityName: "土佐市" } },
+    jma: { office: "390000", officeName: "高知地方気象台", area: "390010", areaName: "高知県中部", city: "3920500", cityName: "土佐市" },
+    tide: { code: "KC", name: "高知", km: 8 } },
   { id: "irino", name: "入野", group: "四国（徳島・高知）", place: "高知県黒潮町", wx: [33.021, 133.016], marine: [33.021, 133.016], facing: 160, swell: 180,
-    jma: { office: "390000", officeName: "高知地方気象台", area: "390030", areaName: "高知県西部", city: "3942800", cityName: "黒潮町" } },
+    jma: { office: "390000", officeName: "高知地方気象台", area: "390030", areaName: "高知県西部", city: "3942800", cityName: "黒潮町" },
+    tide: { code: "L6", name: "高知下田", km: 10 } },
   { id: "ayukawa", name: "鮎川", group: "福井", place: "福井県福井市・越前海岸", wx: [36.135, 136.040], marine: [36.135, 136.040], facing: 300, swell: 310,
     jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1820100", cityName: "福井市" },
+    tide: { code: "ZG", name: "三国", km: 16 },
     cam: { title: "鮎川周辺のカメラ", links: [["鉾島（鮎川町）道路カメラ", "https://www.hozen.pref.fukui.lg.jp/hozen/yuki/assets/images/camera/365.jpg", "福井県・静止画"]] } },
   { id: "hamaji", name: "浜地", group: "福井", place: "福井県坂井市三国町", wx: [36.235, 136.135], marine: [36.235, 136.135], facing: 270, swell: 290,
-    jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1821000", cityName: "坂井市" } },
+    jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1821000", cityName: "坂井市" },
+    tide: { code: "ZG", name: "三国", km: 2 } },
 ];
 const spotById = id => SPOTS.find(sp => sp.id === id);
 let SPOT = spotById(location.hash.slice(1));
@@ -1134,13 +1148,68 @@ function bestWindow(list, sun) {
   return { from: day[s].t, to: new Date(day[e].t.getTime() + 3600e3), peak: day[bi] };
 }
 
+// --- official tide tables (JMA 潮位表) --------------------------------------------------------
+// 1行 = 1日。1〜72桁: 毎時潮位(cm)×24、73〜78: 年月日、79〜80: 地点、81〜108: 満潮×4（時刻4桁+潮位3桁）、109〜136: 干潮×4
+function parseTideTxt(txt) {
+  const out = {};
+  for (const line of txt.split("\n")) {
+    if (line.length < 136) continue;
+    const key = `20${line.slice(72, 74).trim().padStart(2, "0")}-${line.slice(74, 76).trim().padStart(2, "0")}-${line.slice(76, 78).trim().padStart(2, "0")}`;
+    const hourly = Array.from({ length: 24 }, (_, i) => +line.slice(i * 3, i * 3 + 3));
+    const events = start => {
+      const ev = [];
+      for (let j = 0; j < 4; j++) {
+        // 時刻は「時2桁＋分2桁」でそれぞれ右詰め（例 " 8 7" = 8:07）。9999 はその回なし
+        const seg = line.slice(start + j * 7, start + j * 7 + 7), h = +seg.slice(4, 7);
+        if (seg.slice(0, 4) === "9999") continue;
+        const hh = +seg.slice(0, 2).trim(), mi = +seg.slice(2, 4).trim();
+        if (!seg.slice(0, 4).trim() || isNaN(hh) || isNaN(mi) || hh > 24) continue;
+        const t = new Date(`${key}T${pad(hh)}:${pad(mi)}:00`);
+        ev.push({ t, lvl: h / 100 });
+      }
+      return ev;
+    };
+    out[key] = { hourly, highs: events(80), lows: events(108) };
+  }
+  return out;
+}
+const tideCache = {};
+async function loadOfficialTides(spot, hours) {
+  if (!spot.tide) return null;
+  const years = [...new Set(hours.map(h => h.t.getFullYear()))];
+  const days = {};
+  for (const y of years) {
+    const key = `${spot.tide.code}-${y}`;
+    if (!tideCache[key]) {
+      const r = await fetch(`https://www.data.jma.go.jp/kaiyou/data/db/tide/suisan/txt/${y}/${spot.tide.code}.txt`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      tideCache[key] = parseTideTxt(await r.text());
+    }
+    Object.assign(days, tideCache[key]);
+  }
+  const extremes = [];
+  let missing = 0;
+  hours.forEach(h => {
+    const d = days[h.key];
+    if (!d) { missing++; return; }
+    h.tide = d.hourly[h.t.getHours()] / 100;
+  });
+  [...new Set(hours.map(h => h.key))].forEach(k => {
+    const d = days[k];
+    if (d) extremes.push(...d.highs.map(e => ({ ...e, hi: true })), ...d.lows.map(e => ({ ...e, hi: false })));
+  });
+  if (missing === hours.length) return null;
+  extremes.sort((a, b) => a.t - b.t);
+  return { extremes, station: spot.tide };
+}
+
 // --- render forecast ---------------------------------------------------------
 let DATA = null;
 
 function render() {
   const { hours, daily } = DATA;
   const byDay = enrich(hours);
-  const extremes = tideExtremes(hours);
+  const extremes = DATA.tideJ ? DATA.tideJ.extremes : tideExtremes(hours);
   const now = new Date();
   const cur = hours.find(h => h.t.getTime() + 3600e3 > now.getTime()) || hours[0];
   const curWin = bestWindow(byDay[cur.key], daily[cur.key]);
@@ -1175,7 +1244,7 @@ function render() {
       <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m${cur.swell2H >= 0.3 && cur.swell2P ? `<br>2つ目のうねり ${cur.swell2H.toFixed(1)}m・${Math.round(cur.swell2P)}秒・${dirName(cur.swell2Dir)}から` : ""}</span></div>
       <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
       <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
-      <div class="fact"><span class="label">潮位</span><span class="v">${cur.tide != null ? (cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
+      <div class="fact"><span class="label">潮位${DATA.tideJ ? `（${esc(DATA.tideJ.station.name)}）` : ""}</span><span class="v">${cur.tide != null ? (DATA.tideJ ? "" : cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
       <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? gearNames(cur.sst) : ""}${sstDay.length ? `<br>今日 ${Math.min(...sstDay).toFixed(1)}〜${Math.max(...sstDay).toFixed(1)}℃` : ""}</span></div>
       <div class="fact"><span class="label">天気・気温</span><span class="v">${Math.round(cur.temp)}<small> ℃</small></span><span class="d">${WX(cur.code)}・降水 ${cur.pop ?? "—"}%${today ? `<br>最高 ${Math.round(today.tmax)}℃／最低 ${Math.round(today.tmin)}℃・UV ${Math.round(today.uv ?? 0)}` : ""}</span></div>
       <div class="fact"><span class="label">月齢・潮</span><span class="v">${moonSVG(age, 22)}${age.toFixed(1)}</span><span class="d"><span class="tide-name">${tideName(age)}</span> ${phaseName(age)}<br>次の満月 ${md(nextPhase(now, SYNODIC / 2))}・新月 ${md(nextPhase(now, SYNODIC - 0.0001))}</span></div>
@@ -1223,7 +1292,11 @@ function beginnerHTML(h) {
 
 function renderTideTable(byDay, daily, extremes) {
   const todayKey = toKey(new Date());
-  const cm = v => `${v >= 0 ? "+" : ""}${Math.round(v * 100)}`;
+  const official = !!DATA.tideJ;
+  const cm = v => official ? `${Math.round(v * 100)}` : `${v >= 0 ? "+" : ""}${Math.round(v * 100)}`;
+  document.getElementById("tideSub").textContent = official
+    ? `気象庁 潮位表・${DATA.tideJ.station.name}（ポイントから約${DATA.tideJ.station.km}km）`
+    : "海洋モデルの計算値（気象庁の潮位表を取得できなかったため）";
   const rows = Object.keys(byDay).map(k => {
     const d = new Date(k + "T00:00"), age = moonAge(new Date(k + "T12:00")), dd = daily[k];
     const ex = extremes.filter(e => toKey(e.t) === k);
@@ -1470,6 +1543,7 @@ async function refresh() {
   const spotId = SPOT.id;
   try {
     const data = await loadForecast();
+    try { data.tideJ = await loadOfficialTides(SPOT, data.hours); } catch (e) { data.tideJ = null; } // 失敗したらモデルの潮位を使う
     if (spotId !== SPOT.id) return;
     DATA = data;
     render();
