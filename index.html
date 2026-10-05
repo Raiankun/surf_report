@@ -235,6 +235,52 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .cam-list small { font-weight: 400; color: var(--muted); font-size: 12px; display: block; }
 .cam-list .go { color: var(--accent); font-size: 13px; white-space: nowrap; }
 
+/* videos */
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; gap: 4px; margin-bottom: 12px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 13px; padding: 6px 16px; border-radius: 99px; }
+.seg button[aria-selected="true"] { background: var(--accent); color: #fff; }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.vid { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.vid-thumb { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border: 0; padding: 0; background: var(--sea3); display: block; width: 100%; }
+.vid-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vid-thumb iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vid-play { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; box-shadow: 0 3px 0 rgba(0,0,0,.25); transition: transform .15s; }
+.vid-thumb:hover .vid-play { transform: scale(1.08); }
+.vid-play svg { width: 20px; height: 20px; fill: #fff; margin-left: 3px; }
+.vid-len { position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.72); color: #fff; font-family: var(--font-data); font-size: 11px; padding: 1px 6px; border-radius: 6px; }
+.vid-thumb:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.vid-body { padding: 10px 14px 14px; display: grid; gap: 4px; align-content: start; }
+.vid-topic { font-size: 11px; font-weight: 700; color: var(--accent); }
+.vid-body h3 { margin: 0; font-size: 14px; line-height: 1.45; }
+.vid-body p { margin: 0; font-size: 12px; color: var(--muted); }
+
+/* boards */
+.boards { padding: 22px; display: grid; gap: 24px; }
+.board-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.board { display: grid; grid-template-rows: auto auto auto auto 1fr; align-content: start; justify-items: center; gap: 4px; text-align: center; padding: 12px 8px; border-radius: 14px; border: 2px solid transparent; transition: border-color .2s, background .2s; }
+.board.pick { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.board-art { display: flex; align-items: flex-end; height: 230px; }
+.board-art svg { max-width: 100%; height: auto; }
+.board h3 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 400; font-size: 15px; }
+.board-spec { font-family: var(--font-data); font-size: 11.5px; }
+.board-who { font-size: 11px; font-weight: 700; color: #fff; background: var(--sea); border-radius: 99px; padding: 0 8px; }
+.board p { margin: 4px 0 0; font-size: 12px; color: var(--muted); text-align: left; }
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; background: var(--bg); border-radius: 16px; padding: 18px; }
+.calc h3 { margin: 0 0 4px; font-size: 16px; }
+.calc-in { display: grid; gap: 6px; align-content: start; }
+.calc-in label { font-size: 12px; font-weight: 700; color: var(--muted); display: flex; justify-content: space-between; margin-top: 4px; }
+.calc-in output { font-family: var(--font-data); color: var(--fg); }
+.calc-in select { font: inherit; font-size: 14px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; }
+.calc-in input[type="range"] { width: 100%; accent-color: var(--accent); }
+.calc-in select:focus-visible, .calc-in input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.calc-out { display: grid; gap: 8px; align-content: center; justify-items: start; background: var(--surface); border-radius: 14px; padding: 18px 20px; }
+.liters { font-family: var(--font-display); font-size: clamp(40px, 8vw, 56px); line-height: 1; color: var(--accent); }
+.liters small { font-size: .4em; color: var(--muted); }
+.rec { font-size: 14px; }
+.rec span { font-size: 12.5px; color: var(--muted); }
+.calc-note { margin: 0; font-size: 11.5px; color: var(--muted); }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -261,6 +307,11 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
   .meta { justify-items: start; }
   .news a { grid-template-columns: minmax(0, 1fr); }
   .wind-demo { grid-template-columns: minmax(0, 1fr); }
+  .board-row { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .board-art { height: 190px; }
+  .board-art svg { max-height: 190px; width: auto; }
+  .calc { grid-template-columns: minmax(0, 1fr); }
+  .boards { padding: 16px; }
   .pane { padding: 16px; }
   .news .dt { grid-row: auto; grid-column: 1; }
 }
@@ -552,6 +603,65 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
             <li><b>出られないときは手を大きく振って助けを呼ぶ。</b></li>
             <li>緊急時は <b>118</b>（海上保安庁）へ。</li>
           </ul></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="videos">
+    <h2>動画で学ぶ <small>タップするとページ内で再生します</small></h2>
+    <div class="seg" role="tablist" aria-label="動画のレベル">
+      <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="true">初心者向け</button>
+      <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">中級・上級向け</button>
+    </div>
+    <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg"></div>
+    <div class="vids" id="vids-adv" role="tabpanel" aria-labelledby="vtab-adv" hidden></div>
+  </section>
+
+  <section id="boards">
+    <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
+    <div class="panel boards">
+      <div class="board-row" id="boardRow"></div>
+      <div class="calc">
+        <div class="calc-in">
+          <h3>リッター数を計算する</h3>
+          <label for="vWeight">体重 <output id="vWeightOut">65 kg</output></label>
+          <input id="vWeight" type="range" min="30" max="120" step="1" value="65">
+          <label for="vLevel">レベル</label>
+          <select id="vLevel">
+            <option value="0">はじめて〜スープで立てる</option>
+            <option value="1">うねりで立てる・まっすぐ乗れる</option>
+            <option value="2">横に走れる</option>
+            <option value="3">アップス・カットバックができる</option>
+            <option value="4">いろいろな波で自在に乗れる</option>
+            <option value="5">コンテストに出るレベル</option>
+          </select>
+          <label for="vAge">年齢</label>
+          <select id="vAge">
+            <option value="1">20代まで</option>
+            <option value="1.03">30代</option>
+            <option value="1.07">40代</option>
+            <option value="1.12">50代以上</option>
+          </select>
+          <label for="vFreq">海に入る頻度</label>
+          <select id="vFreq">
+            <option value="1">週2回以上</option>
+            <option value="1.03" selected>週1回くらい</option>
+            <option value="1.07">月に数回</option>
+            <option value="1.12">月1回以下</option>
+          </select>
+          <label for="vWave">よく入る波</label>
+          <select id="vWave">
+            <option value="1.06">ひざ〜腰の小波が中心</option>
+            <option value="1" selected>腰〜胸くらい</option>
+            <option value="0.96">胸〜頭以上が多い</option>
+          </select>
+        </div>
+        <div class="calc-out" aria-live="polite">
+          <span class="label">あなたにおすすめの浮力</span>
+          <div class="liters" id="vResult">—</div>
+          <div class="rec" id="vRec"></div>
+          <p class="calc-note">「体重 × レベルごとの係数」に、年齢・頻度・波の大きさで補正をかけた目安です。同じリッター数でも、長さや幅で乗り味は変わります。ショップで実物を見て相談しましょう。</p>
         </div>
       </div>
     </div>
@@ -1202,6 +1312,136 @@ function heroWave(id, y, amp, wl) {
 }
 heroWave("wave1", 226, 7, 120);
 heroWave("wave2", 254, 10, 180);
+
+// --- videos -------------------------------------------------------------------
+const VIDEOS = {
+  beg: [
+    { id: "u8q6oHtVl4s", topic: "パドリング", title: "プロサーファーが教える正しいパドリングの方法", ch: "Surfing TV", len: "4:11" },
+    { id: "FeluceqWWXc", topic: "テイクオフ", title: "プロから学ぶ4つのコツ テイクオフの方法", ch: "プロサーファー河村カイサ", len: "11:04" },
+    { id: "RZiLBYy_wkc", topic: "テイクオフ", title: "見る見る上達するテイクオフのポイント", ch: "90秒でわかる サーフィンの知識", len: "2:04" },
+    { id: "9G2pE9ovQTw", topic: "陸トレ", title: "1日4分でできる初心者のためのテイクオフトレーニング", ch: "プロサーファー森下波瑠", len: "4:19" },
+    { id: "2QeSVsFeEto", topic: "横に走る", title: "テイクオフの次に見る動画 横に走る方法", ch: "Surfing TV", len: "9:13" },
+    { id: "u_ulw0QFdAA", topic: "横に走る", title: "初めてのサーフィンでも横に走ることは可能なのか", ch: "大人のサーフィン理論", len: "13:55" },
+  ],
+  adv: [
+    { id: "0Wh8K9JMXEs", topic: "ボトムターン", title: "事例で解説 ボトムターンはこれで完璧", ch: "Surfing TV", len: "10:21" },
+    { id: "viu4D-Yd53U", topic: "ボトムターン", title: "ボトムターンの仕方（新井洋人プロ）", ch: "Flat Park Film", len: "10:49" },
+    { id: "erDZU3IrUMg", topic: "アップス・リップ", title: "横に滑る、リッピング、アップスを水中映像で解説", ch: "プロサーファー河村カイサ", len: "11:58" },
+    { id: "-RT0EWLCbEg", topic: "カットバック", title: "初〜中級者が知るべきカットバック成功のコツ", ch: "田中英義", len: "19:01" },
+    { id: "dFIdY4oX7bg", topic: "カットバック", title: "カットバック全12種類", ch: "FUNRIDE Surfing", len: "4:46" },
+    { id: "w6DVFKYeBfA", topic: "スピード（英語）", title: "How to Surf: The Triangle of Speed", ch: "Surf Simply", len: "14:25" },
+  ],
+};
+function renderVideos() {
+  for (const [k, list] of Object.entries(VIDEOS)) {
+    document.getElementById(`vids-${k}`).innerHTML = list.map(v => `
+      <article class="vid">
+        <button type="button" class="vid-thumb" data-vid="${v.id}" aria-label="${esc(v.title)} を再生">
+          <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+          <span class="vid-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l14 8-14 8z"/></svg></span>
+          <span class="vid-len">${v.len}</span>
+        </button>
+        <div class="vid-body">
+          <span class="vid-topic">${esc(v.topic)}</span>
+          <h3>${esc(v.title)}</h3>
+          <p>${esc(v.ch)}・<a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">YouTubeで開く</a></p>
+        </div>
+      </article>`).join("");
+  }
+  document.querySelectorAll(".vid-thumb").forEach(b => b.addEventListener("click", () => {
+    const id = b.dataset.vid;
+    const wrap = document.createElement("div");
+    wrap.className = "vid-thumb";
+    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="YouTube 動画" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    b.replaceWith(wrap);
+  }));
+  const tabs = [...document.querySelectorAll('.seg [role="tab"]')];
+  tabs.forEach(t => t.addEventListener("click", () => tabs.forEach(o => {
+    o.setAttribute("aria-selected", o === t);
+    document.getElementById(o.getAttribute("aria-controls")).hidden = o !== t;
+  })));
+}
+
+// --- boards & volume ----------------------------------------------------------------
+// len / wid in inches; nose / tail decide the outline
+const BOARDS = [
+  { key: "soft", name: "ソフトボード", len: 96, wid: 23, nose: "round", tail: "square", fill: "var(--sea)",
+    spec: "7'0\"〜9'0\"・60〜90L", who: "はじめての人", desc: "表面が柔らかく、当たっても痛くない。浮力が大きく、立つ練習に最適。" },
+  { key: "long", name: "ロングボード", len: 110, wid: 22.5, nose: "round", tail: "squash", fill: "var(--sun)",
+    spec: "9'0\"以上・65〜85L", who: "初心者〜上級者", desc: "小さな波でもよく進み、ゆったり長く乗れる。ノーズライディングなど独自の楽しみ方も。" },
+  { key: "fun", name: "ファンボード", len: 90, wid: 21.5, nose: "round", tail: "round", fill: "var(--accent)",
+    spec: "7'0\"〜8'0\"・45〜60L", who: "初中級", desc: "ロングより軽く、ショートより安定。ステップアップ用やミッドレングスとして人気。" },
+  { key: "fish", name: "フィッシュ", len: 68, wid: 21, nose: "fish", tail: "swallow", fill: "var(--leaf2)",
+    spec: "5'4\"〜6'2\"・30〜42L", who: "中級〜", desc: "短くて幅広。小波でもスピードが出て、ショートへの入り口にぴったり。" },
+  { key: "short", name: "ショートボード", len: 72, wid: 19, nose: "point", tail: "squash", fill: "var(--tide)",
+    spec: "5'8\"〜6'4\"・24〜32L", who: "中上級〜", desc: "細くて軽く、鋭いターンができる。浮力が小さいぶん、パドル力と波を選ぶ力が必要。" },
+];
+function boardSVG(b, maxLen) {
+  const S = 2.0, L = b.len * S, W = b.wid * S, cx = W / 2 + 2, h = maxLen * S + 4;
+  const top = h - L - 2, bot = h - 2, wide = top + L * 0.45;
+  const nw = b.nose === "round" ? W * 0.32 : b.nose === "fish" ? W * 0.14 : W * 0.04;
+  const tw = b.tail === "square" ? W * 0.62 : b.tail === "swallow" ? W * 0.66 : b.tail === "round" ? W * 0.32 : W * 0.42;
+  const r = W / 2, t = tw / 2;
+  let tail;
+  if (b.tail === "swallow") tail = `L${cx},${bot - 14} L${cx - t},${bot}`;
+  else if (b.tail === "round") tail = `Q${cx},${bot + 6} ${cx - t},${bot}`;
+  else tail = `L${cx - t},${bot}`;
+  const d = `M${cx},${top} C${cx + nw},${top} ${cx + r},${top + L * 0.18} ${cx + r},${wide}
+    C${cx + r},${top + L * 0.8} ${cx + t + 2},${bot - L * 0.04} ${cx + t},${bot} ${tail}
+    C${cx - t - 2},${bot - L * 0.04} ${cx - r},${top + L * 0.8} ${cx - r},${wide}
+    C${cx - r},${top + L * 0.18} ${cx - nw},${top} ${cx},${top} Z`;
+  return `<svg width="${W + 4}" height="${h}" viewBox="0 0 ${W + 4} ${h}" aria-hidden="true">
+    <path d="${d}" fill="${b.fill}" stroke="var(--fg)" stroke-opacity=".35" stroke-width="1.2"/>
+    ${b.key === "soft" ? [0.3, 0.42, 0.54].map(f => `<line x1="${cx - r + 6}" x2="${cx + r - 6}" y1="${top + L * f}" y2="${top + L * f}" stroke="var(--surface)" stroke-opacity=".5" stroke-width="2"/>`).join("")
+                       : `<line x1="${cx}" x2="${cx}" y1="${top + 6}" y2="${bot - 6}" stroke="var(--fg)" stroke-opacity=".25"/>`}
+  </svg>`;
+}
+function renderBoards() {
+  const maxLen = Math.max(...BOARDS.map(b => b.len));
+  document.getElementById("boardRow").innerHTML = BOARDS.map(b => `
+    <div class="board" data-board="${b.key}">
+      <div class="board-art">${boardSVG(b, maxLen)}</div>
+      <h3>${b.name}</h3>
+      <div class="board-spec">${b.spec}</div>
+      <div class="board-who">${b.who}</div>
+      <p>${b.desc}</p>
+    </div>`).join("");
+}
+
+// L per kg by level: [low, high]
+const GUILD = [[0.95, 1.1], [0.7, 0.85], [0.52, 0.6], [0.45, 0.5], [0.4, 0.44], [0.36, 0.39]];
+const LEVEL_REC = [
+  ["soft", "ソフトボード 8'0\"〜9'0\"（またはロングボード 9'0\"以上）"],
+  ["fun", "ソフトボードかファンボード 7'6\"〜8'6\"、またはロングボード"],
+  ["fun", "ファンボード・ミッドレングス 7'0\"〜7'6\"、小波ならフィッシュも"],
+  ["fish", "フィッシュやハイブリッド 5'8\"〜6'4\""],
+  ["short", "ショートボード 5'10\"〜6'4\""],
+  ["short", "ショートボード（波に合わせて複数本）"],
+];
+const VOL_IDS = ["vWeight", "vLevel", "vAge", "vFreq", "vWave"];
+function calcVolume() {
+  const v = id => +document.getElementById(id).value;
+  const w = v("vWeight"), lv = v("vLevel");
+  const k = v("vAge") * v("vFreq") * v("vWave");
+  const [a, b] = GUILD[lv].map(f => Math.round(w * f * k));
+  document.getElementById("vWeightOut").textContent = `${w} kg`;
+  document.getElementById("vResult").innerHTML = `${a}<small>〜</small>${b}<small> L</small>`;
+  const [key, text] = LEVEL_REC[lv];
+  const board = BOARDS.find(x => x.key === key);
+  document.getElementById("vRec").innerHTML = `<b>${board.name}</b> がおすすめ<br><span>${text}</span>${lv <= 1 ? "<br><span>まずはスクールのレンタルで、いろいろ試すのも◎</span>" : ""}`;
+  document.querySelectorAll(".board").forEach(el => el.classList.toggle("pick", el.dataset.board === key));
+  try { localStorage.setItem("vol-inputs", JSON.stringify(VOL_IDS.map(id => document.getElementById(id).value))); } catch (e) {}
+}
+(function setupLearn() {
+  renderVideos();
+  renderBoards();
+  try {
+    const saved = JSON.parse(localStorage.getItem("vol-inputs") || "null");
+    if (Array.isArray(saved)) VOL_IDS.forEach((id, i) => { if (saved[i] != null) document.getElementById(id).value = saved[i]; });
+  } catch (e) {}
+  VOL_IDS.forEach(id => document.getElementById(id).addEventListener("input", calcVolume));
+  calcVolume();
+})();
 
 // --- beginner guide -------------------------------------------------------------
 (function setupGuide() {
