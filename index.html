@@ -323,6 +323,39 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 .spot-card .ln { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 4px; }
 .spot-card .stars { font-size: 13px; letter-spacing: 1px; }
 
+/* surf log */
+.logbox { padding: 18px 22px; display: grid; gap: 12px; }
+.log-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.calib { display: grid; gap: 2px; font-size: 14px; }
+.calib span { font-size: 12.5px; color: var(--muted); }
+.calib-toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-top: 4px; }
+.calib-toggle input { accent-color: var(--accent); width: 18px; height: 18px; }
+.btn.ghost { background: var(--bg); color: var(--fg); box-shadow: none; border: 1px solid var(--line); }
+.log-toast { margin: 0; font-size: 13px; color: var(--good); font-weight: 700; }
+.log-toast:empty { display: none; }
+.log-form { display: grid; gap: 12px; background: var(--bg); border-radius: 14px; padding: 14px 16px; }
+.log-pred { font-size: 13px; }
+.log-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 14px; }
+.log-fields label { display: grid; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.log-fields .wide { grid-column: 1 / -1; }
+.log-fields select, .log-fields input, .log-tools textarea { font: inherit; font-size: 15px; font-weight: 400; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; min-width: 0; }
+.log-fields select:focus-visible, .log-fields input:focus-visible, .log-tools textarea:focus-visible, .calib-toggle input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.log-actions { display: flex; gap: 8px; }
+.log-msg { margin: 0; font-size: 12.5px; color: var(--bad); }
+.log-msg:empty { display: none; }
+#logToolsMsg { color: var(--muted); }
+.log-list summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+.log-list[open] summary { margin-bottom: 10px; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.log-table th, .log-table td { padding: 8px 8px; text-align: left; border-top: 1px dashed var(--line); vertical-align: top; }
+.log-table thead th { border-top: 0; font-size: 11px; color: var(--muted); }
+.log-table small { color: var(--muted); }
+.log-table .up { color: var(--good); font-weight: 700; } .log-table .down { color: var(--bad); font-weight: 700; }
+.log-del { border: 0; background: none; color: var(--muted); font-size: 12px; text-decoration: underline; padding: 0; }
+.log-tools { display: grid; gap: 8px; margin-top: 12px; justify-items: start; }
+.log-tools label { font-size: 12px; font-weight: 700; color: var(--muted); }
+.log-tools textarea { width: 100%; font-size: 12px; font-family: var(--font-data); }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -434,6 +467,39 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
   <main id="main">
     <div class="view" id="view-forecast" role="tabpanel" aria-labelledby="vt-forecast">
     <div id="now"><div class="status">予報データを取得しています…</div></div>
+    <section id="logSec">
+      <h2>答え合わせ <small>実際の波を記録して、予報のクセを補正</small></h2>
+      <div class="panel logbox">
+        <div class="log-head">
+          <div class="calib" id="calibInfo"></div>
+          <button type="button" class="btn" id="logOpen">いまの波を記録する</button>
+        </div>
+        <p class="log-toast" id="logToast" aria-live="polite"></p>
+        <form id="logForm" class="log-form" hidden>
+          <div class="log-pred" id="logPred"></div>
+          <div class="log-fields">
+            <label for="logHour">時間<select id="logHour"></select></label>
+            <label for="logSize">実際のサイズ<select id="logSize"></select></label>
+            <label for="logFace">波の面<select id="logFace"></select></label>
+            <label for="logStars">自分の評価<select id="logStars"><option value="5">★★★★★ 最高</option><option value="4">★★★★ 良い</option><option value="3" selected>★★★ まずまず</option><option value="2">★★ いまいち</option><option value="1">★ 厳しい</option></select></label>
+            <label for="logMemo" class="wide">メモ（任意）<input id="logMemo" type="text" maxlength="60" placeholder="例：ダンパー気味、人が多い"></label>
+          </div>
+          <p class="log-msg" id="logMsg" aria-live="polite"></p>
+          <div class="log-actions"><button type="submit" class="btn">保存する</button><button type="button" class="btn ghost" id="logCancel">やめる</button></div>
+        </form>
+        <details class="log-list">
+          <summary>このポイントの記録（<span id="logCount">0</span>件）</summary>
+          <div id="logList"></div>
+          <div class="log-tools">
+            <button type="button" class="btn ghost" id="logExport">全記録をコピー（仲間に共有）</button>
+            <label for="logImport">仲間の記録を読み込む</label>
+            <textarea id="logImport" rows="3" placeholder="コピーされた記録をここに貼り付け"></textarea>
+            <button type="button" class="btn ghost" id="logImportBtn">読み込む</button>
+            <p class="log-msg" id="logToolsMsg" aria-live="polite"></p>
+          </div>
+        </details>
+      </div>
+    </section>
     <div id="forecast"></div>
     </div>
     <div class="view" id="view-live" role="tabpanel" aria-labelledby="vt-live" hidden>
@@ -1002,7 +1068,7 @@ async function loadForecast() {
     const usesSwell = swellH >= 0.5 * M.wave_height[i] && M.swell_wave_period[i] != null;
     hours.push({
       t: new Date(t), key: t.slice(0, 10),
-      wave: M.wave_height[i],
+      wave: M.wave_height[i], waveRaw: M.wave_height[i],
       period: usesSwell ? M.swell_wave_period[i] : M.wave_period[i],
       swellH, swellDir: M.swell_wave_direction[i] ?? M.wave_direction[i],
       windWave: M.wind_wave_height[i] ?? 0,
@@ -1032,7 +1098,9 @@ function enrich(hours) {
     const lo = Math.min(...ts), hi = Math.max(...ts);
     list.forEach(h => h.tideFrac = hi > lo && h.tide != null ? (h.tide - lo) / (hi - lo) : 0.5);
   });
+  const f = sizeFactor(SPOT.id);
   hours.forEach(h => {
+    h.wave = h.waveRaw * f; // 記録から求めた補正（記録が少ないときは ×1）
     h.windI = windInfo(h.windDir, h.windSpeed); h.score = rate(h); h.stars = starsOf(h.score);
     if (h.wave >= 2.2) h.stars = Math.min(h.stars, 3); // 大きすぎる日は上級者向けとして頭打ち
   });
@@ -1136,6 +1204,7 @@ function render() {
       </section>
     </div>`;
   renderTideTable(byDay, daily, extremes);
+  renderLog();
   const box = document.getElementById("chartBox");
   box.scrollLeft = Math.max(0, hours.indexOf(cur) * HOUR_W - 120);
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
@@ -1625,6 +1694,161 @@ function calcVolume() {
   });
 })();
 
+// --- surf log: record the real waves and calibrate the size forecast ------------------------
+// サイズ表現ごとの代表的な高さ（m）。sizeWord の区切りの中間あたり
+const SIZE_CLASSES = [
+  ["フラット", 0.15], ["すね", 0.32], ["ひざ", 0.47], ["もも", 0.62], ["腰", 0.8], ["腹〜胸", 1.02],
+  ["胸〜肩", 1.27], ["頭", 1.55], ["頭オーバー", 1.95], ["ダブル", 2.6], ["トリプル以上", 3.5],
+];
+const FACES = ["きれい", "ややザワつき", "ガタガタ"];
+const CALIB_MIN = 3;
+function readLogs() {
+  try { const v = JSON.parse(localStorage.getItem("surf-log") || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function writeLogs(logs) {
+  try { localStorage.setItem("surf-log", JSON.stringify(logs)); return true; } catch (e) { return false; }
+}
+const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+// actual / forecast height ratio for a spot, from its records
+function calibOf(spotId) {
+  const logs = readLogs().filter(l => l.spot === spotId && l.pred?.wave > 0.1);
+  const sizeMid = name => (SIZE_CLASSES.find(c => c[0] === name) || [])[1];
+  const ratios = logs.map(l => sizeMid(l.actual.size) / l.pred.wave).filter(r => r > 0);
+  const starDiff = logs.length ? logs.reduce((s, l) => s + (l.actual.stars - l.pred.stars), 0) / logs.length : 0;
+  return { n: ratios.length, factor: ratios.length ? clamp(median(ratios), 0.4, 2) : 1, starDiff };
+}
+function calibOn(spotId) {
+  try { return localStorage.getItem(`calib-on-${spotId}`) !== "0"; } catch (e) { return true; }
+}
+function sizeFactor(spotId) {
+  const c = calibOf(spotId);
+  return c.n >= CALIB_MIN && calibOn(spotId) ? c.factor : 1;
+}
+
+function renderLog() {
+  const c = calibOf(SPOT.id), all = readLogs(), mine = all.filter(l => l.spot === SPOT.id);
+  const info = document.getElementById("calibInfo");
+  if (c.n < CALIB_MIN) {
+    info.innerHTML = `<b>${esc(SPOT.name)}の記録 ${c.n}件</b><span>あと${CALIB_MIN - c.n}件記録すると、このポイントのサイズ予報を補正できます。</span>`;
+  } else {
+    const pct = Math.round((c.factor - 1) * 100);
+    const trend = Math.abs(pct) < 8 ? "予報とほぼ同じサイズ" : pct > 0 ? `予報より約${pct}%大きい` : `予報より約${-pct}%小さい`;
+    info.innerHTML = `<b>${esc(SPOT.name)}は実際「${trend}」</b>
+      <span>${c.n}件の記録から計算・★は平均 ${c.starDiff >= 0 ? "+" : ""}${c.starDiff.toFixed(1)}</span>
+      <label class="calib-toggle"><input type="checkbox" id="calibToggle" ${calibOn(SPOT.id) ? "checked" : ""}> サイズ予報に補正をかける（×${c.factor.toFixed(2)}）</label>`;
+    document.getElementById("calibToggle").addEventListener("change", e => {
+      try { localStorage.setItem(`calib-on-${SPOT.id}`, e.target.checked ? "1" : "0"); } catch (err) {}
+      spotListAt = 0;
+      if (DATA) render();
+    });
+  }
+  document.getElementById("logCount").textContent = mine.length;
+  const sizeIdx = name => SIZE_CLASSES.findIndex(cl => cl[0] === name);
+  document.getElementById("logList").innerHTML = mine.length ? `<table class="log-table">
+    <thead><tr><th>日時</th><th>予報</th><th>実際</th><th>差</th><th></th></tr></thead>
+    <tbody>${[...mine].sort((a, b) => b.t.localeCompare(a.t)).map(l => {
+      const d = new Date(l.t), diff = sizeIdx(l.actual.size) - sizeIdx(l.pred.size);
+      return `<tr>
+        <td>${md(d)} ${d.getHours()}時</td>
+        <td>${esc(l.pred.size)}<br><small>★${l.pred.stars}・${l.pred.wave.toFixed(1)}m・${esc(l.pred.wind)}</small></td>
+        <td>${esc(l.actual.size)}<br><small>★${l.actual.stars}・${esc(l.actual.face)}${l.actual.memo ? `・${esc(l.actual.memo)}` : ""}</small></td>
+        <td class="${diff > 0 ? "up" : diff < 0 ? "down" : ""}">${diff === 0 ? "±0" : (diff > 0 ? "+" : "") + diff}段階</td>
+        <td><button type="button" class="log-del" data-id="${esc(l.id)}" aria-label="この記録を削除">削除</button></td></tr>`;
+    }).join("")}</tbody></table>` : `<p class="status">まだ記録がありません。</p>`;
+  document.querySelectorAll(".log-del").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("この記録を削除しますか？")) return;
+    writeLogs(readLogs().filter(l => l.id !== b.dataset.id));
+    spotListAt = 0;
+    if (DATA) render(); else renderLog();
+  }));
+  updateLogPred();
+}
+
+// forecast snapshot for the hour chosen in the form (today only, raw = uncorrected)
+function predAt(hour) {
+  if (!DATA) return null;
+  const key = `${toKey(new Date())}T${pad(hour)}`;
+  const h = DATA.hours.find(x => `${x.key}T${pad(x.t.getHours())}` === key);
+  if (!h || !h.windI) return null;
+  return { wave: h.waveRaw, size: sizeWord(h.waveRaw), stars: h.stars, wind: h.windI.type, windSpeed: +h.windSpeed.toFixed(1),
+           period: +h.period.toFixed(1), swellDir: Math.round(h.swellDir), tide: h.tide != null ? Math.round(h.tide * 100) : null };
+}
+function updateLogPred() {
+  const sel = document.getElementById("logHour");
+  if (!sel || document.getElementById("logForm").hidden) return;
+  const p = predAt(+sel.value);
+  document.getElementById("logPred").innerHTML = p
+    ? `この時間の予報：<b>${esc(p.size)}</b>（${p.wave.toFixed(1)}m）・★${p.stars}・${esc(p.wind)} ${p.windSpeed}m/s`
+    : "この時間の予報データがありません";
+}
+function openLogForm() {
+  const now = new Date(), sel = document.getElementById("logHour");
+  sel.innerHTML = Array.from({ length: now.getHours() + 1 }, (_, h) => `<option value="${h}">${h}時ごろ</option>`).reverse().join("");
+  sel.value = String(now.getHours());
+  const cur = DATA?.hours.find(h => h.t.getTime() + 3600e3 > now.getTime());
+  if (cur) document.getElementById("logSize").value = sizeWord(cur.wave);
+  document.getElementById("logForm").hidden = false;
+  document.getElementById("logOpen").hidden = true;
+  document.getElementById("logMsg").textContent = "";
+  document.getElementById("logToast").textContent = "";
+  document.getElementById("logStars").value = "3";
+  document.getElementById("logFace").value = FACES[0];
+  updateLogPred();
+}
+function closeLogForm() {
+  document.getElementById("logForm").hidden = true;
+  document.getElementById("logOpen").hidden = false;
+}
+(function setupLog() {
+  const sizeSel = document.getElementById("logSize");
+  sizeSel.innerHTML = SIZE_CLASSES.map(([n]) => `<option>${n}</option>`).join("");
+  document.getElementById("logFace").innerHTML = FACES.map(f => `<option>${f}</option>`).join("");
+  document.getElementById("logOpen").addEventListener("click", openLogForm);
+  document.getElementById("logCancel").addEventListener("click", closeLogForm);
+  document.getElementById("logHour").addEventListener("change", updateLogPred);
+  document.getElementById("logForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const hour = +document.getElementById("logHour").value;
+    const pred = predAt(hour);
+    if (!pred) { document.getElementById("logMsg").textContent = "予報データの読み込みを待ってから保存してください。"; return; }
+    const t = new Date(); t.setHours(hour, 0, 0, 0);
+    const rec = {
+      id: `${SPOT.id}-${t.getTime()}-${Math.random().toString(36).slice(2, 7)}`,
+      spot: SPOT.id, t: `${toKey(t)}T${pad(hour)}:00`,
+      actual: { size: sizeSel.value, face: document.getElementById("logFace").value,
+                stars: +document.getElementById("logStars").value, memo: document.getElementById("logMemo").value.trim().slice(0, 60) },
+      pred,
+    };
+    if (!writeLogs([...readLogs(), rec])) { document.getElementById("logMsg").textContent = "このブラウザでは保存できませんでした（プライベートモードなど）。"; return; }
+    document.getElementById("logMemo").value = "";
+    closeLogForm();
+    spotListAt = 0;
+    render();
+    document.getElementById("logToast").textContent = `${SPOT.name}・${hour}時の波を記録しました`;
+  });
+  document.getElementById("logExport").addEventListener("click", async () => {
+    const text = JSON.stringify(readLogs());
+    const box = document.getElementById("logImport");
+    try { await navigator.clipboard.writeText(text); document.getElementById("logToolsMsg").textContent = `全${readLogs().length}件の記録をコピーしました。LINEなどに貼り付けて共有できます。`; }
+    catch (err) { box.value = text; box.select(); document.getElementById("logToolsMsg").textContent = "下の欄の文字をコピーしてください。"; }
+  });
+  document.getElementById("logImportBtn").addEventListener("click", () => {
+    const msg = document.getElementById("logToolsMsg");
+    let incoming;
+    try { incoming = JSON.parse(document.getElementById("logImport").value); } catch (err) { msg.textContent = "読み込めませんでした。コピーした記録をそのまま貼り付けてください。"; return; }
+    if (!Array.isArray(incoming)) { msg.textContent = "読み込めませんでした。"; return; }
+    const valid = incoming.filter(l => l && typeof l.id === "string" && spotById(l.spot) && l.actual && l.pred && typeof l.pred.wave === "number"
+      && SIZE_CLASSES.some(c => c[0] === l.actual.size));
+    const logs = readLogs(), ids = new Set(logs.map(l => l.id));
+    const added = valid.filter(l => !ids.has(l.id));
+    writeLogs([...logs, ...added]);
+    msg.textContent = `${added.length}件の記録を追加しました（重複${valid.length - added.length}件はスキップ）。`;
+    document.getElementById("logImport").value = "";
+    spotListAt = 0;
+    if (DATA) render(); else renderLog();
+  });
+})();
+
 // --- spot guide ----------------------------------------------------------------------
 // 確かな情報だけを載せる。未登録の項目は表示しない（あとから追記できる）
 const SPOT_GUIDE = {
@@ -1689,7 +1913,7 @@ async function loadSpotList() {
       if (mi < 0 || wi < 0 || M.wave_height[mi] == null) return null;
       const swellH = M.swell_wave_height[mi] ?? 0;
       const h = {
-        wave: M.wave_height[mi],
+        wave: M.wave_height[mi] * sizeFactor(sp.id),
         period: swellH >= 0.5 * M.wave_height[mi] && M.swell_wave_period[mi] != null ? M.swell_wave_period[mi] : M.wave_period[mi],
         swellDir: M.swell_wave_direction[mi] ?? M.wave_direction[mi], tideFrac: 0.5,
         windSpeed: W.wind_speed_10m[wi], windDir: W.wind_direction_10m[wi], sst: M.sea_surface_temperature[mi],
@@ -1804,6 +2028,9 @@ function applySpot() {
   renderCam();
   renderSpotGuide();
   renderSpotListCurrent();
+  closeLogForm();
+  document.getElementById("logToast").textContent = "";
+  renderLog();
 }
 
 function selectSpot(id) {
