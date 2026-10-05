@@ -281,6 +281,48 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .rec span { font-size: 12.5px; color: var(--muted); }
 .calc-note { margin: 0; font-size: 11.5px; color: var(--muted); }
 
+/* tab views */
+.tabbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; display: flex; gap: 4px; padding: 5px; border-radius: 99px; border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 14px rgba(0,0,0,.06); }
+.tabbar button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 14px; padding: 8px 10px; border-radius: 99px; min-width: 0; }
+.tabbar button span { white-space: nowrap; }
+.tabbar button[aria-selected="true"] { background: var(--accent); color: #fff; }
+.tabbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tabbar svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 80px; }
+.view { display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; }
+.view > * { min-width: 0; }
+
+/* tide table */
+.tide-wrap { overflow-x: auto; }
+.tide-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.tide-table th, .tide-table td { padding: 10px 12px; text-align: left; border-top: 1px dashed var(--line); white-space: nowrap; }
+.tide-table thead th { border-top: 0; font-size: 11px; color: var(--muted); letter-spacing: .08em; }
+.tide-table .d { font-weight: 700; }
+.tide-table .hi { color: var(--tide); font-family: var(--font-data); }
+.tide-table .lo { color: var(--muted); font-family: var(--font-data); }
+.tide-table .moon { display: flex; align-items: center; gap: 6px; }
+.tide-table tr.today { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+
+/* spot guide + list */
+.spot-guide { padding: 20px 22px; display: grid; gap: 14px; }
+.spot-guide .kv { font-size: 14px; gap: 6px 16px; }
+.spot-guide ul { margin: 0; padding-left: 1.1em; font-size: 13.5px; display: grid; gap: 4px; }
+.spot-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.spot-links a { text-decoration: none; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 99px; background: var(--bg); color: var(--fg); }
+.spot-links a:hover { outline: 2px solid var(--accent); }
+.spot-group { display: grid; gap: 8px; }
+.spot-group + .spot-group { margin-top: 18px; }
+.spot-group h3 { margin: 0; font-size: 13px; color: var(--muted); letter-spacing: .06em; }
+.spot-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.spot-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; text-align: left; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 14px; padding: 12px 14px; }
+.spot-card:hover, .spot-card:focus-visible { outline: 2px solid var(--accent); }
+.spot-card.current { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.spot-card .nm { font-weight: 700; font-size: 15px; }
+.spot-card .pl { font-size: 11.5px; color: var(--muted); grid-column: 1; }
+.spot-card .sz { font-family: var(--font-display); font-size: 20px; color: var(--sea); grid-row: span 2; grid-column: 2; align-self: center; text-align: right; }
+.spot-card .ln { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.spot-card .stars { font-size: 13px; letter-spacing: 1px; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -300,6 +342,18 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .status.err { color: var(--bad); }
 
 @media (max-width: 760px) {
+  body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; top: auto; border-radius: 18px 18px 0 0; border: 0; border-top: 1px solid var(--line); padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)); background: var(--surface); box-shadow: 0 -4px 16px rgba(0,0,0,.08); }
+  .tabbar button { flex-direction: column; gap: 2px; font-size: 10.5px; padding: 6px 2px; border-radius: 12px; }
+  .tabbar button[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+  .tabbar svg { width: 22px; height: 22px; }
+  .hero { min-height: 0; padding: 16px 16px 18px; gap: 10px; }
+  .hero .sub { display: none; }
+  .hero h1 { font-size: 30px; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .spot-pick { flex: 1 1 100%; }
+  .spot-pick select { flex: 1; max-width: none; }
+  .view { gap: 24px; }
   .now, .duo { grid-template-columns: minmax(0, 1fr); }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gear { grid-template-columns: minmax(0, 1fr); }
@@ -369,318 +423,344 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
     </div>
   </header>
 
-  <div id="now"><div class="status">予報データを取得しています…</div></div>
+  <nav class="tabbar" role="tablist" aria-label="表示の切り替え">
+    <button type="button" role="tab" id="vt-forecast" aria-controls="view-forecast" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 15c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/><path d="M2 9c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/></svg><span>波予報</span></button>
+    <button type="button" role="tab" id="vt-live" aria-controls="view-live" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg><span>ライブ・潮</span></button>
+    <button type="button" role="tab" id="vt-spots" aria-controls="view-spots" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span>ポイント</span></button>
+    <button type="button" role="tab" id="vt-learn" aria-controls="view-learn" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><span>学ぶ</span></button>
+    <button type="button" role="tab" id="vt-news" aria-controls="view-news" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg><span>ニュース</span></button>
+  </nav>
+  <main id="main">
+    <div class="view" id="view-forecast" role="tabpanel" aria-labelledby="vt-forecast">
+    <div id="now"><div class="status">予報データを取得しています…</div></div>
+    <div id="forecast"></div>
+    </div>
+    <div class="view" id="view-live" role="tabpanel" aria-labelledby="vt-live" hidden>
+    <div class="duo">
+      <section>
+        <h2>ライブカメラ <small id="camSub"></small></h2>
+        <div class="panel cam" id="cam"></div>
+      </section>
 
-  <div class="duo">
+      <section>
+        <h2>気象台の予報 <small id="jmaSub"></small></h2>
+        <div class="panel jma" id="jma"><div class="status">気象台の予報を取得しています…</div></div>
+      </section>
+    </div>
     <section>
-      <h2>ライブカメラ <small id="camSub"></small></h2>
-      <div class="panel cam" id="cam"></div>
+      <h2>潮見表 <small>満潮・干潮・潮回り（7日間）</small></h2>
+      <div class="panel tide-wrap" id="tideTable"><div class="status">潮汐データを取得しています…</div></div>
     </section>
-
+    </div>
+    <div class="view" id="view-spots" role="tabpanel" aria-labelledby="vt-spots" hidden>
     <section>
-      <h2>気象台の予報 <small id="jmaSub"></small></h2>
-      <div class="panel jma" id="jma"><div class="status">気象台の予報を取得しています…</div></div>
+      <h2>いまの波情報 <small>全ポイントの現在の予報・タップで切り替え</small></h2>
+      <div id="spotList"><div class="status">全ポイントの予報を取得しています…</div></div>
     </section>
-  </div>
-
-  <div id="forecast"></div>
-
-  <section id="guide">
-    <h2>はじめての人へ <small>用語・乗り方・パドリング・横に滑る・安全とマナー</small></h2>
-    <div class="panel guide">
-      <div class="tabs" role="tablist" aria-label="初心者ガイド">
-        <button type="button" role="tab" id="tab-words" aria-controls="pane-words" aria-selected="true">用語集</button>
-        <button type="button" role="tab" id="tab-ride" aria-controls="pane-ride" aria-selected="false">乗り方の流れ</button>
-        <button type="button" role="tab" id="tab-paddle" aria-controls="pane-paddle" aria-selected="false">パドリング</button>
-        <button type="button" role="tab" id="tab-trim" aria-controls="pane-trim" aria-selected="false">横に滑る</button>
-        <button type="button" role="tab" id="tab-safe" aria-controls="pane-safe" aria-selected="false">安全とマナー</button>
+    <section>
+      <h2>ポイントガイド <small id="guideSub"></small></h2>
+      <div class="panel spot-guide" id="spotGuide"></div>
+    </section>
+    <section>
+      <div class="settings">
+        <label for="facing">ビーチの向き（沖の方角）</label>
+        <input id="facing" type="number" min="0" max="359" step="5" value="110"> °
+        <span id="facingNote"></span>
       </div>
-
-      <div class="pane" id="pane-words" role="tabpanel" aria-labelledby="tab-words">
-        <div class="wind-demo">
-          <figure>
-            <svg viewBox="0 0 260 120" aria-hidden="true">
-              <rect x="0" y="86" width="260" height="34" fill="var(--sea1)" opacity=".35"/>
-              <path d="M0,96 L70,96 C110,96 128,60 150,40 C162,30 176,32 182,44 C170,40 160,48 162,62 C166,80 190,92 260,94 L260,120 L0,120Z" fill="var(--sea)"/>
-              <path d="M150,40 C162,30 176,32 182,44" stroke="var(--foam)" stroke-width="3" fill="none"/>
-              <g fill="var(--foam)" opacity=".8"><circle cx="196" cy="30" r="2"/><circle cx="204" cy="24" r="1.6"/><circle cx="211" cy="20" r="1.2"/></g>
-              <g stroke="var(--good)" stroke-width="3" fill="var(--good)"><line x1="250" y1="18" x2="200" y2="18"/><path d="M196,18 l9,-6 v12z"/></g>
-              <text x="256" y="12" text-anchor="end" fill="var(--good)" font-size="11" font-weight="700">陸からの風</text>
-            </svg>
-            <figcaption><b class="pill good">オフショア</b> 陸から海へ吹く風。波の面が整い、きれいに崩れる。サーフィンにいちばん良い風。</figcaption>
-          </figure>
-          <figure>
-            <svg viewBox="0 0 260 120" aria-hidden="true">
-              <rect x="0" y="86" width="260" height="34" fill="var(--sea1)" opacity=".35"/>
-              <path d="M0,96 L60,96 C100,92 120,70 140,64 C150,58 160,66 168,62 C176,58 184,70 196,74 C214,82 230,92 260,94 L260,120 L0,120Z" fill="var(--sea)"/>
-              <path d="M140,64 C150,58 160,66 168,62 C176,58 184,70 196,74" stroke="var(--foam)" stroke-width="3" fill="none" stroke-dasharray="5 4"/>
-              <g stroke="var(--bad)" stroke-width="3" fill="var(--bad)"><line x1="10" y1="30" x2="60" y2="30"/><path d="M64,30 l-9,-6 v12z"/></g>
-              <text x="4" y="22" fill="var(--bad)" font-size="11" font-weight="700">海からの風</text>
-            </svg>
-            <figcaption><b class="pill bad">オンショア</b> 海から陸へ吹く風。波の面がガタガタに乱れ、すぐ崩れる。強いと乗りにくい。</figcaption>
-          </figure>
+    </section>
+    </div>
+    <div class="view" id="view-learn" role="tabpanel" aria-labelledby="vt-learn" hidden>
+    <section id="guide">
+      <h2>はじめての人へ <small>用語・乗り方・パドリング・横に滑る・安全とマナー</small></h2>
+      <div class="panel guide">
+        <div class="tabs" role="tablist" aria-label="初心者ガイド">
+          <button type="button" role="tab" id="tab-words" aria-controls="pane-words" aria-selected="true">用語集</button>
+          <button type="button" role="tab" id="tab-ride" aria-controls="pane-ride" aria-selected="false">乗り方の流れ</button>
+          <button type="button" role="tab" id="tab-paddle" aria-controls="pane-paddle" aria-selected="false">パドリング</button>
+          <button type="button" role="tab" id="tab-trim" aria-controls="pane-trim" aria-selected="false">横に滑る</button>
+          <button type="button" role="tab" id="tab-safe" aria-controls="pane-safe" aria-selected="false">安全とマナー</button>
         </div>
-        <label class="filter" for="wordFilter"><span>用語をさがす</span><input id="wordFilter" type="search" placeholder="例：うねり、テイクオフ"></label>
-        <dl class="words" id="words">
-          <div><dt>サイドショア</dt><dd>海岸と平行に吹く風。弱ければ問題ないが、強いと流されやすい。</dd></div>
-          <div><dt>グラッシー</dt><dd>ほぼ無風で、海面がガラスのようにツルツルの状態。朝に多い。</dd></div>
-          <div><dt>うねり（スウェル）</dt><dd>遠くの低気圧や台風で生まれ、長い距離を旅してきた波。まとまりがあり、サーフィン向き。</dd></div>
-          <div><dt>風波（かぜなみ）</dt><dd>近くで吹いている風が作る波。周期が短く、崩れ方がまばら。</dd></div>
-          <div><dt>周期（ピリオド）</dt><dd>波と波の間隔（秒）。10秒以上だと力強いうねり、7秒以下は風波が中心。</dd></div>
-          <div><dt>波高（有義波高）</dt><dd>予報で使う波の高さ。大きい方から3分の1の波の平均で、ときどきこれより大きい波も来る。</dd></div>
-          <div><dt>ひざ・腰・胸・頭</dt><dd>波の大きさを、人の体のどこまであるかで表す言い方。頭を超えると「頭オーバー」、2倍で「ダブル」。</dd></div>
-          <div><dt>セット</dt><dd>数本まとまってやってくる大きめの波。セットの合間は静かになる。</dd></div>
-          <div><dt>ブレイク</dt><dd>波が崩れること、または崩れる場所。</dd></div>
-          <div><dt>ピーク</dt><dd>波がいちばん最初に崩れ始める場所。ここに近い人が優先して乗れる。</dd></div>
-          <div><dt>ショルダー</dt><dd>ピークの横の、まだ崩れていない斜面の部分。ここを横に滑っていく。</dd></div>
-          <div><dt>ダンパー（クローズアウト）</dt><dd>横一直線に一気に崩れる波。横に滑れないので乗りにくい。</dd></div>
-          <div><dt>スープ</dt><dd>崩れたあとの白く泡立った波。初心者のテイクオフ練習にちょうどいい。</dd></div>
-          <div><dt>インサイド／アウト</dt><dd>岸に近い浅い場所がインサイド、波が崩れ始める沖側がアウト。</dd></div>
-          <div><dt>ゲッティングアウト</dt><dd>崩れる波を越えて、沖の波待ちの場所まで出ていくこと。</dd></div>
-          <div><dt>パドリング</dt><dd>ボードに腹ばいになり、両腕で水をかいて進むこと。</dd></div>
-          <div><dt>テイクオフ</dt><dd>波に押されてボードが走り出した瞬間に立ち上がること。</dd></div>
-          <div><dt>ドルフィンスルー</dt><dd>ボードごと水中に潜って波をくぐり抜ける技。主にショートボードで使う。</dd></div>
-          <div><dt>リーシュコード</dt><dd>ボードと足首をつなぐコード。ボードを流さないための必需品。</dd></div>
-          <div><dt>前乗り（ドロップイン）</dt><dd>ピーク寄りの人がすでに乗っている波に、横から割り込むこと。いちばん嫌われるマナー違反。</dd></div>
-          <div><dt>離岸流（カレント）</dt><dd>岸から沖へ向かう強い流れ。波が割れていない、濁っている所に多い。</dd></div>
-          <div><dt>大潮・小潮</dt><dd>月の満ち欠けで変わる潮の動きの大きさ。大潮は満潮と干潮の差が大きく、流れも強くなりやすい。</dd></div>
-          <div><dt>上げ潮・下げ潮</dt><dd>満潮に向かうのが上げ潮、干潮に向かうのが下げ潮。上げ始めは波が良くなることが多いと言われる。</dd></div>
-          <div><dt>ソフトボード／ロングボード</dt><dd>ソフトボードは表面が柔らかく安全。ロングボードは浮力があり波に乗りやすい。初心者はこのどちらかから。</dd></div>
-        </dl>
-      </div>
 
-      <div class="pane" id="pane-ride" role="tabpanel" aria-labelledby="tab-ride" hidden>
-        <p class="lead">はじめは<b>サーフスクール</b>に入るのがいちばんの近道です。ボードは浮力の大きい<b>ソフトボードかロングボード</b>を選びましょう。</p>
-        <ol class="steps">
-          <li><b>海に入る前に</b><span>波・風・潮をこのページでチェック。準備運動をして、リーシュコードを後ろ足の足首に付けます。しばらく浜から波の崩れ方とほかの人の動きを観察しましょう。</span></li>
-          <li><b>パドリング</b><span>ボードの真ん中に腹ばいになり、つま先がボードの後ろの端に来る位置に。あごを少し上げ、腕を大きく交互に回して水をかきます。</span></li>
-          <li><b>ゲッティングアウト</b><span>白波が来たら、ボードを押して胸を浮かせ、体と板の間に波を通します（プッシュスルー）。波の小さい所や、波が割れていない場所を選んで沖へ。</span></li>
-          <li><b>波を待つ</b><span>ボードにまたがって沖を見ます。セットの間隔を数え、ピークのど真ん中ではなく、少し外れた場所で待つのが初心者の基本です。</span></li>
-          <li><b>波をつかまえる</b><span>うねりが近づいたら岸の方へ向き、全力でパドル。ボードがぐっと押される感覚が来てから、さらに2〜3かきします。</span></li>
-          <li><b>テイクオフ</b><span>両手を胸の横について上体を起こし、一気に足を引き込みます。前足は両手の間、目線は進む方向、ひざを曲げて低く構えます。</span></li>
-          <li><b>波から降りる・戻る</b><span>波が終わったら、ボードを前に飛ばさないよう後ろ側へ降ります。戻るときは、波に乗っている人の進路を横切らないようにパドルで回り込みます。</span></li>
-        </ol>
-        <p class="tip">最初はインサイドのスープで、「パドル→立つ」を何度も練習するのがおすすめ。立てるようになってから沖の波に挑戦しましょう。</p>
-      </div>
-
-      <div class="pane" id="pane-paddle" role="tabpanel" aria-labelledby="tab-paddle" hidden>
-        <p class="lead">波に乗れるかどうかは、<b>立つ前のパドリングで8割決まる</b>と言われます。正しい姿勢、いい位置、早めのスタートの3つを押さえましょう。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 340 150" aria-hidden="true">
-            <rect x="0" y="92" width="340" height="58" fill="var(--sea1)" opacity=".35"/>
-            <line x1="0" y1="92" x2="340" y2="92" stroke="var(--sea)" stroke-width="2"/>
-            <path d="M40,90 L270,88 Q300,86 312,80 Q300,92 270,94 L40,94 Q34,92 40,90Z" fill="var(--sun)"/>
-            <rect x="70" y="78" width="96" height="12" rx="6" fill="var(--suit)"/>
-            <path d="M160,80 Q200,70 236,72 L238,86 Q200,88 162,90Z" fill="var(--suit)"/>
-            <line x1="182" y1="78" x2="226" y2="74" stroke="var(--accent)" stroke-width="2.4"/>
-            <circle cx="252" cy="64" r="11" fill="var(--skin)"/>
-            <path d="M241,62 C241,51 263,51 263,62 C259,57 245,57 241,62Z" fill="var(--hair)"/>
-            <path d="M226,76 Q238,96 236,118" stroke="var(--suit)" stroke-width="8" stroke-linecap="round" fill="none"/>
-            <circle cx="236" cy="121" r="4.5" fill="var(--skin)"/>
-            <path d="M246,118 C256,108 258,96 250,88" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-dasharray="3 3" marker-end="url(#ah)"/>
-            <defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--accent)"/></marker></defs>
-            <g font-size="10.5" font-weight="700" fill="var(--fg)">
-              <path d="M312,82 L322,104" stroke="var(--fg)" stroke-width="1"/><text x="336" y="116" text-anchor="end">ノーズが少し浮く</text>
-              <text x="246" y="34" text-anchor="middle">あごを上げて前を見る</text>
-              <text x="112" y="66" text-anchor="middle">足はそろえて板の上</text>
-              <text x="150" y="132" text-anchor="middle">肩から大きく・深くかく</text>
-            </g>
-          </svg>
-          <figcaption>横から見たパドリングの姿勢</figcaption>
-        </figure>
-        <div class="howto">
-          <div class="howto-block"><h3>1. 寝る位置を決める</h3><ul>
-            <li>ボードのノーズ（先端）が<b>水面から2〜3cm浮く</b>位置が正解。</li>
-            <li>ノーズが沈んで水をかぶる → 体を少し<b>後ろ</b>へ。</li>
-            <li>ノーズが高く上がって進まない → 体を少し<b>前</b>へ。</li>
-            <li>板の中心線に、鼻・おへそ・両足をそろえるとまっすぐ進む。</li>
-          </ul></div>
-          <div class="howto-block"><h3>2. 腕のかき方</h3><ul>
-            <li>指を軽く閉じて、手のひらで水を<b>つかむ</b>感じ。</li>
-            <li>肩から大きく前に伸ばし、<b>胸の下まで深く</b>かく。</li>
-            <li>左右交互に、同じリズムで。水面をバシャバシャたたかない。</li>
-            <li>胸を軽く反らせると、腕が回しやすく前も見やすい。</li>
-          </ul></div>
-          <div class="howto-block"><h3>3. 待つ位置とタイミング</h3><ul>
-            <li>波が崩れ始める<b>ピークの少し横（ショルダー側）</b>で待つ。</li>
-            <li>セットの1本目は見送って、どこで崩れるかを確認するのも手。</li>
-            <li>波が<b>5〜6m後ろ</b>まで来たら、岸の方を向いて漕ぎ始める。</li>
-            <li>振り返って波を確認しながら、だんだんスピードを上げる。</li>
-          </ul></div>
-          <div class="howto-block"><h3>4. 乗れる瞬間</h3><ul>
-            <li>お尻（テール）が持ち上がり、ボードが前に傾く感覚が来る。</li>
-            <li>そこで止めずに<b>さらに2〜3かき</b>強く漕ぐ。これが一番大事。</li>
-            <li>ボードが自分で滑り出したら、テイクオフ（立ち上がる）。</li>
-          </ul></div>
-        </div>
-        <div class="trouble">
-          <h3>うまくいかないときは</h3>
-          <dl>
-            <div><dt>波に置いていかれる</dt><dd>漕ぎ始めが遅いか、最後の2〜3かきで止めている。もっと早く、最後まで漕ぐ。</dd></div>
-            <div><dt>ノーズが刺さって前に転ぶ（パーリング）</dt><dd>位置が前すぎるか、波が掘れすぎている。体を少し後ろにずらし、斜めに漕ぎ出す。</dd></div>
-            <div><dt>立ったら波が抜けていく</dt><dd>立つのが早すぎる。ボードが滑り出すまで漕ぎ続ける。</dd></div>
-            <div><dt>まっすぐ進まない</dt><dd>体が板の中心からずれている。足をそろえ、左右の腕を同じ強さでかく。</dd></div>
+        <div class="pane" id="pane-words" role="tabpanel" aria-labelledby="tab-words">
+          <div class="wind-demo">
+            <figure>
+              <svg viewBox="0 0 260 120" aria-hidden="true">
+                <rect x="0" y="86" width="260" height="34" fill="var(--sea1)" opacity=".35"/>
+                <path d="M0,96 L70,96 C110,96 128,60 150,40 C162,30 176,32 182,44 C170,40 160,48 162,62 C166,80 190,92 260,94 L260,120 L0,120Z" fill="var(--sea)"/>
+                <path d="M150,40 C162,30 176,32 182,44" stroke="var(--foam)" stroke-width="3" fill="none"/>
+                <g fill="var(--foam)" opacity=".8"><circle cx="196" cy="30" r="2"/><circle cx="204" cy="24" r="1.6"/><circle cx="211" cy="20" r="1.2"/></g>
+                <g stroke="var(--good)" stroke-width="3" fill="var(--good)"><line x1="250" y1="18" x2="200" y2="18"/><path d="M196,18 l9,-6 v12z"/></g>
+                <text x="256" y="12" text-anchor="end" fill="var(--good)" font-size="11" font-weight="700">陸からの風</text>
+              </svg>
+              <figcaption><b class="pill good">オフショア</b> 陸から海へ吹く風。波の面が整い、きれいに崩れる。サーフィンにいちばん良い風。</figcaption>
+            </figure>
+            <figure>
+              <svg viewBox="0 0 260 120" aria-hidden="true">
+                <rect x="0" y="86" width="260" height="34" fill="var(--sea1)" opacity=".35"/>
+                <path d="M0,96 L60,96 C100,92 120,70 140,64 C150,58 160,66 168,62 C176,58 184,70 196,74 C214,82 230,92 260,94 L260,120 L0,120Z" fill="var(--sea)"/>
+                <path d="M140,64 C150,58 160,66 168,62 C176,58 184,70 196,74" stroke="var(--foam)" stroke-width="3" fill="none" stroke-dasharray="5 4"/>
+                <g stroke="var(--bad)" stroke-width="3" fill="var(--bad)"><line x1="10" y1="30" x2="60" y2="30"/><path d="M64,30 l-9,-6 v12z"/></g>
+                <text x="4" y="22" fill="var(--bad)" font-size="11" font-weight="700">海からの風</text>
+              </svg>
+              <figcaption><b class="pill bad">オンショア</b> 海から陸へ吹く風。波の面がガタガタに乱れ、すぐ崩れる。強いと乗りにくい。</figcaption>
+            </figure>
+          </div>
+          <label class="filter" for="wordFilter"><span>用語をさがす</span><input id="wordFilter" type="search" placeholder="例：うねり、テイクオフ"></label>
+          <dl class="words" id="words">
+            <div><dt>サイドショア</dt><dd>海岸と平行に吹く風。弱ければ問題ないが、強いと流されやすい。</dd></div>
+            <div><dt>グラッシー</dt><dd>ほぼ無風で、海面がガラスのようにツルツルの状態。朝に多い。</dd></div>
+            <div><dt>うねり（スウェル）</dt><dd>遠くの低気圧や台風で生まれ、長い距離を旅してきた波。まとまりがあり、サーフィン向き。</dd></div>
+            <div><dt>風波（かぜなみ）</dt><dd>近くで吹いている風が作る波。周期が短く、崩れ方がまばら。</dd></div>
+            <div><dt>周期（ピリオド）</dt><dd>波と波の間隔（秒）。10秒以上だと力強いうねり、7秒以下は風波が中心。</dd></div>
+            <div><dt>波高（有義波高）</dt><dd>予報で使う波の高さ。大きい方から3分の1の波の平均で、ときどきこれより大きい波も来る。</dd></div>
+            <div><dt>ひざ・腰・胸・頭</dt><dd>波の大きさを、人の体のどこまであるかで表す言い方。頭を超えると「頭オーバー」、2倍で「ダブル」。</dd></div>
+            <div><dt>セット</dt><dd>数本まとまってやってくる大きめの波。セットの合間は静かになる。</dd></div>
+            <div><dt>ブレイク</dt><dd>波が崩れること、または崩れる場所。</dd></div>
+            <div><dt>ピーク</dt><dd>波がいちばん最初に崩れ始める場所。ここに近い人が優先して乗れる。</dd></div>
+            <div><dt>ショルダー</dt><dd>ピークの横の、まだ崩れていない斜面の部分。ここを横に滑っていく。</dd></div>
+            <div><dt>ダンパー（クローズアウト）</dt><dd>横一直線に一気に崩れる波。横に滑れないので乗りにくい。</dd></div>
+            <div><dt>スープ</dt><dd>崩れたあとの白く泡立った波。初心者のテイクオフ練習にちょうどいい。</dd></div>
+            <div><dt>インサイド／アウト</dt><dd>岸に近い浅い場所がインサイド、波が崩れ始める沖側がアウト。</dd></div>
+            <div><dt>ゲッティングアウト</dt><dd>崩れる波を越えて、沖の波待ちの場所まで出ていくこと。</dd></div>
+            <div><dt>パドリング</dt><dd>ボードに腹ばいになり、両腕で水をかいて進むこと。</dd></div>
+            <div><dt>テイクオフ</dt><dd>波に押されてボードが走り出した瞬間に立ち上がること。</dd></div>
+            <div><dt>ドルフィンスルー</dt><dd>ボードごと水中に潜って波をくぐり抜ける技。主にショートボードで使う。</dd></div>
+            <div><dt>リーシュコード</dt><dd>ボードと足首をつなぐコード。ボードを流さないための必需品。</dd></div>
+            <div><dt>前乗り（ドロップイン）</dt><dd>ピーク寄りの人がすでに乗っている波に、横から割り込むこと。いちばん嫌われるマナー違反。</dd></div>
+            <div><dt>離岸流（カレント）</dt><dd>岸から沖へ向かう強い流れ。波が割れていない、濁っている所に多い。</dd></div>
+            <div><dt>大潮・小潮</dt><dd>月の満ち欠けで変わる潮の動きの大きさ。大潮は満潮と干潮の差が大きく、流れも強くなりやすい。</dd></div>
+            <div><dt>上げ潮・下げ潮</dt><dd>満潮に向かうのが上げ潮、干潮に向かうのが下げ潮。上げ始めは波が良くなることが多いと言われる。</dd></div>
+            <div><dt>ソフトボード／ロングボード</dt><dd>ソフトボードは表面が柔らかく安全。ロングボードは浮力があり波に乗りやすい。初心者はこのどちらかから。</dd></div>
           </dl>
         </div>
-      </div>
 
-      <div class="pane" id="pane-trim" role="tabpanel" aria-labelledby="tab-trim" hidden>
-        <p class="lead">立てるようになったら、次は<b>崩れていない斜面（ショルダー）を横に走る</b>練習です。まっすぐ岸へ向かうだけより、ずっと長く乗れます。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 340 230" aria-hidden="true">
-            <defs><marker id="ahg" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--good)"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--muted)"/></marker></defs>
-            <rect width="340" height="230" fill="var(--sea1)" opacity=".18"/>
-            <path d="M0,196 C80,190 240,198 340,190 L340,230 L0,230Z" fill="var(--sand)"/>
-            <text x="170" y="220" text-anchor="middle" font-size="11" font-weight="700" fill="var(--fg)">岸（こちらを向いて乗る）</text>
-            <text x="170" y="16" text-anchor="middle" font-size="10.5" fill="var(--muted)">沖</text>
-            <path d="M10,104 C80,96 160,94 214,98" stroke="var(--sea)" stroke-width="10" stroke-linecap="round" fill="none" opacity=".75"/>
-            <path d="M214,98 C250,102 290,112 330,122 L330,150 C290,140 250,128 214,118Z" fill="var(--foam)" stroke="var(--line)"/>
-            <g fill="var(--line)"><circle cx="246" cy="118" r="2"/><circle cx="270" cy="126" r="2.4"/><circle cx="300" cy="132" r="2"/><circle cx="318" cy="140" r="1.6"/></g>
-            <circle cx="214" cy="104" r="7" fill="var(--accent)"/>
-            <text x="232" y="98" font-size="11" font-weight="700" fill="var(--accent)">ピーク</text>
-            <text x="300" y="166" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">スープ（崩れた波）</text>
-            <text x="96" y="88" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--sea)">ショルダー（まだ崩れていない）</text>
-            <path d="M242,62 L224,96" stroke="var(--good)" stroke-width="2.4" stroke-dasharray="5 4" fill="none" marker-end="url(#ahg)"/>
-            <text x="252" y="52" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--good)">①少し斜めにパドル</text>
-            <path d="M200,114 C176,128 130,128 54,118" stroke="var(--good)" stroke-width="3" fill="none" marker-end="url(#ahg)"/>
-            <text x="128" y="146" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--good)">②立ったら斜面を横へ</text>
-            <path d="M196,70 L150,70" stroke="var(--muted)" stroke-width="1.6" fill="none" marker-end="url(#ahm)"/>
-            <text x="174" y="62" text-anchor="middle" font-size="9.5" fill="var(--muted)">崩れていく向き</text>
-          </svg>
-          <figcaption>上から見た「ライト」の波（岸を向いて右へ走る）</figcaption>
-        </figure>
-        <div class="howto">
-          <div class="howto-block"><h3>波の向きを知る</h3><ul>
-            <li>沖から岸を向いて、<b>右へ崩れていく波がライト、左がレフト</b>。</li>
-            <li>波待ち中に、どちらへ崩れていくかを見ておく。</li>
-            <li>左足が前（レギュラー）の人はライトで<b>波に顔を向けて</b>乗れるので、はじめはこちらが簡単。右足が前（グーフィー）の人はレフト。</li>
-          </ul></div>
-          <div class="howto-block"><h3>斜めにテイクオフ</h3><ul>
-            <li>真岸に向けず、行きたい方向へ<b>10〜30°ほど</b>板を向けて漕ぐ。</li>
-            <li>立った瞬間から、もう横へ走り出せる。</li>
-            <li>最初はスープで、立ってから斜めに進む練習から。</li>
-          </ul></div>
-          <div class="howto-block"><h3>曲がるコツ</h3><ul>
-            <li><b>目線 → 肩 → 腰 → 足</b>の順に、行きたい方向へ向ける。体は見た方へ進む。</li>
-            <li>波に顔を向けている時は<b>つま先側</b>、背中を向けている時は<b>かかと側</b>に体重をのせる。</li>
-            <li>ひざを曲げて低く。棒立ちだとすぐ倒れる。</li>
-          </ul></div>
-          <div class="howto-block"><h3>スピードを保つ（トリム）</h3><ul>
-            <li>斜面の<b>真ん中あたり</b>をキープして走る。</li>
-            <li>遅くなって波に置いていかれそう → <b>前足</b>に体重、少し下へ。</li>
-            <li>速すぎて前に出すぎる → <b>後ろ足</b>に体重、斜面の上へ戻る。</li>
-            <li>慣れたら、斜面を上下にゆるく動いて加速する。</li>
-          </ul></div>
+        <div class="pane" id="pane-ride" role="tabpanel" aria-labelledby="tab-ride" hidden>
+          <p class="lead">はじめは<b>サーフスクール</b>に入るのがいちばんの近道です。ボードは浮力の大きい<b>ソフトボードかロングボード</b>を選びましょう。</p>
+          <ol class="steps">
+            <li><b>海に入る前に</b><span>波・風・潮をこのページでチェック。準備運動をして、リーシュコードを後ろ足の足首に付けます。しばらく浜から波の崩れ方とほかの人の動きを観察しましょう。</span></li>
+            <li><b>パドリング</b><span>ボードの真ん中に腹ばいになり、つま先がボードの後ろの端に来る位置に。あごを少し上げ、腕を大きく交互に回して水をかきます。</span></li>
+            <li><b>ゲッティングアウト</b><span>白波が来たら、ボードを押して胸を浮かせ、体と板の間に波を通します（プッシュスルー）。波の小さい所や、波が割れていない場所を選んで沖へ。</span></li>
+            <li><b>波を待つ</b><span>ボードにまたがって沖を見ます。セットの間隔を数え、ピークのど真ん中ではなく、少し外れた場所で待つのが初心者の基本です。</span></li>
+            <li><b>波をつかまえる</b><span>うねりが近づいたら岸の方へ向き、全力でパドル。ボードがぐっと押される感覚が来てから、さらに2〜3かきします。</span></li>
+            <li><b>テイクオフ</b><span>両手を胸の横について上体を起こし、一気に足を引き込みます。前足は両手の間、目線は進む方向、ひざを曲げて低く構えます。</span></li>
+            <li><b>波から降りる・戻る</b><span>波が終わったら、ボードを前に飛ばさないよう後ろ側へ降ります。戻るときは、波に乗っている人の進路を横切らないようにパドルで回り込みます。</span></li>
+          </ol>
+          <p class="tip">最初はインサイドのスープで、「パドル→立つ」を何度も練習するのがおすすめ。立てるようになってから沖の波に挑戦しましょう。</p>
         </div>
-        <ol class="steps">
-          <li><b>スープでまっすぐ立つ</b><span>崩れた白波で、パドル→立つを安定してできるまで繰り返す。</span></li>
-          <li><b>スープで体重移動</b><span>立ったあと、目線と体重で左右に進む向きを変えてみる。</span></li>
-          <li><b>うねりで斜めにテイクオフ</b><span>崩れる前の波を、ピークの少し横から斜めに漕いでつかまえる。</span></li>
-          <li><b>斜面を横に走る</b><span>ショルダーの真ん中をキープして、できるだけ長く横へ。</span></li>
-        </ol>
-        <p class="tip">波が前で崩れて行き止まりになったら、板を体から離さずに<b>波の後ろ側へ降りる</b>か、板を上に向けて波の裏へ抜けます（プルアウト）。前に飛び込むと、板が後ろから飛んできて危険です。</p>
-      </div>
 
-      <div class="pane" id="pane-safe" role="tabpanel" aria-labelledby="tab-safe" hidden>
-        <div class="rules">
-          <div class="rule"><h3>マナー</h3><ul>
-            <li><b>前乗りしない。</b>ピークに近い人が優先。乗る前に左右を確認。</li>
-            <li><b>1本の波に1人。</b>乗っている人がいる波には乗らない。</li>
-            <li><b>ボードを手放さない。</b>流れたボードは周りの人に当たると大ケガのもと。</li>
-            <li><b>あいさつと順番。</b>ローカルの人を尊重し、混んでいる場所に無理に入らない。</li>
-            <li><b>駐車・ゴミ・着替え</b>は地域のルールを守る。</li>
-          </ul></div>
-          <div class="rule"><h3>安全</h3><ul>
-            <li><b>1人で入らない。</b>仲間かスクールと一緒に。</li>
-            <li><b>大きい日は入らない勇気を。</b>「腰〜胸」を超える日や台風のうねりは初心者は見学。</li>
-            <li><b>雷が鳴ったらすぐ上がる。</b>海の上はとても危険。</li>
-            <li><b>体が冷えたら早めに上がる。</b>水温に合ったウェットスーツを。</li>
-            <li><b>警報・注意報</b>（高波・強風）が出ていたら入らない。</li>
-          </ul></div>
-          <div class="rule rip"><h3>離岸流に流されたら</h3><ul>
-            <li><b>あわてず、ボードにつかまる。</b>ボードは浮き輪になる。</li>
-            <li><b>岸と平行に移動して流れから出る。</b>岸に向かってまっすぐ戻ろうとしない。</li>
-            <li><b>出られないときは手を大きく振って助けを呼ぶ。</b></li>
-            <li>緊急時は <b>118</b>（海上保安庁）へ。</li>
-          </ul></div>
+        <div class="pane" id="pane-paddle" role="tabpanel" aria-labelledby="tab-paddle" hidden>
+          <p class="lead">波に乗れるかどうかは、<b>立つ前のパドリングで8割決まる</b>と言われます。正しい姿勢、いい位置、早めのスタートの3つを押さえましょう。</p>
+          <figure class="diagram">
+            <svg viewBox="0 0 340 150" aria-hidden="true">
+              <rect x="0" y="92" width="340" height="58" fill="var(--sea1)" opacity=".35"/>
+              <line x1="0" y1="92" x2="340" y2="92" stroke="var(--sea)" stroke-width="2"/>
+              <path d="M40,90 L270,88 Q300,86 312,80 Q300,92 270,94 L40,94 Q34,92 40,90Z" fill="var(--sun)"/>
+              <rect x="70" y="78" width="96" height="12" rx="6" fill="var(--suit)"/>
+              <path d="M160,80 Q200,70 236,72 L238,86 Q200,88 162,90Z" fill="var(--suit)"/>
+              <line x1="182" y1="78" x2="226" y2="74" stroke="var(--accent)" stroke-width="2.4"/>
+              <circle cx="252" cy="64" r="11" fill="var(--skin)"/>
+              <path d="M241,62 C241,51 263,51 263,62 C259,57 245,57 241,62Z" fill="var(--hair)"/>
+              <path d="M226,76 Q238,96 236,118" stroke="var(--suit)" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <circle cx="236" cy="121" r="4.5" fill="var(--skin)"/>
+              <path d="M246,118 C256,108 258,96 250,88" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-dasharray="3 3" marker-end="url(#ah)"/>
+              <defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--accent)"/></marker></defs>
+              <g font-size="10.5" font-weight="700" fill="var(--fg)">
+                <path d="M312,82 L322,104" stroke="var(--fg)" stroke-width="1"/><text x="336" y="116" text-anchor="end">ノーズが少し浮く</text>
+                <text x="246" y="34" text-anchor="middle">あごを上げて前を見る</text>
+                <text x="112" y="66" text-anchor="middle">足はそろえて板の上</text>
+                <text x="150" y="132" text-anchor="middle">肩から大きく・深くかく</text>
+              </g>
+            </svg>
+            <figcaption>横から見たパドリングの姿勢</figcaption>
+          </figure>
+          <div class="howto">
+            <div class="howto-block"><h3>1. 寝る位置を決める</h3><ul>
+              <li>ボードのノーズ（先端）が<b>水面から2〜3cm浮く</b>位置が正解。</li>
+              <li>ノーズが沈んで水をかぶる → 体を少し<b>後ろ</b>へ。</li>
+              <li>ノーズが高く上がって進まない → 体を少し<b>前</b>へ。</li>
+              <li>板の中心線に、鼻・おへそ・両足をそろえるとまっすぐ進む。</li>
+            </ul></div>
+            <div class="howto-block"><h3>2. 腕のかき方</h3><ul>
+              <li>指を軽く閉じて、手のひらで水を<b>つかむ</b>感じ。</li>
+              <li>肩から大きく前に伸ばし、<b>胸の下まで深く</b>かく。</li>
+              <li>左右交互に、同じリズムで。水面をバシャバシャたたかない。</li>
+              <li>胸を軽く反らせると、腕が回しやすく前も見やすい。</li>
+            </ul></div>
+            <div class="howto-block"><h3>3. 待つ位置とタイミング</h3><ul>
+              <li>波が崩れ始める<b>ピークの少し横（ショルダー側）</b>で待つ。</li>
+              <li>セットの1本目は見送って、どこで崩れるかを確認するのも手。</li>
+              <li>波が<b>5〜6m後ろ</b>まで来たら、岸の方を向いて漕ぎ始める。</li>
+              <li>振り返って波を確認しながら、だんだんスピードを上げる。</li>
+            </ul></div>
+            <div class="howto-block"><h3>4. 乗れる瞬間</h3><ul>
+              <li>お尻（テール）が持ち上がり、ボードが前に傾く感覚が来る。</li>
+              <li>そこで止めずに<b>さらに2〜3かき</b>強く漕ぐ。これが一番大事。</li>
+              <li>ボードが自分で滑り出したら、テイクオフ（立ち上がる）。</li>
+            </ul></div>
+          </div>
+          <div class="trouble">
+            <h3>うまくいかないときは</h3>
+            <dl>
+              <div><dt>波に置いていかれる</dt><dd>漕ぎ始めが遅いか、最後の2〜3かきで止めている。もっと早く、最後まで漕ぐ。</dd></div>
+              <div><dt>ノーズが刺さって前に転ぶ（パーリング）</dt><dd>位置が前すぎるか、波が掘れすぎている。体を少し後ろにずらし、斜めに漕ぎ出す。</dd></div>
+              <div><dt>立ったら波が抜けていく</dt><dd>立つのが早すぎる。ボードが滑り出すまで漕ぎ続ける。</dd></div>
+              <div><dt>まっすぐ進まない</dt><dd>体が板の中心からずれている。足をそろえ、左右の腕を同じ強さでかく。</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="pane" id="pane-trim" role="tabpanel" aria-labelledby="tab-trim" hidden>
+          <p class="lead">立てるようになったら、次は<b>崩れていない斜面（ショルダー）を横に走る</b>練習です。まっすぐ岸へ向かうだけより、ずっと長く乗れます。</p>
+          <figure class="diagram">
+            <svg viewBox="0 0 340 230" aria-hidden="true">
+              <defs><marker id="ahg" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--good)"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--muted)"/></marker></defs>
+              <rect width="340" height="230" fill="var(--sea1)" opacity=".18"/>
+              <path d="M0,196 C80,190 240,198 340,190 L340,230 L0,230Z" fill="var(--sand)"/>
+              <text x="170" y="220" text-anchor="middle" font-size="11" font-weight="700" fill="var(--fg)">岸（こちらを向いて乗る）</text>
+              <text x="170" y="16" text-anchor="middle" font-size="10.5" fill="var(--muted)">沖</text>
+              <path d="M10,104 C80,96 160,94 214,98" stroke="var(--sea)" stroke-width="10" stroke-linecap="round" fill="none" opacity=".75"/>
+              <path d="M214,98 C250,102 290,112 330,122 L330,150 C290,140 250,128 214,118Z" fill="var(--foam)" stroke="var(--line)"/>
+              <g fill="var(--line)"><circle cx="246" cy="118" r="2"/><circle cx="270" cy="126" r="2.4"/><circle cx="300" cy="132" r="2"/><circle cx="318" cy="140" r="1.6"/></g>
+              <circle cx="214" cy="104" r="7" fill="var(--accent)"/>
+              <text x="232" y="98" font-size="11" font-weight="700" fill="var(--accent)">ピーク</text>
+              <text x="300" y="166" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">スープ（崩れた波）</text>
+              <text x="96" y="88" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--sea)">ショルダー（まだ崩れていない）</text>
+              <path d="M242,62 L224,96" stroke="var(--good)" stroke-width="2.4" stroke-dasharray="5 4" fill="none" marker-end="url(#ahg)"/>
+              <text x="252" y="52" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--good)">①少し斜めにパドル</text>
+              <path d="M200,114 C176,128 130,128 54,118" stroke="var(--good)" stroke-width="3" fill="none" marker-end="url(#ahg)"/>
+              <text x="128" y="146" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--good)">②立ったら斜面を横へ</text>
+              <path d="M196,70 L150,70" stroke="var(--muted)" stroke-width="1.6" fill="none" marker-end="url(#ahm)"/>
+              <text x="174" y="62" text-anchor="middle" font-size="9.5" fill="var(--muted)">崩れていく向き</text>
+            </svg>
+            <figcaption>上から見た「ライト」の波（岸を向いて右へ走る）</figcaption>
+          </figure>
+          <div class="howto">
+            <div class="howto-block"><h3>波の向きを知る</h3><ul>
+              <li>沖から岸を向いて、<b>右へ崩れていく波がライト、左がレフト</b>。</li>
+              <li>波待ち中に、どちらへ崩れていくかを見ておく。</li>
+              <li>左足が前（レギュラー）の人はライトで<b>波に顔を向けて</b>乗れるので、はじめはこちらが簡単。右足が前（グーフィー）の人はレフト。</li>
+            </ul></div>
+            <div class="howto-block"><h3>斜めにテイクオフ</h3><ul>
+              <li>真岸に向けず、行きたい方向へ<b>10〜30°ほど</b>板を向けて漕ぐ。</li>
+              <li>立った瞬間から、もう横へ走り出せる。</li>
+              <li>最初はスープで、立ってから斜めに進む練習から。</li>
+            </ul></div>
+            <div class="howto-block"><h3>曲がるコツ</h3><ul>
+              <li><b>目線 → 肩 → 腰 → 足</b>の順に、行きたい方向へ向ける。体は見た方へ進む。</li>
+              <li>波に顔を向けている時は<b>つま先側</b>、背中を向けている時は<b>かかと側</b>に体重をのせる。</li>
+              <li>ひざを曲げて低く。棒立ちだとすぐ倒れる。</li>
+            </ul></div>
+            <div class="howto-block"><h3>スピードを保つ（トリム）</h3><ul>
+              <li>斜面の<b>真ん中あたり</b>をキープして走る。</li>
+              <li>遅くなって波に置いていかれそう → <b>前足</b>に体重、少し下へ。</li>
+              <li>速すぎて前に出すぎる → <b>後ろ足</b>に体重、斜面の上へ戻る。</li>
+              <li>慣れたら、斜面を上下にゆるく動いて加速する。</li>
+            </ul></div>
+          </div>
+          <ol class="steps">
+            <li><b>スープでまっすぐ立つ</b><span>崩れた白波で、パドル→立つを安定してできるまで繰り返す。</span></li>
+            <li><b>スープで体重移動</b><span>立ったあと、目線と体重で左右に進む向きを変えてみる。</span></li>
+            <li><b>うねりで斜めにテイクオフ</b><span>崩れる前の波を、ピークの少し横から斜めに漕いでつかまえる。</span></li>
+            <li><b>斜面を横に走る</b><span>ショルダーの真ん中をキープして、できるだけ長く横へ。</span></li>
+          </ol>
+          <p class="tip">波が前で崩れて行き止まりになったら、板を体から離さずに<b>波の後ろ側へ降りる</b>か、板を上に向けて波の裏へ抜けます（プルアウト）。前に飛び込むと、板が後ろから飛んできて危険です。</p>
+        </div>
+
+        <div class="pane" id="pane-safe" role="tabpanel" aria-labelledby="tab-safe" hidden>
+          <div class="rules">
+            <div class="rule"><h3>マナー</h3><ul>
+              <li><b>前乗りしない。</b>ピークに近い人が優先。乗る前に左右を確認。</li>
+              <li><b>1本の波に1人。</b>乗っている人がいる波には乗らない。</li>
+              <li><b>ボードを手放さない。</b>流れたボードは周りの人に当たると大ケガのもと。</li>
+              <li><b>あいさつと順番。</b>ローカルの人を尊重し、混んでいる場所に無理に入らない。</li>
+              <li><b>駐車・ゴミ・着替え</b>は地域のルールを守る。</li>
+            </ul></div>
+            <div class="rule"><h3>安全</h3><ul>
+              <li><b>1人で入らない。</b>仲間かスクールと一緒に。</li>
+              <li><b>大きい日は入らない勇気を。</b>「腰〜胸」を超える日や台風のうねりは初心者は見学。</li>
+              <li><b>雷が鳴ったらすぐ上がる。</b>海の上はとても危険。</li>
+              <li><b>体が冷えたら早めに上がる。</b>水温に合ったウェットスーツを。</li>
+              <li><b>警報・注意報</b>（高波・強風）が出ていたら入らない。</li>
+            </ul></div>
+            <div class="rule rip"><h3>離岸流に流されたら</h3><ul>
+              <li><b>あわてず、ボードにつかまる。</b>ボードは浮き輪になる。</li>
+              <li><b>岸と平行に移動して流れから出る。</b>岸に向かってまっすぐ戻ろうとしない。</li>
+              <li><b>出られないときは手を大きく振って助けを呼ぶ。</b></li>
+              <li>緊急時は <b>118</b>（海上保安庁）へ。</li>
+            </ul></div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="videos">
-    <h2>動画で学ぶ <small>新着は開くたびに最新を取得・タップでページ内再生</small></h2>
-    <div class="seg" role="tablist" aria-label="動画の種類">
-      <button type="button" role="tab" id="vtab-new" aria-controls="vids-new" aria-selected="true">新着</button>
-      <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="false">定番・初心者向け</button>
-      <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">定番・中上級向け</button>
-    </div>
-    <div class="vids" id="vids-new" role="tabpanel" aria-labelledby="vtab-new"><p class="status">解説チャンネルの新着動画を取得しています…</p></div>
-    <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg" hidden></div>
-    <div class="vids" id="vids-adv" role="tabpanel" aria-labelledby="vtab-adv" hidden></div>
-  </section>
+    <section id="videos">
+      <h2>動画で学ぶ <small>新着は開くたびに最新を取得・タップでページ内再生</small></h2>
+      <div class="seg" role="tablist" aria-label="動画の種類">
+        <button type="button" role="tab" id="vtab-new" aria-controls="vids-new" aria-selected="true">新着</button>
+        <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="false">定番・初心者向け</button>
+        <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">定番・中上級向け</button>
+      </div>
+      <div class="vids" id="vids-new" role="tabpanel" aria-labelledby="vtab-new"><p class="status">解説チャンネルの新着動画を取得しています…</p></div>
+      <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg" hidden></div>
+      <div class="vids" id="vids-adv" role="tabpanel" aria-labelledby="vtab-adv" hidden></div>
+    </section>
 
-  <section id="boards">
-    <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
-    <div class="panel boards">
-      <div class="board-row" id="boardRow"></div>
-      <div class="calc">
-        <div class="calc-in">
-          <h3>リッター数を計算する</h3>
-          <label for="vWeight">体重 <output id="vWeightOut">65 kg</output></label>
-          <input id="vWeight" type="range" min="30" max="120" step="1" value="65">
-          <label for="vLevel">レベル</label>
-          <select id="vLevel">
-            <option value="0">はじめて〜スープで立てる</option>
-            <option value="1">うねりで立てる・まっすぐ乗れる</option>
-            <option value="2">横に走れる</option>
-            <option value="3">アップス・カットバックができる</option>
-            <option value="4">いろいろな波で自在に乗れる</option>
-            <option value="5">コンテストに出るレベル</option>
-          </select>
-          <label for="vAge">年齢</label>
-          <select id="vAge">
-            <option value="1">20代まで</option>
-            <option value="1.03">30代</option>
-            <option value="1.07">40代</option>
-            <option value="1.12">50代以上</option>
-          </select>
-          <label for="vFreq">海に入る頻度</label>
-          <select id="vFreq">
-            <option value="1">週2回以上</option>
-            <option value="1.03" selected>週1回くらい</option>
-            <option value="1.07">月に数回</option>
-            <option value="1.12">月1回以下</option>
-          </select>
-          <label for="vWave">よく入る波</label>
-          <select id="vWave">
-            <option value="1.06">ひざ〜腰の小波が中心</option>
-            <option value="1" selected>腰〜胸くらい</option>
-            <option value="0.96">胸〜頭以上が多い</option>
-          </select>
-        </div>
-        <div class="calc-out" aria-live="polite">
-          <span class="label">あなたにおすすめの浮力</span>
-          <div class="liters" id="vResult">—</div>
-          <div class="rec" id="vRec"></div>
-          <p class="calc-note">「体重 × レベルごとの係数」に、年齢・頻度・波の大きさで補正をかけた目安です。同じリッター数でも、長さや幅で乗り味は変わります。ショップで実物を見て相談しましょう。</p>
+    <section id="boards">
+      <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
+      <div class="panel boards">
+        <div class="board-row" id="boardRow"></div>
+        <div class="calc">
+          <div class="calc-in">
+            <h3>リッター数を計算する</h3>
+            <label for="vWeight">体重 <output id="vWeightOut">65 kg</output></label>
+            <input id="vWeight" type="range" min="30" max="120" step="1" value="65">
+            <label for="vLevel">レベル</label>
+            <select id="vLevel">
+              <option value="0">はじめて〜スープで立てる</option>
+              <option value="1">うねりで立てる・まっすぐ乗れる</option>
+              <option value="2">横に走れる</option>
+              <option value="3">アップス・カットバックができる</option>
+              <option value="4">いろいろな波で自在に乗れる</option>
+              <option value="5">コンテストに出るレベル</option>
+            </select>
+            <label for="vAge">年齢</label>
+            <select id="vAge">
+              <option value="1">20代まで</option>
+              <option value="1.03">30代</option>
+              <option value="1.07">40代</option>
+              <option value="1.12">50代以上</option>
+            </select>
+            <label for="vFreq">海に入る頻度</label>
+            <select id="vFreq">
+              <option value="1">週2回以上</option>
+              <option value="1.03" selected>週1回くらい</option>
+              <option value="1.07">月に数回</option>
+              <option value="1.12">月1回以下</option>
+            </select>
+            <label for="vWave">よく入る波</label>
+            <select id="vWave">
+              <option value="1.06">ひざ〜腰の小波が中心</option>
+              <option value="1" selected>腰〜胸くらい</option>
+              <option value="0.96">胸〜頭以上が多い</option>
+            </select>
+          </div>
+          <div class="calc-out" aria-live="polite">
+            <span class="label">あなたにおすすめの浮力</span>
+            <div class="liters" id="vResult">—</div>
+            <div class="rec" id="vRec"></div>
+            <p class="calc-note">「体重 × レベルごとの係数」に、年齢・頻度・波の大きさで補正をかけた目安です。同じリッター数でも、長さや幅で乗り味は変わります。ショップで実物を見て相談しましょう。</p>
+          </div>
         </div>
       </div>
+    </section>
     </div>
-  </section>
-
-  <section>
-    <h2>サーフィンニュース <small>開くたびに最新を取得・2週間以内の記事だけ表示</small></h2>
-    <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
-  </section>
-
-  <section>
-    <div class="settings">
-      <label for="facing">ビーチの向き（沖の方角）</label>
-      <input id="facing" type="number" min="0" max="359" step="5" value="110"> °
-      <span id="facingNote"></span>
+    <div class="view" id="view-news" role="tabpanel" aria-labelledby="vt-news" hidden>
+    <section>
+      <h2>サーフィンニュース <small>開くたびに最新を取得・2週間以内の記事だけ表示</small></h2>
+      <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
+    </section>
     </div>
-  </section>
+  </main>
 
   <section class="notes">
     <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（波・風・潮位・水温、CC BY 4.0）、<a id="jmaLink" href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">気象庁</a>（地域の予報）、ニュースは各サイトのRSS。ライブ映像は各配信元のものです。</p>
@@ -738,7 +818,7 @@ const spotById = id => SPOTS.find(sp => sp.id === id);
 let SPOT = spotById(location.hash.slice(1));
 if (!SPOT) { try { SPOT = spotById(localStorage.getItem("surf-spot")); } catch (e) {} }
 if (!SPOT) SPOT = SPOTS[0];
-const DAYS = 4;
+const DAYS = 7;
 const HOUR_W = 22;
 const NEWS_FEEDS = [
   { name: "THE SURF NEWS", url: "https://www.surfnews.jp/feed/" },
@@ -746,13 +826,16 @@ const NEWS_FEEDS = [
 ];
 
 let facing = SPOT.facing;
-function loadFacing() {
-  facing = SPOT.facing;
+const facingKey = sp => sp.id === "kou" ? "kou-facing" : `facing-${sp.id}`;
+function storedFacing(sp) {
   try {
-    const key = SPOT.id === "kou" ? "kou-facing" : `facing-${SPOT.id}`;
-    const s = localStorage.getItem(key);
-    if (s !== null && !isNaN(+s)) facing = +s;
+    const s = localStorage.getItem(facingKey(sp));
+    if (s !== null && s !== "" && !isNaN(+s)) return +s;
   } catch (e) {}
+  return sp.facing;
+}
+function loadFacing() {
+  facing = storedFacing(SPOT);
   document.getElementById("facing").value = facing;
 }
 
@@ -782,9 +865,9 @@ function sizeWord(h) {
   if (h < 3.0) return "ダブル";
   return "トリプル以上";
 }
-function windInfo(from, speed) {
+function windInfo(from, speed, fac = facing) {
   if (speed < 1.5) return { type: "無風", cls: "calm", score: 1 };
-  const d = angDiff(from, (facing + 180) % 360);
+  const d = angDiff(from, (fac + 180) % 360);
   if (d <= 45) return { type: "オフショア", cls: "good", score: speed > 9 ? 0.65 : 1 };
   if (d <= 80) return { type: "サイドオフ", cls: "good", score: speed > 8 ? 0.6 : 0.88 };
   if (d <= 110) return { type: "サイド", cls: "ok", score: clamp(0.75 - (speed - 3) * 0.08, 0.2, 0.75) };
@@ -793,12 +876,12 @@ function windInfo(from, speed) {
 }
 const sizeScore = h => h < 0.25 ? 0.05 : h < 0.5 ? lerp(h, 0.25, 0.5, 0.05, 0.4) : h < 0.9 ? lerp(h, 0.5, 0.9, 0.4, 1) : h <= 1.6 ? 1 : h <= 2.2 ? lerp(h, 1.6, 2.2, 1, 0.6) : lerp(h, 2.2, 3.2, 0.6, 0.08);
 const periodScore = p => lerp(p, 5, 11, 0.25, 1);
-const dirScore = d => { const x = angDiff(d, SPOT.swell); return x <= 60 ? 1 : x <= 90 ? 0.6 : 0.3; };
+const dirScore = (d, c = SPOT.swell) => { const x = angDiff(d, c); return x <= 60 ? 1 : x <= 90 ? 0.6 : 0.3; };
 const tideScore = f => (f >= 0.25 && f <= 0.8) ? 1 : 0.8;
 
-function rate(h) {
+function rate(h, swellCenter = SPOT.swell) {
   const s = Math.pow(sizeScore(h.wave), 0.45) * Math.pow(h.windI.score, 0.35) *
-            Math.pow(periodScore(h.period), 0.1) * Math.pow(dirScore(h.swellDir), 0.05) *
+            Math.pow(periodScore(h.period), 0.1) * Math.pow(dirScore(h.swellDir, swellCenter), 0.05) *
             Math.pow(tideScore(h.tideFrac), 0.05);
   return Math.round(s * 100);
 }
@@ -902,7 +985,7 @@ function moonSVG(age, size) {
 // --- forecast data -----------------------------------------------------------
 async function loadForecast() {
   const m = { lat: SPOT.marine[0], lon: SPOT.marine[1] }, w = { lat: SPOT.wx[0], lon: SPOT.wx[1] };
-  const mu = `https://marine-api.open-meteo.com/v1/marine?latitude=${m.lat}&longitude=${m.lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,sea_level_height_msl,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
+  const mu = `https://marine-api.open-meteo.com/v1/marine?latitude=${m.lat}&longitude=${m.lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,secondary_swell_wave_height,secondary_swell_wave_period,secondary_swell_wave_direction,wind_wave_height,sea_level_height_msl,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
   const wu = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,weather_code,precipitation_probability,precipitation&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
   const [mr, wr] = await Promise.all([fetch(mu), fetch(wu)]);
   if (!mr.ok || !wr.ok) throw new Error(`HTTP ${mr.status}/${wr.status}`);
@@ -921,6 +1004,7 @@ async function loadForecast() {
       period: usesSwell ? M.swell_wave_period[i] : M.wave_period[i],
       swellH, swellDir: M.swell_wave_direction[i] ?? M.wave_direction[i],
       windWave: M.wind_wave_height[i] ?? 0,
+      swell2H: M.secondary_swell_wave_height?.[i] ?? 0, swell2P: M.secondary_swell_wave_period?.[i], swell2Dir: M.secondary_swell_wave_direction?.[i],
       tide: M.sea_level_height_msl[i],
       sst: M.sea_surface_temperature[i],
       windSpeed: W.wind_speed_10m[j], windDir: W.wind_direction_10m[j], gust: W.wind_gusts_10m[j],
@@ -1018,7 +1102,7 @@ function render() {
       ${beginnerHTML(cur)}
     </div>
     <div class="facts">
-      <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m</span></div>
+      <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m${cur.swell2H >= 0.3 && cur.swell2P ? `<br>2つ目のうねり ${cur.swell2H.toFixed(1)}m・${Math.round(cur.swell2P)}秒・${dirName(cur.swell2Dir)}から` : ""}</span></div>
       <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
       <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
       <div class="fact"><span class="label">潮位</span><span class="v">${cur.tide != null ? (cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
@@ -1045,10 +1129,11 @@ function render() {
         </div>
       </section>
       <section>
-        <h2>日ごとのまとめ</h2>
+        <h2>週間予報 <small>7日間・日ごとのまとめ</small></h2>
         <div class="days">${dayCards}</div>
       </section>
     </div>`;
+  renderTideTable(byDay, daily, extremes);
   const box = document.getElementById("chartBox");
   box.scrollLeft = Math.max(0, hours.indexOf(cur) * HOUR_W - 120);
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
@@ -1063,6 +1148,24 @@ function beginnerLevel(h) {
 function beginnerHTML(h) {
   const [mark, col, text] = beginnerLevel(h);
   return `<div class="beginner"><span class="mark" style="color:${col}">${mark}</span><span><b>初心者は：</b>${text} <a href="#guide" data-guide>はじめての人へ</a></span></div>`;
+}
+
+function renderTideTable(byDay, daily, extremes) {
+  const todayKey = toKey(new Date());
+  const cm = v => `${v >= 0 ? "+" : ""}${Math.round(v * 100)}`;
+  const rows = Object.keys(byDay).map(k => {
+    const d = new Date(k + "T00:00"), age = moonAge(new Date(k + "T12:00")), dd = daily[k];
+    const ex = extremes.filter(e => toKey(e.t) === k);
+    const list = hi => ex.filter(e => e.hi === hi).map(e => `${hm(e.t)} <small>${cm(e.lvl)}</small>`).join("<br>") || "—";
+    return `<tr${k === todayKey ? ' class="today"' : ""}>
+      <td class="d">${md(d)}（${WEEK[d.getDay()]}）</td>
+      <td><span class="moon">${moonSVG(age, 16)}<span class="tide-name">${tideName(age)}</span></span></td>
+      <td class="hi">${list(true)}</td><td class="lo">${list(false)}</td>
+      <td>${dd ? `${hm(dd.rise)}<br><small>${hm(dd.set)}</small>` : "—"}</td></tr>`;
+  }).join("");
+  document.getElementById("tideTable").innerHTML = `<table class="tide-table">
+    <thead><tr><th>日付</th><th>潮回り</th><th>満潮（cm）</th><th>干潮（cm）</th><th>日の出／入</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
 }
 
 function tideTrend(cur, extremes) {
@@ -1291,6 +1394,8 @@ async function refresh() {
   upd.textContent = "更新中…";
   loadJMA();
   loadNews();
+  spotListAt = 0;
+  if (currentView === "spots") loadSpotList();
   const spotId = SPOT.id;
   try {
     const data = await loadForecast();
@@ -1513,8 +1618,144 @@ function calcVolume() {
   document.addEventListener("click", e => {
     if (!e.target.closest("[data-guide]")) return;
     e.preventDefault();
+    showView("learn", { scroll: false });
     document.getElementById("guide").scrollIntoView({ behavior: "smooth" });
   });
+})();
+
+// --- spot guide ----------------------------------------------------------------------
+// 確かな情報だけを載せる。未登録の項目は表示しない（あとから追記できる）
+const SPOT_GUIDE = {
+  kou: { type: "ビーチブレイク（遠浅の砂浜）", notes: ["年間を通じて多くのサーファーが訪れる、伊勢志摩を代表するポイント", "浜の後ろに阿児の松原が広がる"] },
+  omaezaki: { type: "ビーチブレイク（砂浜）" },
+  shizunami: { type: "ビーチブレイク（砂浜）", notes: ["近くに人工波プール「静波サーフスタジアム」がある"] },
+  irago: { type: "ビーチブレイク（砂浜）", notes: ["渥美半島の太平洋側。大会が開かれることもある愛知の代表的なエリア"] },
+  akabane: { type: "ビーチブレイク（砂浜）" },
+  isonoura: { type: "ビーチブレイク（砂浜）", notes: ["和歌山市内にあり、紀淡海峡を抜けてくるうねりで波が立つ"] },
+  senri: { type: "ビーチブレイク（砂浜）", notes: ["本州有数のアカウミガメの産卵地。産卵期（初夏〜夏）は砂浜の扱いに配慮を"] },
+  hacchohama: { type: "ビーチブレイク（砂浜）", notes: ["日本海側。冬の季節風のうねりで波が上がりやすい"] },
+  shishikui: { notes: ["徳島県最南端、高知県との県境近くのエリア"] },
+  ikumi: { type: "ビーチブレイク（砂浜）", notes: ["サーフィンビーチとして知られる四国の人気ポイント"] },
+  niyodo: { type: "リバーマウス（河口）", notes: ["川の流れがあるので、流されないよう位置を確認しながら"] },
+  irino: { type: "ビーチブレイク（砂浜）", notes: ["「砂浜美術館」で知られる入野松原の前に続く長い砂浜"] },
+  ayukawa: { notes: ["日本海側。冬の季節風のうねりで波が上がりやすい"] },
+  hamaji: { type: "ビーチブレイク（砂浜）", notes: ["日本海側。普段は穏やかで、冬の季節風のうねりで波が上がる"] },
+};
+const mapURL = (sp, q) => q
+  ? `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${sp.wx[0]},${sp.wx[1]},13z`
+  : `https://www.google.com/maps/search/?api=1&query=${sp.wx[0]},${sp.wx[1]}`;
+function renderSpotGuide() {
+  const g = SPOT_GUIDE[SPOT.id] || {}, off = (facing + 180) % 360;
+  document.getElementById("guideSub").textContent = `${SPOT.name}（${SPOT.place}）`;
+  document.getElementById("spotGuide").innerHTML = `
+    <dl class="kv">
+      ${g.type ? `<dt>地形</dt><dd>${esc(g.type)}</dd>` : ""}
+      <dt>海の向き</dt><dd>${dirName(facing)}向き（${facing}°）</dd>
+      <dt>いい風</dt><dd><span class="pill good">オフショア</span> ${dirName(off)}寄りの風</dd>
+      <dt>いいうねり</dt><dd>${dirName(SPOT.swell)}方向から入るうねり</dd>
+      <dt>予報区域</dt><dd>${esc(SPOT.jma.officeName)}・${esc(SPOT.jma.areaName)}</dd>
+      ${g.level ? `<dt>レベル</dt><dd>${esc(g.level)}</dd>` : ""}
+      ${g.parking ? `<dt>駐車場</dt><dd>${esc(g.parking)}</dd>` : ""}
+      ${g.facilities ? `<dt>設備</dt><dd>${esc(g.facilities)}</dd>` : ""}
+    </dl>
+    ${g.notes?.length ? `<ul>${g.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
+    <div class="spot-links">
+      <a href="${mapURL(SPOT)}" target="_blank" rel="noopener">地図で見る ↗</a>
+      <a href="${mapURL(SPOT, "駐車場")}" target="_blank" rel="noopener">近くの駐車場 ↗</a>
+      <a href="${mapURL(SPOT, "サーフショップ")}" target="_blank" rel="noopener">近くのサーフショップ ↗</a>
+      <a href="${jmaWarningURL(SPOT.jma)}" target="_blank" rel="noopener">${esc(SPOT.jma.cityName)}の警報・注意報 ↗</a>
+    </div>`;
+}
+
+// --- all spots at a glance (one request for every spot) -------------------------------
+let spotListAt = 0;
+async function loadSpotList() {
+  if (Date.now() - spotListAt < 20 * 60e3) return renderSpotListCurrent();
+  const el = document.getElementById("spotList");
+  const lat = k => SPOTS.map(sp => sp[k][0]).join(","), lon = k => SPOTS.map(sp => sp[k][1]).join(",");
+  try {
+    const [mr, wr] = await Promise.all([
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat("marine")}&longitude=${lon("marine")}&hourly=wave_height,wave_period,swell_wave_height,swell_wave_period,swell_wave_direction,wave_direction,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=1`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat("wx")}&longitude=${lon("wx")}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=1`),
+    ]);
+    if (!mr.ok || !wr.ok) throw new Error(`HTTP ${mr.status}/${wr.status}`);
+    const [ms, ws] = await Promise.all([mr.json(), wr.json()]);
+    const now = new Date(), key = `${toKey(now)}T${pad(now.getHours())}:00`;
+    SPOT_NOW = SPOTS.map((sp, i) => {
+      const M = ms[i].hourly, W = ws[i].hourly;
+      const mi = M.time.indexOf(key), wi = W.time.indexOf(key);
+      if (mi < 0 || wi < 0 || M.wave_height[mi] == null) return null;
+      const swellH = M.swell_wave_height[mi] ?? 0;
+      const h = {
+        wave: M.wave_height[mi],
+        period: swellH >= 0.5 * M.wave_height[mi] && M.swell_wave_period[mi] != null ? M.swell_wave_period[mi] : M.wave_period[mi],
+        swellDir: M.swell_wave_direction[mi] ?? M.wave_direction[mi], tideFrac: 0.5,
+        windSpeed: W.wind_speed_10m[wi], windDir: W.wind_direction_10m[wi], sst: M.sea_surface_temperature[mi],
+      };
+      h.windI = windInfo(h.windDir, h.windSpeed, storedFacing(sp));
+      h.score = rate(h, sp.swell);
+      h.stars = h.wave >= 2.2 ? Math.min(starsOf(h.score), 3) : starsOf(h.score);
+      return h;
+    });
+    spotListAt = Date.now();
+    renderSpotListCurrent();
+  } catch (e) {
+    el.innerHTML = `<div class="status err">全ポイントの予報を取得できませんでした（${esc(e.message)}）。</div>`;
+  }
+}
+let SPOT_NOW = null;
+function renderSpotListCurrent() {
+  if (!SPOT_NOW) return;
+  const groups = [...new Set(SPOTS.map(sp => sp.group))];
+  document.getElementById("spotList").innerHTML = groups.map(g => `
+    <div class="spot-group"><h3>${esc(g)}</h3><div class="spot-cards">
+      ${SPOTS.map((sp, i) => [sp, SPOT_NOW[i]]).filter(([sp]) => sp.group === g).map(([sp, h]) => `
+        <button type="button" class="spot-card${sp.id === SPOT.id ? " current" : ""}" data-spot="${sp.id}">
+          <span class="nm">${esc(sp.name)}</span>
+          <span class="sz">${h ? sizeWord(h.wave) : "—"}</span>
+          <span class="pl">${esc(sp.place)}</span>
+          ${h ? `<span class="ln">${starHTML(h.stars)}<span class="pill ${h.windI.cls}">${h.windI.type}</span>${h.wave.toFixed(1)}m・${Math.round(h.period)}秒${h.sst != null ? `・水温${h.sst.toFixed(0)}℃` : ""}</span>` : `<span class="ln">データなし</span>`}
+        </button>`).join("")}
+    </div></div>`).join("");
+  document.querySelectorAll(".spot-card").forEach(b => b.addEventListener("click", () => {
+    selectSpot(b.dataset.spot);
+    showView("forecast");
+  }));
+}
+
+// --- tab views ---------------------------------------------------------------------
+const VIEWS = ["forecast", "live", "spots", "learn", "news"];
+let currentView = "forecast";
+function showView(name, opts = {}) {
+  if (!VIEWS.includes(name)) name = "forecast";
+  currentView = name;
+  VIEWS.forEach(v => {
+    const on = v === name, tab = document.getElementById(`vt-${v}`);
+    tab.setAttribute("aria-selected", on);
+    tab.tabIndex = on ? 0 : -1;
+    document.getElementById(`view-${v}`).hidden = !on;
+  });
+  try { localStorage.setItem("surf-view", name); } catch (e) {}
+  if (name === "spots") loadSpotList();
+  if (opts.scroll !== false) {
+    const top = document.getElementById("main").getBoundingClientRect().top + scrollY - 70;
+    if (scrollY > top) scrollTo({ top: Math.max(0, top) });
+  }
+}
+(function setupViews() {
+  VIEWS.forEach((v, i) => {
+    const tab = document.getElementById(`vt-${v}`);
+    tab.addEventListener("click", () => showView(v));
+    tab.addEventListener("keydown", e => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      const next = VIEWS[(i + d + VIEWS.length) % VIEWS.length];
+      showView(next); document.getElementById(`vt-${next}`).focus();
+    });
+  });
+  let saved = null;
+  try { saved = localStorage.getItem("surf-view"); } catch (e) {}
+  showView(saved || "forecast", { scroll: false });
 })();
 
 // --- spot switching -----------------------------------------------------------
@@ -1559,6 +1800,8 @@ function applySpot() {
   w.textContent = `${J.cityName}の警報・注意報`;
   loadFacing();
   renderCam();
+  renderSpotGuide();
+  renderSpotListCurrent();
 }
 
 function selectSpot(id) {
@@ -1570,6 +1813,7 @@ function selectSpot(id) {
   if (location.hash.slice(1) !== SPOT.id) history.replaceState(null, "", `#${SPOT.id}`);
   document.getElementById("now").innerHTML = `<div class="status">${esc(SPOT.name)}の予報を取得しています…</div>`;
   document.getElementById("forecast").innerHTML = "";
+  document.getElementById("tideTable").innerHTML = `<div class="status">潮汐データを取得しています…</div>`;
   applySpot();
   refresh();
 }
@@ -1588,8 +1832,11 @@ document.getElementById("facing").addEventListener("change", e => {
   const v = ((+e.target.value % 360) + 360) % 360;
   if (isNaN(v)) return;
   facing = v;
-  try { localStorage.setItem(SPOT.id === "kou" ? "kou-facing" : `facing-${SPOT.id}`, String(v)); } catch (err) {}
+  try { localStorage.setItem(facingKey(SPOT), String(v)); } catch (err) {}
   if (DATA) render();
+  renderSpotGuide();
+  spotListAt = 0;
+  if (currentView === "spots") loadSpotList();
 });
 applySpot();
 refresh();
