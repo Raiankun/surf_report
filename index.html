@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+Antique:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: tide-chart instrument panel — summary strip, 4-day timeline (score / wave / tide / wind), then per-day cards */
+/* Layout: tide-chart instrument panel — now strip, live cam + JMA forecast, 4-day timeline, day cards, news */
 :root {
   --bg: #edf2f3;
   --surface: #f8fbfb;
@@ -17,6 +17,9 @@
   --line: #cfdcdf;
   --accent: #0a7488;
   --tide: #3b63c9;
+  --sun: #d9861a;
+  --moon-lit: #f3e6b4;
+  --moon-dark: #2a3e46;
   --night: rgba(13, 40, 48, 0.07);
   --good: #13896b;
   --ok: #c08a12;
@@ -30,13 +33,15 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #08171c; --surface: #0f242b; --fg: #dcebee; --muted: #8aa4ab; --line: #1f3a42;
-    --accent: #37b7c9; --tide: #7f9cf0; --night: rgba(0, 0, 0, 0.28);
+    --accent: #37b7c9; --tide: #7f9cf0; --sun: #f0a94a; --moon-lit: #f3e6b4; --moon-dark: #1b2f36;
+    --night: rgba(0, 0, 0, 0.28);
     --good: #3cc79c; --ok: #e3b23c; --bad: #ef7a6f; --star: #f2c14e; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #08171c; --surface: #0f242b; --fg: #dcebee; --muted: #8aa4ab; --line: #1f3a42;
-  --accent: #37b7c9; --tide: #7f9cf0; --night: rgba(0, 0, 0, 0.28);
+  --accent: #37b7c9; --tide: #7f9cf0; --sun: #f0a94a; --moon-lit: #f3e6b4; --moon-dark: #1b2f36;
+  --night: rgba(0, 0, 0, 0.28);
   --good: #3cc79c; --ok: #e3b23c; --bad: #ef7a6f; --star: #f2c14e; color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -45,6 +50,8 @@ body {
   font-family: var(--font-body); font-size: 15px; line-height: 1.6;
 }
 .wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.stack > *, .wrap > * { min-width: 0; }
 header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
 h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: 0.02em; }
 .sub { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
@@ -52,64 +59,98 @@ h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 
 button { font: inherit; cursor: pointer; }
 .btn { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 6px; padding: 4px 12px; font-size: 13px; }
 .btn:hover { border-color: var(--accent); }
-.btn:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .label { font-size: 11px; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; }
+a { color: var(--accent); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+section > h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin: 0 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight: 400; color: var(--muted); }
 
 /* now panel */
-.now { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr); gap: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; }
+.now { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr); gap: 20px; padding: 22px; }
 .verdict { display: grid; gap: 6px; align-content: start; }
 .size-word { font-family: var(--font-display); font-weight: 900; font-size: clamp(34px, 7vw, 52px); line-height: 1.05; }
 .stars { color: var(--star); font-size: 22px; letter-spacing: 2px; }
 .stars .off { color: var(--line); }
 .verdict-text { font-size: 14px; color: var(--muted); }
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 20px; align-content: start; }
-.fact { display: grid; gap: 2px; min-width: 0; }
-.fact .v { font-family: var(--font-data); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.fact { display: grid; gap: 2px; min-width: 0; align-content: start; }
+.fact .v { font-family: var(--font-data); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; }
 .fact .v small { font-size: 12px; font-weight: 400; color: var(--muted); }
 .fact .d { font-size: 12px; color: var(--muted); }
-.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 9px; border-radius: 99px; color: #fff; }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 9px; border-radius: 99px; color: #fff; white-space: nowrap; }
 .pill.good { background: var(--good); } .pill.ok { background: var(--ok); } .pill.bad { background: var(--bad); } .pill.calm { background: var(--accent); }
+.tide-name { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 8px; border-radius: 99px; border: 1px solid var(--tide); color: var(--tide); white-space: nowrap; }
+
+/* cam + jma */
+.duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.cam { overflow: hidden; }
+.cam-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--moon-dark); display: grid; place-items: center; }
+.cam-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.cam-play { display: grid; justify-items: center; gap: 8px; color: #e8f2f4; background: none; border: 0; padding: 20px; }
+.cam-play .circle { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #e8f2f4; display: grid; place-items: center; transition: transform .15s; }
+.cam-play:hover .circle { transform: scale(1.06); }
+.cam-play .circle svg { width: 24px; height: 24px; margin-left: 4px; fill: #e8f2f4; }
+.cam-play span { font-size: 13px; }
+.cam-links { padding: 12px 16px 14px; display: grid; gap: 6px; font-size: 13px; }
+.cam-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.jma { padding: 18px; display: grid; gap: 14px; }
+.jma-day { display: grid; gap: 4px; }
+.jma-day h3 { margin: 0; font-size: 14px; font-family: var(--font-display); }
+.jma .kv { font-size: 13px; }
+.pops { display: flex; gap: 4px; flex-wrap: wrap; font-family: var(--font-data); font-size: 12px; }
+.pops span { border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; }
+.jma details { font-size: 13px; color: var(--muted); }
+.jma details p { margin: 6px 0 0; white-space: pre-line; }
+.jma summary { cursor: pointer; color: var(--fg); font-weight: 700; }
 
 /* timeline */
-section > h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin: 0 0 10px; }
-.chart-box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+.chart-box { overflow-x: auto; }
 .chart-box svg { display: block; }
 .chart-box text { font-family: var(--font-data); fill: var(--muted); font-size: 10px; }
 .chart-box .rowlabel { font-family: var(--font-body); font-weight: 700; fill: var(--fg); font-size: 11px; }
 .chart-box .daylabel { font-family: var(--font-body); font-weight: 700; fill: var(--fg); font-size: 12px; }
+.chart-box .wxchar { font-family: var(--font-body); font-weight: 700; font-size: 11px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 
 /* day cards */
 .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-.day { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
+.day { padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
 .day h3 { margin: 0; font-family: var(--font-display); font-size: 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .day h3 .stars { font-size: 15px; }
 .best { font-size: 14px; }
 .best b { font-family: var(--font-data); font-size: 17px; }
 .kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; font-size: 13px; margin: 0; }
-.kv dt { color: var(--muted); }
+.kv dt { color: var(--muted); white-space: nowrap; }
 .kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 .tides { font-family: var(--font-data); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.moonline { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+
+/* news */
+.news { list-style: none; margin: 0; padding: 0; }
+.news li { border-top: 1px solid var(--line); }
+.news li:first-child { border-top: 0; }
+.news a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 11px 16px; text-decoration: none; color: var(--fg); }
+.news a:hover { background: var(--bg); }
+.news .t { font-size: 14px; font-weight: 500; }
+.news .s { font-size: 12px; color: var(--muted); grid-column: 1; }
+.news .dt { font-family: var(--font-data); font-size: 12px; color: var(--muted); grid-row: 1 / span 2; grid-column: 2; align-self: center; white-space: nowrap; }
 
 /* settings + notes */
 .settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-size: 13px; color: var(--muted); }
 .settings input { width: 68px; font: inherit; font-family: var(--font-data); padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); }
 .notes { font-size: 12.5px; color: var(--muted); max-width: 72ch; display: grid; gap: 6px; }
 .notes p { margin: 0; }
-.notes a { color: var(--accent); }
-.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
-.stack > *, .wrap > * { min-width: 0; }
-.status { padding: 40px 0; text-align: center; color: var(--muted); }
+.status { padding: 32px 16px; text-align: center; color: var(--muted); font-size: 13px; }
 .status.err { color: var(--bad); }
 
-@media (max-width: 720px) {
-  .now { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 760px) {
+  .now, .duo { grid-template-columns: minmax(0, 1fr); }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .meta { text-align: left; justify-items: start; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .chart-box svg .bar { transition: opacity .15s; }
+  .news a { grid-template-columns: minmax(0, 1fr); }
+  .news .dt { grid-row: auto; grid-column: 1; }
 }
 </style>
 </head>
@@ -119,7 +160,7 @@ section > h2 { font-family: var(--font-display); font-size: 20px; font-weight: 7
     <div>
       <div class="label">伊勢志摩・志摩市阿児町国府</div>
       <h1>国府の浜 波予報</h1>
-      <p class="sub">気象予報データから、サイズ・風・うねり・潮をサーフィン向けに判定します</p>
+      <p class="sub">気象予報データから、サイズ・風・うねり・潮・水温をサーフィン向けに判定します</p>
     </div>
     <div class="meta">
       <span id="updated">読み込み中…</span>
@@ -127,7 +168,42 @@ section > h2 { font-family: var(--font-display); font-size: 20px; font-weight: 7
     </div>
   </header>
 
-  <div id="app"><div class="status">予報データを取得しています…</div></div>
+  <div id="now"><div class="status">予報データを取得しています…</div></div>
+
+  <div class="duo">
+    <section>
+      <h2>ライブカメラ <small>志摩市 国府白浜ライブカメラ</small></h2>
+      <div class="panel cam">
+        <div class="cam-frame" id="camFrame">
+          <button class="cam-play" id="camPlay" type="button">
+            <span class="circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z"/></svg></span>
+            <span>タップでライブ映像を再生</span>
+          </button>
+        </div>
+        <div class="cam-links">
+          <span class="label">ほかのカメラ・映像（別ページで開く）</span>
+          <ul>
+            <li><a href="https://web.spo.live/event/PVhPiqHlIo" target="_blank" rel="noopener">SpoLive（志摩市・ラスタ前）</a></li>
+            <li><a href="https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3" target="_blank" rel="noopener">MCTV 静止画（メイン〜テトラ前）</a></li>
+            <li><a href="https://www.bcm-surfpatrol.com/wave-detail/10/114/" target="_blank" rel="noopener">BCM サーフパトロール</a></li>
+            <li><a href="https://www.youtube.com/@machispodev/streams" target="_blank" rel="noopener">YouTube（マチスポ）</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>気象台の予報 <small>津地方気象台・三重県南部</small></h2>
+      <div class="panel jma" id="jma"><div class="status">気象台の予報を取得しています…</div></div>
+    </section>
+  </div>
+
+  <div id="forecast"></div>
+
+  <section>
+    <h2>サーフィンニュース <small>THE SURF NEWS・SURFMEDIA</small></h2>
+    <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
+  </section>
 
   <section>
     <div class="settings">
@@ -138,9 +214,9 @@ section > h2 { font-family: var(--font-display); font-size: 20px; font-weight: 7
   </section>
 
   <section class="notes">
-    <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（Marine API・Forecast API、CC BY 4.0）。潮位は海洋モデルの海面高で、潮位表とは数十分・数十cmずれることがあります。</p>
-    <p>サイズ表現は沖の有義波高からの目安です。国府の浜は地形（サンドバー）でブレイクが変わるので、実際の波と見比べながら「ビーチの向き」を調整してください。</p>
-    <p>危険な高波・離岸流に注意し、最終判断は現地の状況と海況情報で行ってください。</p>
+    <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（波・風・潮位・水温、CC BY 4.0）、<a href="https://www.jma.go.jp/bosai/forecast/#area_type=class10s&area_code=240020" target="_blank" rel="noopener">気象庁</a>（三重県南部の予報）、ニュースは各サイトのRSS。ライブ映像は志摩市（SpoLive）の配信です。</p>
+    <p>潮位は海洋モデルの海面高で、潮位表とは数十分・数十cmずれることがあります。月齢と潮名（大潮・小潮など）は計算による目安です。</p>
+    <p>サイズ表現は沖の有義波高からの目安です。実際の波と見比べながら「ビーチの向き」を調整してください。危険な高波・離岸流に注意し、<a href="https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=2421500" target="_blank" rel="noopener">志摩市の警報・注意報</a>も確認してください。</p>
   </section>
 </div>
 
@@ -152,6 +228,11 @@ const SPOT = {
 };
 const DAYS = 4;
 const HOUR_W = 22;
+const CAM_URL = "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true";
+const NEWS_FEEDS = [
+  { name: "THE SURF NEWS", url: "https://www.surfnews.jp/feed/" },
+  { name: "SURFMEDIA", url: "https://surfmedia.jp/feed/" },
+];
 
 let facing = 110;
 try { const s = localStorage.getItem("kou-facing"); if (s !== null && !isNaN(+s)) facing = +s; } catch (e) {}
@@ -165,6 +246,9 @@ const lerp = (x, x0, x1, y0, y1) => y0 + (y1 - y0) * clamp((x - x0) / (x1 - x0),
 const pad = n => String(n).padStart(2, "0");
 const hm = d => `${d.getHours()}:${pad(d.getMinutes())}`;
 const WEEK = ["日","月","火","水","木","金","土"];
+const md = d => `${d.getMonth() + 1}/${d.getDate()}`;
+const toKey = t => `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 // --- surf translation ---------------------------------------------------
 function sizeWord(h) {
@@ -213,16 +297,50 @@ function wetsuit(t) {
   return "セミドライ＋ブーツ";
 }
 const WX = c => c === 0 ? "快晴" : c <= 2 ? "晴れ" : c === 3 ? "くもり" : c <= 48 ? "霧" : c <= 57 ? "霧雨" : c <= 67 ? "雨" : c <= 77 ? "雪" : c <= 82 ? "にわか雨" : c <= 86 ? "にわか雪" : "雷雨";
+const WX_CHAR = c => c <= 1 ? ["晴", "var(--sun)"] : c <= 3 ? ["曇", "var(--muted)"] : c <= 48 ? ["霧", "var(--muted)"] : c <= 67 || (c >= 80 && c <= 82) ? ["雨", "var(--tide)"] : c <= 86 ? ["雪", "var(--tide)"] : ["雷", "var(--bad)"];
 
-// --- data ------------------------------------------------------------------
-async function load() {
+// --- moon ------------------------------------------------------------------
+const SYNODIC = 29.530588853;
+const NEW_MOON_EPOCH = Date.UTC(2000, 0, 6, 18, 14);
+const moonAge = t => { const a = ((t.getTime() - NEW_MOON_EPOCH) / 86400e3) % SYNODIC; return a < 0 ? a + SYNODIC : a; };
+function tideName(age) {
+  const d = Math.floor(age) + 1; // 旧暦日の近似
+  if (d <= 3 || d >= 29 || (d >= 14 && d <= 17)) return "大潮";
+  if (d <= 7 || d === 13 || (d >= 18 && d <= 21) || d >= 27) return "中潮";
+  if (d <= 10 || (d >= 22 && d <= 24)) return "小潮";
+  if (d === 11 || d === 25) return "長潮";
+  return "若潮";
+}
+function phaseName(age) {
+  if (age < 1.5 || age > SYNODIC - 1.5) return "新月";
+  if (Math.abs(age - 7.4) < 1.5) return "上弦";
+  if (Math.abs(age - 14.8) < 1.5) return "満月";
+  if (Math.abs(age - 22.1) < 1.5) return "下弦";
+  return age < 14.8 ? (age < 7.4 ? "三日月" : "十日夜") : (age < 22.1 ? "寝待月" : "有明月");
+}
+function nextPhase(t, targetAge) {
+  const a = moonAge(t);
+  let dd = targetAge - a; if (dd <= 0) dd += SYNODIC;
+  return new Date(t.getTime() + dd * 86400e3);
+}
+function moonSVG(age, size) {
+  const R = size / 2 - 1, k = (1 - Math.cos(2 * Math.PI * age / SYNODIC)) / 2;
+  const waxing = age < SYNODIC / 2, rx = Math.abs(1 - 2 * k) * R;
+  let lit;
+  if (waxing) lit = `M0,${-R} A${R},${R} 0 0 1 0,${R} A${rx},${R} 0 0 ${k < 0.5 ? 0 : 1} 0,${-R} Z`;
+  else lit = `M0,${-R} A${R},${R} 0 0 0 0,${R} A${rx},${R} 0 0 ${k < 0.5 ? 1 : 0} 0,${-R} Z`;
+  return `<svg width="${size}" height="${size}" viewBox="${-size / 2} ${-size / 2} ${size} ${size}" aria-hidden="true"><circle r="${R}" fill="var(--moon-dark)" stroke="var(--line)"/><path d="${lit}" fill="var(--moon-lit)"/></svg>`;
+}
+
+// --- forecast data -----------------------------------------------------------
+async function loadForecast() {
   const m = SPOT.marine, w = SPOT.wx;
   const mu = `https://marine-api.open-meteo.com/v1/marine?latitude=${m.lat}&longitude=${m.lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,sea_level_height_msl,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
-  const wu = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,weather_code&daily=sunrise,sunset&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
+  const wu = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,weather_code,precipitation_probability,precipitation&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
   const [mr, wr] = await Promise.all([fetch(mu), fetch(wu)]);
   if (!mr.ok || !wr.ok) throw new Error(`HTTP ${mr.status}/${wr.status}`);
-  const [md, wd] = await Promise.all([mr.json(), wr.json()]);
-  const M = md.hourly, W = wd.hourly;
+  const [mdat, wd] = await Promise.all([mr.json(), wr.json()]);
+  const M = mdat.hourly, W = wd.hourly;
   const wIndex = new Map(W.time.map((t, i) => [t, i]));
   const hours = [];
   M.time.forEach((t, i) => {
@@ -240,11 +358,17 @@ async function load() {
       sst: M.sea_surface_temperature[i],
       windSpeed: W.wind_speed_10m[j], windDir: W.wind_direction_10m[j], gust: W.wind_gusts_10m[j],
       temp: W.temperature_2m[j], code: W.weather_code[j],
+      pop: W.precipitation_probability[j], rain: W.precipitation[j],
     });
   });
-  const sun = {};
-  wd.daily.time.forEach((d, i) => sun[d] = { rise: new Date(wd.daily.sunrise[i]), set: new Date(wd.daily.sunset[i]) });
-  return { hours, sun };
+  const daily = {};
+  const D = wd.daily;
+  D.time.forEach((d, i) => daily[d] = {
+    rise: new Date(D.sunrise[i]), set: new Date(D.sunset[i]),
+    tmax: D.temperature_2m_max[i], tmin: D.temperature_2m_min[i],
+    popMax: D.precipitation_probability_max[i], rainSum: D.precipitation_sum[i], uv: D.uv_index_max[i],
+  });
+  return { hours, daily };
 }
 
 function enrich(hours) {
@@ -286,49 +410,53 @@ function bestWindow(list, sun) {
   return { from: day[s].t, to: new Date(day[e].t.getTime() + 3600e3), peak: day[bi] };
 }
 
-// --- render ------------------------------------------------------------------
+// --- render forecast ---------------------------------------------------------
 let DATA = null;
 
 function render() {
-  const { hours, sun } = DATA;
+  const { hours, daily } = DATA;
   const byDay = enrich(hours);
   const extremes = tideExtremes(hours);
   const now = new Date();
   const cur = hours.find(h => h.t.getTime() + 3600e3 > now.getTime()) || hours[0];
-  const curWin = bestWindow(byDay[cur.key], sun[cur.key]);
+  const curWin = bestWindow(byDay[cur.key], daily[cur.key]);
+  const age = moonAge(now);
+  const today = daily[cur.key];
+  const sstDay = byDay[cur.key].map(h => h.sst).filter(v => v != null);
 
-  const nowHTML = `
-  <section class="now" aria-label="現在の状況">
+  document.getElementById("now").innerHTML = `
+  <section class="panel now" aria-label="現在の状況">
     <div class="verdict">
-      <div class="label">${cur.t.getMonth() + 1}/${cur.t.getDate()} ${cur.t.getHours()}時ごろ</div>
+      <div class="label">${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
       <div class="size-word">${sizeWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="verdict-text">${summaryText(cur, curWin)}</div>
     </div>
     <div class="facts">
       <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m</span></div>
-      <div class="fact"><span class="label">周期</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体で乱れやすい"}</span></div>
-      <div class="fact"><span class="label">うねりの向き</span><span class="v">${dirName(cur.swellDir)}</span><span class="d">${Math.round(cur.swellDir)}° から</span></div>
-      <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風 <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
+      <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
+      <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
       <div class="fact"><span class="label">潮位</span><span class="v">${cur.tide != null ? (cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
-      <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? wetsuit(cur.sst) : ""}</span></div>
+      <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? wetsuit(cur.sst) : ""}${sstDay.length ? `<br>今日 ${Math.min(...sstDay).toFixed(1)}〜${Math.max(...sstDay).toFixed(1)}℃` : ""}</span></div>
+      <div class="fact"><span class="label">天気・気温</span><span class="v">${Math.round(cur.temp)}<small> ℃</small></span><span class="d">${WX(cur.code)}・降水 ${cur.pop ?? "—"}%${today ? `<br>最高 ${Math.round(today.tmax)}℃／最低 ${Math.round(today.tmin)}℃・UV ${Math.round(today.uv ?? 0)}` : ""}</span></div>
+      <div class="fact"><span class="label">月齢・潮</span><span class="v">${moonSVG(age, 22)}${age.toFixed(1)}</span><span class="d"><span class="tide-name">${tideName(age)}</span> ${phaseName(age)}<br>次の満月 ${md(nextPhase(now, SYNODIC / 2))}・新月 ${md(nextPhase(now, SYNODIC - 0.0001))}</span></div>
+      <div class="fact"><span class="label">日の出・日の入</span><span class="v">${today ? hm(today.rise) : "—"}</span><span class="d">${today ? `日の入 ${hm(today.set)}` : ""}</span></div>
     </div>
   </section>`;
 
-  const dayCards = Object.keys(byDay).map(k => dayCard(k, byDay[k], sun[k], extremes)).join("");
-  document.getElementById("app").innerHTML = `
+  const dayCards = Object.keys(byDay).map(k => dayCard(k, byDay[k], daily[k], extremes)).join("");
+  document.getElementById("forecast").innerHTML = `
     <div class="stack">
-      ${nowHTML}
       <section>
         <h2>時間ごとの予報</h2>
-        <div class="chart-box" id="chartBox">${chartSVG(hours, sun, extremes, now)}</div>
+        <div class="panel chart-box" id="chartBox">${chartSVG(hours, daily, extremes, now)}</div>
         <div class="legend">
           <span><i style="background:var(--good)"></i>★4〜5</span>
           <span><i style="background:var(--ok)"></i>★3</span>
           <span><i style="background:var(--star)"></i>★2</span>
           <span><i style="background:var(--bad)"></i>★1</span>
           <span><i style="background:var(--night)"></i>夜間</span>
-          <span>風の矢印は風が吹いていく向き</span>
+          <span>風の矢印は風が吹いていく向き・数字は m/s</span>
         </div>
       </section>
       <section>
@@ -337,10 +465,8 @@ function render() {
       </section>
     </div>`;
   const box = document.getElementById("chartBox");
-  const nowX = hours.indexOf(cur) * HOUR_W;
-  box.scrollLeft = Math.max(0, nowX - 120);
-  document.getElementById("facingNote").textContent =
-    `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
+  box.scrollLeft = Math.max(0, hours.indexOf(cur) * HOUR_W - 120);
+  document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
 }
 
 function tideTrend(cur, extremes) {
@@ -360,10 +486,10 @@ function summaryText(h, win) {
   return s;
 }
 
-function dayCard(k, list, sun, extremes) {
+function dayCard(k, list, dd, extremes) {
   const d = new Date(k + "T00:00");
-  const win = bestWindow(list, sun);
-  const dayH = sun ? list.filter(h => h.t >= sun.rise && h.t <= sun.set) : list;
+  const win = bestWindow(list, dd);
+  const dayH = dd ? list.filter(h => h.t >= dd.rise && h.t <= dd.set) : list;
   const src = dayH.length ? dayH : list;
   const minW = Math.min(...src.map(h => h.wave)), maxW = Math.max(...src.map(h => h.wave));
   const am = src.filter(h => h.t.getHours() < 11), pm = src.filter(h => h.t.getHours() >= 12);
@@ -374,63 +500,78 @@ function dayCard(k, list, sun, extremes) {
     const avg = arr.reduce((s, h) => s + h.windSpeed, 0) / arr.length;
     return `${top} ${avg.toFixed(0)}m/s`;
   };
-  const tides = extremes.filter(e => e.t.toISOString && toKey(e.t) === k)
+  const tides = extremes.filter(e => toKey(e.t) === k)
     .map(e => `<span>${e.hi ? "満潮" : "干潮"} ${hm(e.t)}</span>`).join("");
   const codes = {}; src.forEach(h => codes[WX(h.code)] = (codes[WX(h.code)] || 0) + 1);
   const wx = Object.entries(codes).sort((a, b) => b[1] - a[1])[0][0];
-  const maxT = Math.max(...src.map(h => h.temp));
+  const ssts = list.map(h => h.sst).filter(v => v != null);
+  const sstAvg = ssts.length ? ssts.reduce((a, b) => a + b, 0) / ssts.length : null;
+  const age = moonAge(new Date(k + "T12:00"));
   const peakStars = win ? win.peak.stars : 1;
   return `
-  <article class="day">
-    <h3><span>${d.getMonth() + 1}/${d.getDate()}（${WEEK[d.getDay()]}）</span>${starHTML(peakStars)}</h3>
+  <article class="panel day">
+    <h3><span>${md(d)}（${WEEK[d.getDay()]}）</span>${starHTML(peakStars)}</h3>
     <div class="best">${win ? `狙い目 <b>${hm(win.from)}〜${hm(win.to)}</b>` : "日中のデータなし"}</div>
     <dl class="kv">
       <dt>サイズ</dt><dd>${sizeWord(minW) === sizeWord(maxW) ? sizeWord(minW) : `${sizeWord(minW)}〜${sizeWord(maxW)}`}（${minW.toFixed(1)}–${maxW.toFixed(1)}m）</dd>
       <dt>風 午前</dt><dd>${windSum(am)}</dd>
       <dt>風 午後</dt><dd>${windSum(pm)}</dd>
-      <dt>天気</dt><dd>${wx}・最高 ${Math.round(maxT)}℃</dd>
-      <dt>日の出</dt><dd>${sun ? `${hm(sun.rise)}／日の入 ${hm(sun.set)}` : "—"}</dd>
+      <dt>天気</dt><dd>${wx}・${dd ? `${Math.round(dd.tmax)}℃／${Math.round(dd.tmin)}℃・降水 ${dd.popMax ?? "—"}%` : ""}</dd>
+      <dt>水温</dt><dd>${sstAvg != null ? `${sstAvg.toFixed(1)}℃・${wetsuit(sstAvg)}` : "—"}</dd>
+      <dt>日の出</dt><dd>${dd ? `${hm(dd.rise)}／日の入 ${hm(dd.set)}` : "—"}</dd>
     </dl>
+    <div class="moonline">${moonSVG(age, 18)}<span>月齢 ${age.toFixed(1)}</span><span class="tide-name">${tideName(age)}</span></div>
     <div class="tides">${tides || "<span>潮汐データなし</span>"}</div>
   </article>`;
 }
-const toKey = t => `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
 
-function chartSVG(hours, sun, extremes, now) {
+function chartSVG(hours, daily, extremes, now) {
   const n = hours.length, L = 64, W = L + n * HOUR_W + 12;
-  const R = { day: [0, 22], score: [26, 92], wave: [100, 190], tide: [198, 268], wind: [276, 318], hour: [322, 336] };
-  const H = 340;
+  const R = { day: [0, 22], wx: [26, 58], score: [64, 124], wave: [132, 218], tide: [226, 292], wind: [300, 342], hour: [346, 360] };
+  const H = 364;
   const x = i => L + i * HOUR_W;
   const t0 = hours[0].t.getTime();
   const xt = t => L + (t.getTime() - t0) / 3600e3 * HOUR_W + HOUR_W / 2;
-  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${DAYS}日間の時間ごとのスコア、波高、潮位、風">`;
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${DAYS}日間の時間ごとの天気、スコア、波高、潮位、風">`;
 
   // night shading
   hours.forEach((h, i) => {
-    const sn = sun[h.key];
+    const sn = daily[h.key];
     const mid = new Date(h.t.getTime() + 1800e3);
-    if (sn && (mid < sn.rise || mid > sn.set)) s += `<rect x="${x(i)}" y="${R.score[0]}" width="${HOUR_W}" height="${R.wind[1] - R.score[0]}" fill="var(--night)"/>`;
+    if (sn && (mid < sn.rise || mid > sn.set)) s += `<rect x="${x(i)}" y="${R.wx[0]}" width="${HOUR_W}" height="${R.wind[1] - R.wx[0]}" fill="var(--night)"/>`;
   });
   // row labels + grid lines
-  const rows = [["スコア", R.score], ["波高", R.wave], ["潮位", R.tide], ["風", R.wind]];
-  rows.forEach(([lab, [a, b]]) => {
+  [["天気", R.wx], ["スコア", R.score], ["波高", R.wave], ["潮位", R.tide], ["風", R.wind]].forEach(([lab, [a, b]]) => {
     s += `<text class="rowlabel" x="8" y="${a + 13}">${lab}</text>`;
     s += `<line x1="${L}" x2="${W - 12}" y1="${b + 3}" y2="${b + 3}" stroke="var(--line)"/>`;
   });
-  // day separators
+  // day separators + hour ticks
   hours.forEach((h, i) => {
     if (h.t.getHours() === 0) {
+      const age = moonAge(new Date(h.t.getTime() + 12 * 3600e3));
       s += `<line x1="${x(i)}" x2="${x(i)}" y1="${R.day[0]}" y2="${H}" stroke="var(--line)" stroke-width="1.5"/>`;
-      s += `<text class="daylabel" x="${x(i) + 6}" y="16">${h.t.getMonth() + 1}/${h.t.getDate()}（${WEEK[h.t.getDay()]}）</text>`;
+      s += `<text class="daylabel" x="${x(i) + 6}" y="16">${md(h.t)}（${WEEK[h.t.getDay()]}）</text>`;
+      s += `<text x="${x(i) + 86}" y="16" style="fill:var(--tide)">${tideName(age)}</text>`;
     }
     if (h.t.getHours() % 3 === 0) s += `<text x="${x(i) + HOUR_W / 2}" y="${R.hour[1] - 2}" text-anchor="middle">${h.t.getHours()}</text>`;
+  });
+
+  // weather: glyph + temp every 3h, rain probability as faint bar
+  hours.forEach((h, i) => {
+    const cx = x(i) + HOUR_W / 2;
+    if (h.pop) s += `<rect x="${x(i) + 3}" y="${R.wx[1] - (h.pop / 100) * 30}" width="${HOUR_W - 6}" height="${(h.pop / 100) * 30}" fill="var(--tide)" fill-opacity="0.15"/>`;
+    if (h.t.getHours() % 3 === 0) {
+      const [ch, col] = WX_CHAR(h.code);
+      s += `<text class="wxchar" x="${cx}" y="${R.wx[0] + 14}" text-anchor="middle" style="fill:${col}">${ch}</text>`;
+      s += `<text x="${cx}" y="${R.wx[0] + 28}" text-anchor="middle">${Math.round(h.temp)}°</text>`;
+    }
   });
 
   // score bars
   const sh = R.score[1] - R.score[0];
   hours.forEach((h, i) => {
     const bh = Math.max(2, sh * h.score / 100);
-    s += `<rect class="bar" x="${x(i) + 2}" y="${R.score[1] - bh}" width="${HOUR_W - 4}" height="${bh}" rx="2" fill="${starColor(h.stars)}"><title>${h.t.getMonth() + 1}/${h.t.getDate()} ${h.t.getHours()}時 ★${h.stars}（${h.score}点）${sizeWord(h.wave)}・${h.windI.type}</title></rect>`;
+    s += `<rect x="${x(i) + 2}" y="${R.score[1] - bh}" width="${HOUR_W - 4}" height="${bh}" rx="2" fill="${starColor(h.stars)}"><title>${md(h.t)} ${h.t.getHours()}時 ★${h.stars}（${h.score}点）${sizeWord(h.wave)}・${h.windI.type}</title></rect>`;
   });
 
   // wave height area
@@ -471,23 +612,94 @@ function chartSVG(hours, sun, extremes, now) {
 
   // now marker
   const nx = xt(new Date(now.getTime() - 1800e3));
-  if (nx > L && nx < W) s += `<line x1="${nx}" x2="${nx}" y1="${R.score[0]}" y2="${R.wind[1] + 3}" stroke="var(--fg)" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${nx + 4}" y="${R.score[0] + 10}" style="fill:var(--fg)">いま</text>`;
+  if (nx > L && nx < W) s += `<line x1="${nx}" x2="${nx}" y1="${R.wx[0]}" y2="${R.wind[1] + 3}" stroke="var(--fg)" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${nx + 4}" y="${R.score[0] + 10}" style="fill:var(--fg)">いま</text>`;
   return s + "</svg>";
 }
 
+// --- JMA forecast (三重県南部) ----------------------------------------------
+const jmaText = s => esc(String(s ?? "").replace(/　/g, " ").trim());
+async function loadJMA() {
+  const el = document.getElementById("jma");
+  try {
+    const [fr, or] = await Promise.all([
+      fetch("https://www.jma.go.jp/bosai/forecast/data/forecast/240000.json"),
+      fetch("https://www.jma.go.jp/bosai/forecast/data/overview_forecast/240000.json"),
+    ]);
+    if (!fr.ok) throw new Error(`HTTP ${fr.status}`);
+    const f = await fr.json();
+    const ov = or.ok ? await or.json() : null;
+    const ts = f[0].timeSeries;
+    const area = ts[0].areas.find(a => a.area.code === "240020");
+    const popArea = ts[1]?.areas.find(a => a.area.code === "240020");
+    const days = ts[0].timeDefines.map((t, i) => {
+      const d = new Date(t);
+      const label = i === 0 ? "今日" : i === 1 ? "明日" : "あさって";
+      const pops = (ts[1]?.timeDefines || []).map((pt, j) => ({ t: new Date(pt), v: popArea?.pops[j] }))
+        .filter(p => toKey(p.t) === toKey(d) && p.v !== "" && p.v != null);
+      return `
+      <div class="jma-day">
+        <h3>${label} ${md(d)}（${WEEK[d.getDay()]}）</h3>
+        <dl class="kv">
+          <dt>天気</dt><dd>${jmaText(area.weathers?.[i])}</dd>
+          <dt>風</dt><dd>${jmaText(area.winds?.[i])}</dd>
+          <dt>波</dt><dd><strong>${jmaText(area.waves?.[i])}</strong></dd>
+          ${pops.length ? `<dt>降水確率</dt><dd class="pops">${pops.map(p => `<span>${p.t.getHours()}時〜 ${esc(p.v)}%</span>`).join("")}</dd>` : ""}
+        </dl>
+      </div>`;
+    }).join("");
+    const rep = new Date(f[0].reportDatetime);
+    el.innerHTML = `${days}
+      ${ov?.text ? `<details><summary>天気概況（三重県）</summary><p>${esc(ov.text.trim())}</p></details>` : ""}
+      <div class="label">${md(rep)} ${hm(rep)} 津地方気象台 発表</div>`;
+  } catch (e) {
+    el.innerHTML = `<div class="status err">気象台の予報を取得できませんでした（${esc(e.message)}）。<a href="https://www.jma.go.jp/bosai/forecast/#area_type=class10s&area_code=240020" target="_blank" rel="noopener">気象庁のサイトで見る</a></div>`;
+  }
+}
+
+// --- news ------------------------------------------------------------------
+async function loadNews() {
+  const el = document.getElementById("news");
+  const results = await Promise.allSettled(NEWS_FEEDS.map(async feed => {
+    const r = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`);
+    const j = await r.json();
+    if (j.status !== "ok") throw new Error(j.message || "error");
+    return j.items.map(it => ({ title: it.title, link: it.link, date: new Date(String(it.pubDate).replace(" ", "T") + "Z"), source: feed.name }));
+  }));
+  const items = results.filter(r => r.status === "fulfilled").flatMap(r => r.value)
+    .filter(it => /^https:\/\//.test(it.link))
+    .sort((a, b) => b.date - a.date).slice(0, 12);
+  if (!items.length) {
+    el.innerHTML = `<li class="status err">ニュースを取得できませんでした。<a href="https://www.surfnews.jp/" target="_blank" rel="noopener">THE SURF NEWS</a>・<a href="https://surfmedia.jp/" target="_blank" rel="noopener">SURFMEDIA</a> で直接ご覧ください。</li>`;
+    return;
+  }
+  el.innerHTML = items.map(it => `
+    <li><a href="${esc(it.link)}" target="_blank" rel="noopener">
+      <span class="t">${esc(it.title)}</span>
+      <span class="s">${esc(it.source)}</span>
+      <span class="dt">${isNaN(it.date) ? "" : `${md(it.date)} ${hm(it.date)}`}</span>
+    </a></li>`).join("");
+}
+
+// --- wiring ------------------------------------------------------------------
 async function refresh() {
   const upd = document.getElementById("updated");
   upd.textContent = "更新中…";
+  loadJMA();
+  loadNews();
   try {
-    DATA = await load();
+    DATA = await loadForecast();
     render();
     upd.textContent = `取得 ${new Date().toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
   } catch (e) {
     upd.textContent = "取得失敗";
-    document.getElementById("app").innerHTML = `<div class="status err">予報データを取得できませんでした（${e.message}）。ネット接続を確認して「最新に更新」を押してください。</div>`;
+    document.getElementById("now").innerHTML = `<div class="status err">予報データを取得できませんでした（${esc(e.message)}）。ネット接続を確認して「最新に更新」を押してください。</div>`;
   }
 }
 
+document.getElementById("camPlay").addEventListener("click", () => {
+  const f = document.getElementById("camFrame");
+  f.innerHTML = `<iframe src="${CAM_URL}" title="国府白浜ライブカメラ" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+});
 document.getElementById("reload").addEventListener("click", refresh);
 document.getElementById("facing").addEventListener("change", e => {
   const v = ((+e.target.value % 360) + 360) % 360;
