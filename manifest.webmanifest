@@ -1,0 +1,17 @@
+{
+  "name": "波予報 — 東海・関西・四国・福井",
+  "short_name": "波予報",
+  "description": "波・風・潮・水温から、今日いつ入るか、何を着るかまで。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ecefe9",
+  "theme_color": "#f1a476",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
