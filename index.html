@@ -134,6 +134,12 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 /* cam + jma */
 .duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
 .cam { overflow: hidden; }
+.cam-empty { padding: 28px 20px; display: grid; justify-items: start; gap: 12px; font-size: 14px; color: var(--muted); background: linear-gradient(160deg, color-mix(in srgb, var(--sea1) 14%, transparent), transparent); }
+.cam-empty p { margin: 0; }
+.cam-empty .btn { text-decoration: none; }
+.spot-pick { display: flex; align-items: center; gap: 8px; background: var(--surface); color: var(--fg); border-radius: 99px; padding: 4px 6px 4px 14px; font-family: var(--font-body); font-size: 12px; font-weight: 700; box-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.spot-pick select { font: inherit; font-size: 15px; font-weight: 700; color: var(--accent); background: var(--bg); border: 0; border-radius: 99px; padding: 4px 10px; max-width: 60vw; }
+.spot-pick select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .cam-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: linear-gradient(180deg, var(--sea2), var(--sea3)); display: grid; place-items: center; }
 .cam-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .cam-play { display: grid; justify-items: center; gap: 8px; color: var(--foam); background: none; border: 0; padding: 20px; }
@@ -247,11 +253,12 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
     </svg>
     <div class="hero-top">
       <div>
-        <div class="place">伊勢志摩・志摩市阿児町国府</div>
-        <h1>国府の浜 波予報</h1>
+        <div class="place" id="place">伊勢志摩・志摩市阿児町国府</div>
+        <h1 id="title">国府の浜 波予報</h1>
         <p class="sub">波・風・潮・水温から、今日いつ入るか、何を着るかまで</p>
       </div>
       <div class="meta">
+        <label class="spot-pick" for="spot"><span>ポイント</span><select id="spot"></select></label>
         <span id="updated">読み込み中…</span>
         <button class="btn" id="reload" type="button">最新に更新</button>
       </div>
@@ -262,28 +269,12 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 
   <div class="duo">
     <section>
-      <h2>ライブカメラ <small>志摩市 国府白浜ライブカメラ</small></h2>
-      <div class="panel cam">
-        <div class="cam-frame" id="camFrame">
-          <button class="cam-play" id="camPlay" type="button">
-            <span class="circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z"/></svg></span>
-            <span>タップでライブ映像を再生</span>
-          </button>
-        </div>
-        <div class="cam-links">
-          <span class="label">ほかのカメラ・映像（別ページで開く）</span>
-          <ul>
-            <li><a href="https://web.spo.live/event/PVhPiqHlIo" target="_blank" rel="noopener">SpoLive（志摩市・ラスタ前）</a></li>
-            <li><a href="https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3" target="_blank" rel="noopener">MCTV 静止画（メイン〜テトラ前）</a></li>
-            <li><a href="https://www.bcm-surfpatrol.com/wave-detail/10/114/" target="_blank" rel="noopener">BCM サーフパトロール</a></li>
-            <li><a href="https://www.youtube.com/@machispodev/streams" target="_blank" rel="noopener">YouTube（マチスポ）</a></li>
-          </ul>
-        </div>
-      </div>
+      <h2>ライブカメラ <small id="camSub"></small></h2>
+      <div class="panel cam" id="cam"></div>
     </section>
 
     <section>
-      <h2>気象台の予報 <small>津地方気象台・三重県南部</small></h2>
+      <h2>気象台の予報 <small id="jmaSub"></small></h2>
       <div class="panel jma" id="jma"><div class="status">気象台の予報を取得しています…</div></div>
     </section>
   </div>
@@ -304,29 +295,69 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
   </section>
 
   <section class="notes">
-    <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（波・風・潮位・水温、CC BY 4.0）、<a href="https://www.jma.go.jp/bosai/forecast/#area_type=class10s&area_code=240020" target="_blank" rel="noopener">気象庁</a>（三重県南部の予報）、ニュースは各サイトのRSS。ライブ映像は志摩市（SpoLive）の配信です。</p>
+    <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（波・風・潮位・水温、CC BY 4.0）、<a id="jmaLink" href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">気象庁</a>（地域の予報）、ニュースは各サイトのRSS。ライブ映像は各配信元のものです。</p>
     <p>潮位は海洋モデルの海面高で、潮位表とは数十分・数十cmずれることがあります。月齢と潮名（大潮・小潮など）は計算による目安です。</p>
-    <p>サイズ表現は沖の有義波高からの目安です。実際の波と見比べながら「ビーチの向き」を調整してください。危険な高波・離岸流に注意し、<a href="https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=2421500" target="_blank" rel="noopener">志摩市の警報・注意報</a>も確認してください。</p>
+    <p>サイズ表現は沖の有義波高からの目安です。国府の浜以外のポイントの「ビーチの向き」は地図から読んだ推定値なので、実際の波と見比べながら調整してください（ポイントごとに保存されます）。危険な高波・離岸流に注意し、<a id="warnLink" href="https://www.jma.go.jp/bosai/warning/" target="_blank" rel="noopener">警報・注意報</a>も確認してください。</p>
   </section>
 </div>
 
 <script>
-const SPOT = {
-  wx: { lat: 34.33, lon: 136.90 },      // 国府の浜（風・天気）
-  marine: { lat: 34.32, lon: 136.92 },  // 沖合の海洋グリッド
-  swellCenter: 120,                     // うねりが入りやすい中心方位
-};
+// wx = 浜の座標（風・天気）, marine = 沖の海洋グリッド, facing = 沖の方角, swell = うねりが入りやすい中心方位
+// jma = 気象庁の府県予報区(office)・一次細分区域(area)・市町村(city)
+const SPOTS = [
+  { id: "kou", name: "国府の浜", group: "三重", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120,
+    jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
+    cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
+      links: [["SpoLive（志摩市・ラスタ前）", "https://web.spo.live/event/PVhPiqHlIo"], ["MCTV 静止画（メイン〜テトラ前）", "https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3"],
+              ["BCM サーフパトロール", "https://www.bcm-surfpatrol.com/wave-detail/10/114/"], ["YouTube（マチスポ）", "https://www.youtube.com/@machispodev/streams"]] } },
+  { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190,
+    jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" } },
+  { id: "shizunami", name: "静波", group: "東海（静岡・愛知）", place: "静岡県牧之原市", wx: [34.733, 138.232], marine: [34.733, 138.232], facing: 115, swell: 140,
+    jma: { office: "220000", officeName: "静岡地方気象台", area: "220010", areaName: "静岡県中部", city: "2222600", cityName: "牧之原市" } },
+  { id: "irago", name: "伊良湖ロングビーチ", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.600, 137.080], marine: [34.600, 137.080], facing: 180, swell: 170,
+    jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" } },
+  { id: "akabane", name: "赤羽根", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.603, 137.178], marine: [34.603, 137.178], facing: 175, swell: 170,
+    jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" } },
+  { id: "isonoura", name: "磯ノ浦", group: "関西（和歌山・京都）", place: "和歌山県和歌山市", wx: [34.260, 135.095], marine: [34.260, 135.095], facing: 285, swell: 210,
+    jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3020100", cityName: "和歌山市" } },
+  { id: "senri", name: "千里の浜", group: "関西（和歌山・京都）", place: "和歌山県みなべ町", wx: [33.785, 135.325], marine: [33.785, 135.325], facing: 215, swell: 200,
+    jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3039100", cityName: "みなべ町" } },
+  { id: "hacchohama", name: "八丁浜", group: "関西（和歌山・京都）", place: "京都府京丹後市網野町", wx: [35.689, 135.023], marine: [35.689, 135.023], facing: 350, swell: 340,
+    jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" } },
+  { id: "shishikui", name: "宍喰", group: "四国（徳島・高知）", place: "徳島県海陽町", wx: [33.565, 134.318], marine: [33.565, 134.318], facing: 120, swell: 140,
+    jma: { office: "360000", officeName: "徳島地方気象台", area: "360020", areaName: "徳島県南部", city: "3638800", cityName: "海陽町" } },
+  { id: "ikumi", name: "生見", group: "四国（徳島・高知）", place: "高知県東洋町", wx: [33.548, 134.290], marine: [33.548, 134.290], facing: 135, swell: 150,
+    jma: { office: "390000", officeName: "高知地方気象台", area: "390020", areaName: "高知県東部", city: "3930100", cityName: "東洋町" } },
+  { id: "niyodo", name: "仁淀川河口", group: "四国（徳島・高知）", place: "高知県土佐市・高知市", wx: [33.497, 133.478], marine: [33.497, 133.478], facing: 170, swell: 170,
+    jma: { office: "390000", officeName: "高知地方気象台", area: "390010", areaName: "高知県中部", city: "3920500", cityName: "土佐市" } },
+  { id: "irino", name: "入野", group: "四国（徳島・高知）", place: "高知県黒潮町", wx: [33.021, 133.016], marine: [33.021, 133.016], facing: 160, swell: 180,
+    jma: { office: "390000", officeName: "高知地方気象台", area: "390030", areaName: "高知県西部", city: "3942800", cityName: "黒潮町" } },
+  { id: "ayukawa", name: "鮎川", group: "福井", place: "福井県福井市・越前海岸", wx: [36.135, 136.040], marine: [36.135, 136.040], facing: 300, swell: 310,
+    jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1820100", cityName: "福井市" } },
+  { id: "hamaji", name: "浜地", group: "福井", place: "福井県坂井市三国町", wx: [36.235, 136.135], marine: [36.235, 136.135], facing: 270, swell: 290,
+    jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1821000", cityName: "坂井市" } },
+];
+const spotById = id => SPOTS.find(sp => sp.id === id);
+let SPOT = spotById(location.hash.slice(1));
+if (!SPOT) { try { SPOT = spotById(localStorage.getItem("surf-spot")); } catch (e) {} }
+if (!SPOT) SPOT = SPOTS[0];
 const DAYS = 4;
 const HOUR_W = 22;
-const CAM_URL = "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true";
 const NEWS_FEEDS = [
   { name: "THE SURF NEWS", url: "https://www.surfnews.jp/feed/" },
   { name: "SURFMEDIA", url: "https://surfmedia.jp/feed/" },
 ];
 
-let facing = 110;
-try { const s = localStorage.getItem("kou-facing"); if (s !== null && !isNaN(+s)) facing = +s; } catch (e) {}
-document.getElementById("facing").value = facing;
+let facing = SPOT.facing;
+function loadFacing() {
+  facing = SPOT.facing;
+  try {
+    const key = SPOT.id === "kou" ? "kou-facing" : `facing-${SPOT.id}`;
+    const s = localStorage.getItem(key);
+    if (s !== null && !isNaN(+s)) facing = +s;
+  } catch (e) {}
+  document.getElementById("facing").value = facing;
+}
 
 const DIRS = ["北","北北東","北東","東北東","東","東南東","南東","南南東","南","南南西","南西","西南西","西","西北西","北西","北北西"];
 const dirName = d => DIRS[Math.round(((d % 360) + 360) % 360 / 22.5) % 16];
@@ -363,9 +394,9 @@ function windInfo(from, speed) {
   if (d <= 145) return { type: "サイドオン", cls: "bad", score: clamp(0.62 - (speed - 2) * 0.1, 0.1, 0.62) };
   return { type: "オンショア", cls: "bad", score: clamp(0.5 - (speed - 1.5) * 0.12, 0.05, 0.5) };
 }
-const sizeScore = h => h < 0.25 ? 0.05 : h < 0.6 ? lerp(h, 0.25, 0.6, 0.25, 1) : h <= 1.6 ? 1 : h <= 2.2 ? lerp(h, 1.6, 2.2, 1, 0.6) : lerp(h, 2.2, 3.2, 0.6, 0.08);
+const sizeScore = h => h < 0.25 ? 0.05 : h < 0.5 ? lerp(h, 0.25, 0.5, 0.05, 0.4) : h < 0.9 ? lerp(h, 0.5, 0.9, 0.4, 1) : h <= 1.6 ? 1 : h <= 2.2 ? lerp(h, 1.6, 2.2, 1, 0.6) : lerp(h, 2.2, 3.2, 0.6, 0.08);
 const periodScore = p => lerp(p, 5, 11, 0.25, 1);
-const dirScore = d => { const x = angDiff(d, SPOT.swellCenter); return x <= 60 ? 1 : x <= 90 ? 0.6 : 0.3; };
+const dirScore = d => { const x = angDiff(d, SPOT.swell); return x <= 60 ? 1 : x <= 90 ? 0.6 : 0.3; };
 const tideScore = f => (f >= 0.25 && f <= 0.8) ? 1 : 0.8;
 
 function rate(h) {
@@ -473,7 +504,7 @@ function moonSVG(age, size) {
 
 // --- forecast data -----------------------------------------------------------
 async function loadForecast() {
-  const m = SPOT.marine, w = SPOT.wx;
+  const m = { lat: SPOT.marine[0], lon: SPOT.marine[1] }, w = { lat: SPOT.wx[0], lon: SPOT.wx[1] };
   const mu = `https://marine-api.open-meteo.com/v1/marine?latitude=${m.lat}&longitude=${m.lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,sea_level_height_msl,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
   const wu = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,weather_code,precipitation_probability,precipitation&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
   const [mr, wr] = await Promise.all([fetch(mu), fetch(wu)]);
@@ -770,21 +801,27 @@ function chartSVG(hours, daily, extremes, now) {
   return s + "</svg>";
 }
 
+const jmaForecastURL = J => `https://www.jma.go.jp/bosai/forecast/#area_type=class10s&area_code=${J.area}`;
+const jmaWarningURL = J => `https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=${J.city}`;
+
 // --- JMA forecast (三重県南部) ----------------------------------------------
 const jmaText = s => esc(String(s ?? "").replace(/　/g, " ").trim());
 async function loadJMA() {
   const el = document.getElementById("jma");
+  const J = SPOT.jma, spotId = SPOT.id;
+  el.innerHTML = `<div class="status">気象台の予報を取得しています…</div>`;
   try {
     const [fr, or] = await Promise.all([
-      fetch("https://www.jma.go.jp/bosai/forecast/data/forecast/240000.json"),
-      fetch("https://www.jma.go.jp/bosai/forecast/data/overview_forecast/240000.json"),
+      fetch(`https://www.jma.go.jp/bosai/forecast/data/forecast/${J.office}.json`),
+      fetch(`https://www.jma.go.jp/bosai/forecast/data/overview_forecast/${J.office}.json`),
     ]);
     if (!fr.ok) throw new Error(`HTTP ${fr.status}`);
     const f = await fr.json();
     const ov = or.ok ? await or.json() : null;
     const ts = f[0].timeSeries;
-    const area = ts[0].areas.find(a => a.area.code === "240020");
-    const popArea = ts[1]?.areas.find(a => a.area.code === "240020");
+    const area = ts[0].areas.find(a => a.area.code === J.area);
+    const popArea = ts[1]?.areas.find(a => a.area.code === J.area);
+    if (!area) throw new Error("予報区域が見つかりません");
     const days = ts[0].timeDefines.map((t, i) => {
       const d = new Date(t);
       const label = i === 0 ? "今日" : i === 1 ? "明日" : "あさって";
@@ -802,11 +839,13 @@ async function loadJMA() {
       </div>`;
     }).join("");
     const rep = new Date(f[0].reportDatetime);
+    if (spotId !== SPOT.id) return;
     el.innerHTML = `${days}
-      ${ov?.text ? `<details><summary>天気概況（三重県）</summary><p>${esc(ov.text.trim())}</p></details>` : ""}
-      <div class="label">${md(rep)} ${hm(rep)} 津地方気象台 発表</div>`;
+      ${ov?.text ? `<details><summary>天気概況（${esc(ov.targetArea || "")}）</summary><p>${esc(ov.text.trim())}</p></details>` : ""}
+      <div class="label">${md(rep)} ${hm(rep)} ${esc(f[0].publishingOffice || J.officeName)} 発表</div>`;
   } catch (e) {
-    el.innerHTML = `<div class="status err">気象台の予報を取得できませんでした（${esc(e.message)}）。<a href="https://www.jma.go.jp/bosai/forecast/#area_type=class10s&area_code=240020" target="_blank" rel="noopener">気象庁のサイトで見る</a></div>`;
+    if (spotId !== SPOT.id) return;
+    el.innerHTML = `<div class="status err">気象台の予報を取得できませんでした（${esc(e.message)}）。<a href="${jmaForecastURL(J)}" target="_blank" rel="noopener">気象庁のサイトで見る</a></div>`;
   }
 }
 
@@ -840,11 +879,15 @@ async function refresh() {
   upd.textContent = "更新中…";
   loadJMA();
   loadNews();
+  const spotId = SPOT.id;
   try {
-    DATA = await loadForecast();
+    const data = await loadForecast();
+    if (spotId !== SPOT.id) return;
+    DATA = data;
     render();
     upd.textContent = `取得 ${new Date().toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
   } catch (e) {
+    if (spotId !== SPOT.id) return;
     upd.textContent = "取得失敗";
     document.getElementById("now").innerHTML = `<div class="status err">予報データを取得できませんでした（${esc(e.message)}）。ネット接続を確認して「最新に更新」を押してください。</div>`;
   }
@@ -860,18 +903,78 @@ function heroWave(id, y, amp, wl) {
 heroWave("wave1", 226, 7, 120);
 heroWave("wave2", 254, 10, 180);
 
-document.getElementById("camPlay").addEventListener("click", () => {
-  const f = document.getElementById("camFrame");
-  f.innerHTML = `<iframe src="${CAM_URL}" title="国府白浜ライブカメラ" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
-});
+// --- spot switching -----------------------------------------------------------
+function renderCam() {
+  const el = document.getElementById("cam"), c = SPOT.cam;
+  document.getElementById("camSub").textContent = c ? c.title : "";
+  if (!c) {
+    const q = encodeURIComponent(`${SPOT.name} ${SPOT.place.split(/[・\s]/)[0]} ライブカメラ`);
+    el.innerHTML = `<div class="cam-empty">
+        <p>このポイントのライブカメラはまだ登録していません。</p>
+        <a class="btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">「${esc(SPOT.name)} ライブカメラ」を検索</a>
+      </div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="cam-frame" id="camFrame">
+      <button class="cam-play" id="camPlay" type="button">
+        <span class="circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z"/></svg></span>
+        <span>タップでライブ映像を再生</span>
+      </button>
+    </div>
+    ${c.links?.length ? `<div class="cam-links"><span class="label">ほかのカメラ・映像（別ページで開く）</span>
+      <ul>${c.links.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul></div>` : ""}`;
+  document.getElementById("camPlay").addEventListener("click", () => {
+    document.getElementById("camFrame").innerHTML = `<iframe src="${esc(c.embed)}" title="${esc(c.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+  });
+}
+
+function applySpot() {
+  const J = SPOT.jma;
+  document.title = `${SPOT.name} 波予報`;
+  document.getElementById("title").textContent = `${SPOT.name} 波予報`;
+  document.getElementById("place").textContent = SPOT.place;
+  document.getElementById("spot").value = SPOT.id;
+  document.getElementById("jmaSub").textContent = `${J.officeName}・${J.areaName}`;
+  document.getElementById("jmaLink").href = jmaForecastURL(J);
+  const w = document.getElementById("warnLink");
+  w.href = jmaWarningURL(J);
+  w.textContent = `${J.cityName}の警報・注意報`;
+  loadFacing();
+  renderCam();
+}
+
+function selectSpot(id) {
+  const next = spotById(id);
+  if (!next || next === SPOT) return;
+  SPOT = next;
+  DATA = null;
+  try { localStorage.setItem("surf-spot", SPOT.id); } catch (e) {}
+  if (location.hash.slice(1) !== SPOT.id) history.replaceState(null, "", `#${SPOT.id}`);
+  document.getElementById("now").innerHTML = `<div class="status">${esc(SPOT.name)}の予報を取得しています…</div>`;
+  document.getElementById("forecast").innerHTML = "";
+  applySpot();
+  refresh();
+}
+
+(function buildPicker() {
+  const sel = document.getElementById("spot");
+  const groups = [...new Set(SPOTS.map(sp => sp.group))];
+  sel.innerHTML = groups.map(g => `<optgroup label="${esc(g)}">${SPOTS.filter(sp => sp.group === g)
+    .map(sp => `<option value="${sp.id}">${esc(sp.name)}</option>`).join("")}</optgroup>`).join("");
+  sel.addEventListener("change", e => selectSpot(e.target.value));
+  window.addEventListener("hashchange", () => selectSpot(location.hash.slice(1)));
+})();
+
 document.getElementById("reload").addEventListener("click", refresh);
 document.getElementById("facing").addEventListener("change", e => {
   const v = ((+e.target.value % 360) + 360) % 360;
   if (isNaN(v)) return;
   facing = v;
-  try { localStorage.setItem("kou-facing", String(v)); } catch (err) {}
+  try { localStorage.setItem(SPOT.id === "kou" ? "kou-facing" : `facing-${SPOT.id}`, String(v)); } catch (err) {}
   if (DATA) render();
 });
+applySpot();
 refresh();
 </script>
 </body>
