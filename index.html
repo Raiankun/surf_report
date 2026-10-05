@@ -6,70 +6,105 @@
 <title>国府の浜 波予報</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+Antique:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: tide-chart instrument panel — now strip, live cam + JMA forecast, 4-day timeline, day cards, news */
+/* Layout: 秋の夕暮れの国府白浜 — illustrated hero (sunset, waves, 阿児の松原), now panel + gear, live cam + JMA, 4-day timeline, day cards, news */
 :root {
-  --bg: #edf2f3;
-  --surface: #f8fbfb;
-  --fg: #0d2830;
-  --muted: #5b7279;
-  --line: #cfdcdf;
-  --accent: #0a7488;
-  --tide: #3b63c9;
-  --sun: #d9861a;
+  --bg: #ecefe9;
+  --surface: #fbfaf5;
+  --fg: #1f2a2f;
+  --muted: #66727a;
+  --line: #dcd9cc;
+  --accent: #d75f2a;   /* 柿色 */
+  --sea: #23718a;
+  --tide: #3d5fb2;
+  --sun: #e39a2d;
   --moon-lit: #f3e6b4;
   --moon-dark: #2a3e46;
-  --night: rgba(13, 40, 48, 0.07);
-  --good: #13896b;
-  --ok: #c08a12;
-  --bad: #c2483d;
-  --star: #e2a516;
-  --font-display: "Zen Kaku Gothic Antique", "Hiragino Sans", sans-serif;
-  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --night: rgba(31, 42, 47, 0.07);
+  --good: #2c8c5a;
+  --ok: #c98a14;
+  --bad: #c4473a;
+  --star: #e8a326;
+  --skin: #f0c49e;
+  --hair: #3a271b;
+  --suit: #263540;
+  --suit-hi: #3a4d5a;
+  --sky1: #f8dcae; --sky2: #f1a476; --sun-disc: #fff1cf;
+  --sea1: #3b8399; --sea2: #286a80; --sea3: #1a4f63; --foam: #fffaf0;
+  --sand: #e8c897; --pine: #2c3b33; --leaf1: #d75f2a; --leaf2: #e3a12f;
+  --hero-fg: #3b2314;
+  --font-display: "Dela Gothic One", "Hiragino Sans", sans-serif;
+  --font-body: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
   --font-data: "JetBrains Mono", ui-monospace, Menlo, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #08171c; --surface: #0f242b; --fg: #dcebee; --muted: #8aa4ab; --line: #1f3a42;
-    --accent: #37b7c9; --tide: #7f9cf0; --sun: #f0a94a; --moon-lit: #f3e6b4; --moon-dark: #1b2f36;
+    --bg: #0d1820; --surface: #14232c; --fg: #ece5d6; --muted: #9ba6ab; --line: #263844;
+    --accent: #f0844e; --sea: #4fb3c8; --tide: #8fa6f0; --sun: #f2b85a; --moon-lit: #f3e6b4; --moon-dark: #1b2f36;
     --night: rgba(0, 0, 0, 0.28);
-    --good: #3cc79c; --ok: #e3b23c; --bad: #ef7a6f; --star: #f2c14e; color-scheme: dark;
+    --good: #4cc68e; --ok: #e3b23c; --bad: #ef7a6f; --star: #f2c14e;
+    --skin: #e2b48e; --hair: #2b1c13; --suit: #34454f; --suit-hi: #4d616c;
+    --sky1: #141c33; --sky2: #4b3352; --sun-disc: #f3e6b4;
+    --sea1: #22506a; --sea2: #183d52; --sea3: #0f2b3b; --foam: #cfe3e8;
+    --sand: #3a3226; --pine: #070e12; --leaf1: #e0703c; --leaf2: #d9a13a;
+    --hero-fg: #f6ecd6; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #08171c; --surface: #0f242b; --fg: #dcebee; --muted: #8aa4ab; --line: #1f3a42;
-  --accent: #37b7c9; --tide: #7f9cf0; --sun: #f0a94a; --moon-lit: #f3e6b4; --moon-dark: #1b2f36;
+  --bg: #0d1820; --surface: #14232c; --fg: #ece5d6; --muted: #9ba6ab; --line: #263844;
+  --accent: #f0844e; --sea: #4fb3c8; --tide: #8fa6f0; --sun: #f2b85a; --moon-lit: #f3e6b4; --moon-dark: #1b2f36;
   --night: rgba(0, 0, 0, 0.28);
-  --good: #3cc79c; --ok: #e3b23c; --bad: #ef7a6f; --star: #f2c14e; color-scheme: dark;
+  --good: #4cc68e; --ok: #e3b23c; --bad: #ef7a6f; --star: #f2c14e;
+  --skin: #e2b48e; --hair: #2b1c13; --suit: #34454f; --suit-hi: #4d616c;
+  --sky1: #141c33; --sky2: #4b3352; --sun-disc: #f3e6b4;
+  --sea1: #22506a; --sea2: #183d52; --sea3: #0f2b3b; --foam: #cfe3e8;
+  --sand: #3a3226; --pine: #070e12; --leaf1: #e0703c; --leaf2: #d9a13a;
+  --hero-fg: #f6ecd6; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
-  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  font-family: var(--font-body); font-size: 15px; line-height: 1.65;
 }
-.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
-.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; }
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; }
 .stack > *, .wrap > * { min-width: 0; }
-header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
-h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: 0.02em; }
-.sub { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
-.meta { font-family: var(--font-data); font-size: 12px; color: var(--muted); text-align: right; display: grid; gap: 4px; justify-items: end; }
 button { font: inherit; cursor: pointer; }
-.btn { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 6px; padding: 4px 12px; font-size: 13px; }
-.btn:hover { border-color: var(--accent); }
-.btn:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.label { font-size: 11px; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; }
+.btn { border: 0; background: var(--accent); color: #fff; border-radius: 99px; padding: 5px 16px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 0 rgba(0,0,0,.18); transition: transform .12s; }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(1px); box-shadow: none; }
+.btn:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, .cam-play:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.label { font-size: 11px; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
 a { color: var(--accent); }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
-section > h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin: 0 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight: 400; color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+section > h2 { font-family: var(--font-display); font-weight: 400; font-size: 21px; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+section > h2::before { content: ""; width: 12px; height: 12px; flex: none; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--muted); }
+
+/* hero */
+.hero { position: relative; border-radius: 24px; overflow: hidden; min-height: clamp(210px, 32vw, 280px); display: flex; flex-direction: column; justify-content: space-between; padding: 22px clamp(18px, 4vw, 34px); color: var(--hero-fg); isolation: isolate; }
+.hero > svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.hero .place { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; }
+.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 7vw, 54px); line-height: 1.1; margin: 4px 0 0; letter-spacing: 0.02em; text-wrap: balance; }
+.hero .sub { font-size: 13px; margin: 6px 0 0; font-weight: 500; max-width: 34em; }
+.meta { font-family: var(--font-data); font-size: 12px; display: grid; gap: 6px; justify-items: end; }
+.wave-anim { animation: drift var(--dur, 9s) linear infinite; }
+@keyframes drift { to { transform: translateX(var(--shift, -240px)); } }
+.leaf { animation: fall var(--dur, 12s) linear infinite; animation-delay: var(--delay, 0s); transform-box: fill-box; }
+@keyframes fall {
+  0% { transform: translate(0, -30px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate(var(--dx, -120px), 300px) rotate(540deg); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .wave-anim, .leaf { animation: none; } .leaf { opacity: 0.9; } }
 
 /* now panel */
-.now { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr); gap: 20px; padding: 22px; }
+.now { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr); gap: 22px; padding: 24px; }
 .verdict { display: grid; gap: 6px; align-content: start; }
-.size-word { font-family: var(--font-display); font-weight: 900; font-size: clamp(34px, 7vw, 52px); line-height: 1.05; }
+.size-word { font-family: var(--font-display); font-size: clamp(38px, 8vw, 58px); line-height: 1.05; color: var(--sea); }
 .stars { color: var(--star); font-size: 22px; letter-spacing: 2px; }
 .stars .off { color: var(--line); }
 .verdict-text { font-size: 14px; color: var(--muted); }
@@ -79,27 +114,41 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .fact .v small { font-size: 12px; font-weight: 400; color: var(--muted); }
 .fact .d { font-size: 12px; color: var(--muted); }
 .pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 9px; border-radius: 99px; color: #fff; white-space: nowrap; }
-.pill.good { background: var(--good); } .pill.ok { background: var(--ok); } .pill.bad { background: var(--bad); } .pill.calm { background: var(--accent); }
+.pill.good { background: var(--good); } .pill.ok { background: var(--ok); } .pill.bad { background: var(--bad); } .pill.calm { background: var(--sea); }
 .tide-name { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 8px; border-radius: 99px; border: 1px solid var(--tide); color: var(--tide); white-space: nowrap; }
 
+/* gear */
+.gear { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 26px; padding: 20px 24px; align-items: center; }
+.gear-temp { display: grid; justify-items: center; gap: 2px; padding-right: 26px; border-right: 2px dashed var(--line); }
+.gear-temp .big { font-family: var(--font-display); font-size: 44px; line-height: 1; color: var(--sea); }
+.gear-temp .big small { font-size: 18px; }
+.gear-temp .d { font-size: 12px; color: var(--muted); text-align: center; }
+.outfits { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; }
+.outfit { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: center; min-width: 0; }
+.outfit svg { display: block; }
+.outfit .nm { font-family: var(--font-display); font-size: 18px; line-height: 1.2; }
+.outfit .or { font-size: 11px; font-weight: 700; color: var(--accent); }
+.outfit .ds { font-size: 12px; color: var(--muted); max-width: 18em; }
+.gear-tip { grid-column: 1 / -1; font-size: 13px; background: var(--bg); border-radius: 12px; padding: 8px 14px; }
+
 /* cam + jma */
-.duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
 .cam { overflow: hidden; }
-.cam-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--moon-dark); display: grid; place-items: center; }
+.cam-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: linear-gradient(180deg, var(--sea2), var(--sea3)); display: grid; place-items: center; }
 .cam-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.cam-play { display: grid; justify-items: center; gap: 8px; color: #e8f2f4; background: none; border: 0; padding: 20px; }
-.cam-play .circle { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #e8f2f4; display: grid; place-items: center; transition: transform .15s; }
-.cam-play:hover .circle { transform: scale(1.06); }
-.cam-play .circle svg { width: 24px; height: 24px; margin-left: 4px; fill: #e8f2f4; }
-.cam-play span { font-size: 13px; }
+.cam-play { display: grid; justify-items: center; gap: 8px; color: var(--foam); background: none; border: 0; padding: 20px; }
+.cam-play .circle { width: 66px; height: 66px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; transition: transform .15s; box-shadow: 0 4px 0 rgba(0,0,0,.2); }
+.cam-play:hover .circle { transform: scale(1.07); }
+.cam-play .circle svg { width: 24px; height: 24px; margin-left: 4px; fill: #fff; }
+.cam-play span { font-size: 13px; font-weight: 700; }
 .cam-links { padding: 12px 16px 14px; display: grid; gap: 6px; font-size: 13px; }
 .cam-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .jma { padding: 18px; display: grid; gap: 14px; }
 .jma-day { display: grid; gap: 4px; }
-.jma-day h3 { margin: 0; font-size: 14px; font-family: var(--font-display); }
+.jma-day h3 { margin: 0; font-size: 15px; font-weight: 700; }
 .jma .kv { font-size: 13px; }
 .pops { display: flex; gap: 4px; flex-wrap: wrap; font-family: var(--font-data); font-size: 12px; }
-.pops span { border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; }
+.pops span { background: var(--bg); border-radius: 6px; padding: 0 6px; }
 .jma details { font-size: 13px; color: var(--muted); }
 .jma details p { margin: 6px 0 0; white-space: pre-line; }
 .jma summary { cursor: pointer; color: var(--fg); font-weight: 700; }
@@ -112,34 +161,36 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .chart-box .daylabel { font-family: var(--font-body); font-weight: 700; fill: var(--fg); font-size: 12px; }
 .chart-box .wxchar { font-family: var(--font-body); font-weight: 700; font-size: 11px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); margin-top: 8px; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
 
 /* day cards */
 .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .day { padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
-.day h3 { margin: 0; font-family: var(--font-display); font-size: 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.day h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .day h3 .stars { font-size: 15px; }
 .best { font-size: 14px; }
-.best b { font-family: var(--font-data); font-size: 17px; }
+.best b { font-family: var(--font-data); font-size: 17px; color: var(--accent); }
 .kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; font-size: 13px; margin: 0; }
 .kv dt { color: var(--muted); white-space: nowrap; }
 .kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 .tides { font-family: var(--font-data); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .moonline { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.day-gear { display: flex; align-items: center; gap: 10px; background: var(--bg); border-radius: 12px; padding: 4px 10px; font-size: 13px; }
+.day-gear .icons { display: flex; gap: 2px; }
 
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
-.news li { border-top: 1px solid var(--line); }
+.news li { border-top: 1px dashed var(--line); }
 .news li:first-child { border-top: 0; }
-.news a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 11px 16px; text-decoration: none; color: var(--fg); }
+.news a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 11px 18px; text-decoration: none; color: var(--fg); }
 .news a:hover { background: var(--bg); }
 .news .t { font-size: 14px; font-weight: 500; }
-.news .s { font-size: 12px; color: var(--muted); grid-column: 1; }
+.news .s { font-size: 12px; color: var(--accent); font-weight: 700; grid-column: 1; }
 .news .dt { font-family: var(--font-data); font-size: 12px; color: var(--muted); grid-row: 1 / span 2; grid-column: 2; align-self: center; white-space: nowrap; }
 
 /* settings + notes */
 .settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-size: 13px; color: var(--muted); }
-.settings input { width: 68px; font: inherit; font-family: var(--font-data); padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); }
+.settings input { width: 68px; font: inherit; font-family: var(--font-data); padding: 3px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); }
 .notes { font-size: 12.5px; color: var(--muted); max-width: 72ch; display: grid; gap: 6px; }
 .notes p { margin: 0; }
 .status { padding: 32px 16px; text-align: center; color: var(--muted); font-size: 13px; }
@@ -148,7 +199,9 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 @media (max-width: 760px) {
   .now, .duo { grid-template-columns: minmax(0, 1fr); }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .meta { text-align: left; justify-items: start; }
+  .gear { grid-template-columns: minmax(0, 1fr); }
+  .gear-temp { border-right: 0; padding-right: 0; border-bottom: 2px dashed var(--line); padding-bottom: 10px; grid-auto-flow: column; align-items: baseline; justify-content: start; gap: 12px; }
+  .meta { justify-items: start; }
   .news a { grid-template-columns: minmax(0, 1fr); }
   .news .dt { grid-row: auto; grid-column: 1; }
 }
@@ -156,15 +209,52 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <div class="label">伊勢志摩・志摩市阿児町国府</div>
-      <h1>国府の浜 波予報</h1>
-      <p class="sub">気象予報データから、サイズ・風・うねり・潮・水温をサーフィン向けに判定します</p>
-    </div>
-    <div class="meta">
-      <span id="updated">読み込み中…</span>
-      <button class="btn" id="reload" type="button">最新に更新</button>
+  <header class="hero">
+    <svg class="scene" viewBox="0 0 1200 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" style="stop-color:var(--sky1)"/><stop offset="1" style="stop-color:var(--sky2)"/>
+        </linearGradient>
+      </defs>
+      <rect width="1200" height="300" fill="url(#sky)"/>
+      <circle cx="1090" cy="196" r="92" fill="var(--sun-disc)" opacity="0.25"/>
+      <circle cx="1090" cy="196" r="46" fill="var(--sun-disc)"/>
+      <rect y="200" width="1200" height="100" fill="var(--sea1)"/>
+      <g stroke="var(--sun-disc)" stroke-width="3" stroke-linecap="round" opacity="0.7">
+        <line x1="1052" y1="208" x2="1128" y2="208"/><line x1="1064" y1="216" x2="1116" y2="216"/><line x1="1076" y1="224" x2="1104" y2="224"/>
+      </g>
+      <path id="wave1" class="wave-anim" fill="var(--sea2)" style="--shift:-120px;--dur:7s"/>
+      <path id="wave1f" class="wave-anim" fill="none" stroke="var(--foam)" stroke-width="2" opacity="0.5" style="--shift:-120px;--dur:7s"/>
+      <path id="wave2" class="wave-anim" fill="var(--sea3)" style="--shift:-180px;--dur:9s"/>
+      <path id="wave2f" class="wave-anim" fill="none" stroke="var(--foam)" stroke-width="2.5" opacity="0.75" style="--shift:-180px;--dur:9s"/>
+      <path d="M0,300 L0,286 C300,274 700,284 1200,270 L1200,300Z" fill="var(--sand)"/>
+      <g fill="var(--pine)" transform="translate(0,118) scale(0.62)">
+        <path d="M0,214 C60,198 140,200 210,222 C240,232 262,252 272,300 L272,320 L0,320Z"/>
+        <path d="M58,206 C60,172 70,140 92,112" stroke="var(--pine)" stroke-width="5" fill="none"/>
+        <ellipse cx="94" cy="110" rx="36" ry="9"/><ellipse cx="68" cy="136" rx="26" ry="8"/><ellipse cx="114" cy="130" rx="22" ry="7"/><ellipse cx="80" cy="160" rx="20" ry="6"/>
+        <path d="M152,214 C148,190 142,166 140,142" stroke="var(--pine)" stroke-width="4.5" fill="none"/>
+        <ellipse cx="140" cy="140" rx="30" ry="8"/><ellipse cx="164" cy="162" rx="22" ry="7"/><ellipse cx="122" cy="168" rx="18" ry="6"/>
+        <path d="M28,212 C26,196 24,182 22,166" stroke="var(--pine)" stroke-width="4" fill="none"/>
+        <ellipse cx="22" cy="164" rx="22" ry="7"/><ellipse cx="38" cy="184" rx="16" ry="6"/>
+      </g>
+      <g>
+        <g transform="translate(760,10)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf1)" style="--dur:11s;--delay:0s;--dx:-140px"/></g>
+        <g transform="translate(1010,0)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf2)" style="--dur:13s;--delay:-4s;--dx:-180px"/></g>
+        <g transform="translate(1130,20)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf1)" style="--dur:10s;--delay:-7s;--dx:-110px"/></g>
+        <g transform="translate(600,0)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf2)" style="--dur:14s;--delay:-9s;--dx:-90px"/></g>
+        <g transform="translate(400,5)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf1)" style="--dur:12s;--delay:-2s;--dx:-130px"/></g>
+      </g>
+    </svg>
+    <div class="hero-top">
+      <div>
+        <div class="place">伊勢志摩・志摩市阿児町国府</div>
+        <h1>国府の浜 波予報</h1>
+        <p class="sub">波・風・潮・水温から、今日いつ入るか、何を着るかまで</p>
+      </div>
+      <div class="meta">
+        <span id="updated">読み込み中…</span>
+        <button class="btn" id="reload" type="button">最新に更新</button>
+      </div>
     </div>
   </header>
 
@@ -288,13 +378,62 @@ const starsOf = score => clamp(1 + Math.round(score / 25), 1, 5);
 const STAR_WORD = { 1: "厳しい", 2: "いまいち", 3: "まずまず", 4: "良い", 5: "最高" };
 const starHTML = n => `<span class="stars" aria-label="5段階中${n}">${"★".repeat(n)}<span class="off">${"★".repeat(5 - n)}</span></span>`;
 const starColor = n => n >= 4 ? "var(--good)" : n === 3 ? "var(--ok)" : n === 2 ? "var(--star)" : "var(--bad)";
-function wetsuit(t) {
-  if (t >= 25) return "ボードショーツ／タッパー";
-  if (t >= 22) return "スプリング／タッパー";
-  if (t >= 19) return "シーガル／ロンスプ";
-  if (t >= 16) return "3/2mm フルスーツ";
-  if (t >= 13) return "5/3mm フルスーツ";
-  return "セミドライ＋ブーツ";
+// --- gear (what to wear) -------------------------------------------------------
+const GEAR = {
+  board:      { name: "ボードショーツ", desc: "水着だけでOK。日焼け止めを忘れずに", fit: { legs: "none", shorts: true } },
+  tappa:      { name: "タッパー", desc: "長袖ジャケット＋ボードショーツ。風よけと日焼け対策に", fit: { torso: true, arms: "long", legs: "none", shorts: true } },
+  spring:     { name: "スプリング", desc: "半袖・半ズボンのウェット", fit: { torso: true, arms: "short", legs: "short" } },
+  seagull:    { name: "シーガル", desc: "半袖・長ズボン。足元が冷える日に", fit: { torso: true, arms: "short", legs: "long" } },
+  longspring: { name: "ロングスプリング", desc: "長袖・半ズボン。腕の冷えと日焼けを防ぐ", fit: { torso: true, arms: "long", legs: "short" } },
+  full32:     { name: "3/2mm フルスーツ", desc: "長袖・長ズボン。秋の定番", fit: { torso: true, arms: "long", legs: "long" } },
+  full53:     { name: "5/3mm フルスーツ", desc: "厚手のフルスーツ。ブーツもあると安心", fit: { torso: true, arms: "long", legs: "long", boots: true } },
+  semidry:    { name: "セミドライ", desc: "冬用の保温スーツ。ブーツ・グローブ・キャップも", fit: { torso: true, arms: "long", legs: "long", boots: true, gloves: true, hood: true } },
+};
+function gearFor(t) {
+  if (t >= 25) return ["board", "tappa"];
+  if (t >= 22) return ["spring", "tappa"];
+  if (t >= 19) return ["seagull", "longspring"];
+  if (t >= 16) return ["full32"];
+  if (t >= 13) return ["full53"];
+  return ["semidry"];
+}
+const gearNames = t => gearFor(t).map(k => GEAR[k].name).join("／");
+
+// front-facing surfer figure; each body part is skin or neoprene depending on the suit
+function suitSVG(key, w, withBoard) {
+  const f = GEAR[key].fit, SK = "var(--skin)", SU = "var(--suit)", SH = "var(--accent)";
+  const h = w * 112 / 64;
+  const arm = (x, rot) => `<g transform="translate(${x},28) rotate(${rot})">
+      <rect x="-4" y="0" width="8" height="20" rx="4" fill="${f.arms && f.arms !== "none" ? SU : SK}"/>
+      <rect x="-3.5" y="18" width="7" height="18" rx="3.5" fill="${f.arms === "long" ? SU : SK}"/>
+      <circle cx="0" cy="39" r="3.6" fill="${f.gloves ? SU : SK}"/></g>`;
+  const leg = (x, fx) => `<g transform="translate(${x},56)">
+      <rect x="-5.5" y="0" width="11" height="22" rx="5" fill="${f.legs === "short" || f.legs === "long" ? SU : SK}"/>
+      <rect x="-4.5" y="20" width="9" height="22" rx="4" fill="${f.legs === "long" ? SU : SK}"/>
+      ${f.shorts ? `<rect x="-6" y="0" width="12" height="15" rx="3" fill="${SH}"/><line x1="-3" y1="3" x2="-3" y2="14" stroke="var(--surface)" stroke-width="1.2" opacity=".6"/>` : ""}
+      <ellipse cx="${fx}" cy="44" rx="5.5" ry="2.8" fill="${f.boots ? SU : SK}"/></g>`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 64 112" aria-hidden="true">
+    ${withBoard ? `<g transform="rotate(8 54 60)"><ellipse cx="54" cy="60" rx="7" ry="50" fill="var(--sun)"/><line x1="54" y1="12" x2="54" y2="108" stroke="var(--accent)" stroke-width="1.6"/></g>` : ""}
+    ${arm(19, 14)}${arm(41, -14)}
+    ${leg(25, -1)}${leg(35, 1)}
+    <rect x="27" y="19" width="6" height="7" fill="${f.hood ? SU : SK}"/>
+    <path d="M18,26 Q30,22 42,26 L41,58 Q30,61 19,58 Z" fill="${f.torso ? SU : SK}"/>
+    ${f.torso ? `<path d="M19,37 L41,32" stroke="var(--accent)" stroke-width="2.6"/><path d="M19,41 L41,36" stroke="var(--suit-hi)" stroke-width="1.4"/>` : ""}
+    ${f.shorts ? `<rect x="19" y="52" width="22" height="9" rx="2.5" fill="${SH}"/>` : ""}
+    ${f.hood ? `<circle cx="30" cy="12" r="11" fill="${SU}"/><ellipse cx="30" cy="13.5" rx="6.6" ry="7" fill="${SK}"/>`
+             : `<circle cx="30" cy="12" r="9" fill="${SK}"/><path d="M21,11 C21,1.5 39,1.5 39,11 C35,7 25,7 21,11Z" fill="var(--hair)"/>`}
+    <circle cx="27" cy="13" r="1.1" fill="var(--hair)"/><circle cx="33" cy="13" r="1.1" fill="var(--hair)"/>
+    <path d="M27.5,16.5 Q30,18.6 32.5,16.5" stroke="var(--hair)" stroke-width="1" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function gearTip(sst, today, cur) {
+  if (!today) return "";
+  if (cur.gust >= 9) return "風が強く体が冷えやすい日。迷ったらワンランク厚めを。";
+  if (today.tmin <= 16 && sst >= 19) return `朝の気温は ${Math.round(today.tmin)}℃ まで下がります。上がったあとの上着やポンチョがあると快適です。`;
+  if ((today.uv ?? 0) >= 6) return `日差しが強め（UV ${Math.round(today.uv)}）。顔と首の日焼け止めをしっかり。`;
+  if (sst - today.tmax >= 3) return "海の中のほうが暖かい日。着替えは手早く。";
+  return "秋の海は日ごとに冷えていきます。水温の下がり具合をチェックしておきましょう。";
 }
 const WX = c => c === 0 ? "快晴" : c <= 2 ? "晴れ" : c === 3 ? "くもり" : c <= 48 ? "霧" : c <= 57 ? "霧雨" : c <= 67 ? "雨" : c <= 77 ? "雪" : c <= 82 ? "にわか雨" : c <= 86 ? "にわか雪" : "雷雨";
 const WX_CHAR = c => c <= 1 ? ["晴", "var(--sun)"] : c <= 3 ? ["曇", "var(--muted)"] : c <= 48 ? ["霧", "var(--muted)"] : c <= 67 || (c >= 80 && c <= 82) ? ["雨", "var(--tide)"] : c <= 86 ? ["雪", "var(--tide)"] : ["雷", "var(--bad)"];
@@ -424,7 +563,21 @@ function render() {
   const today = daily[cur.key];
   const sstDay = byDay[cur.key].map(h => h.sst).filter(v => v != null);
 
-  document.getElementById("now").innerHTML = `
+  const gearT = cur.sst ?? (sstDay.length ? sstDay[0] : null);
+  const gearHTML = gearT == null ? "" : `
+  <section>
+    <h2>今日のおすすめの格好 <small>水温と気温から</small></h2>
+    <div class="panel gear">
+      <div class="gear-temp"><span class="label">いまの水温</span><span class="big">${gearT.toFixed(1)}<small>℃</small></span><span class="d">気温 ${Math.round(cur.temp)}℃</span></div>
+      <div class="outfits">${gearFor(gearT).map((k, i) => `
+        <div class="outfit">${suitSVG(k, 66, i === 0)}
+          <div>${i ? '<div class="or">または</div>' : ""}<div class="nm">${GEAR[k].name}</div><div class="ds">${GEAR[k].desc}</div></div>
+        </div>`).join("")}</div>
+      <div class="gear-tip">${gearTip(gearT, today, cur)}</div>
+    </div>
+  </section>`;
+
+  document.getElementById("now").innerHTML = `<div class="stack">
   <section class="panel now" aria-label="現在の状況">
     <div class="verdict">
       <div class="label">${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
@@ -437,12 +590,12 @@ function render() {
       <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
       <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
       <div class="fact"><span class="label">潮位</span><span class="v">${cur.tide != null ? (cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
-      <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? wetsuit(cur.sst) : ""}${sstDay.length ? `<br>今日 ${Math.min(...sstDay).toFixed(1)}〜${Math.max(...sstDay).toFixed(1)}℃` : ""}</span></div>
+      <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? gearNames(cur.sst) : ""}${sstDay.length ? `<br>今日 ${Math.min(...sstDay).toFixed(1)}〜${Math.max(...sstDay).toFixed(1)}℃` : ""}</span></div>
       <div class="fact"><span class="label">天気・気温</span><span class="v">${Math.round(cur.temp)}<small> ℃</small></span><span class="d">${WX(cur.code)}・降水 ${cur.pop ?? "—"}%${today ? `<br>最高 ${Math.round(today.tmax)}℃／最低 ${Math.round(today.tmin)}℃・UV ${Math.round(today.uv ?? 0)}` : ""}</span></div>
       <div class="fact"><span class="label">月齢・潮</span><span class="v">${moonSVG(age, 22)}${age.toFixed(1)}</span><span class="d"><span class="tide-name">${tideName(age)}</span> ${phaseName(age)}<br>次の満月 ${md(nextPhase(now, SYNODIC / 2))}・新月 ${md(nextPhase(now, SYNODIC - 0.0001))}</span></div>
       <div class="fact"><span class="label">日の出・日の入</span><span class="v">${today ? hm(today.rise) : "—"}</span><span class="d">${today ? `日の入 ${hm(today.set)}` : ""}</span></div>
     </div>
-  </section>`;
+  </section>${gearHTML}</div>`;
 
   const dayCards = Object.keys(byDay).map(k => dayCard(k, byDay[k], daily[k], extremes)).join("");
   document.getElementById("forecast").innerHTML = `
@@ -517,9 +670,10 @@ function dayCard(k, list, dd, extremes) {
       <dt>風 午前</dt><dd>${windSum(am)}</dd>
       <dt>風 午後</dt><dd>${windSum(pm)}</dd>
       <dt>天気</dt><dd>${wx}・${dd ? `${Math.round(dd.tmax)}℃／${Math.round(dd.tmin)}℃・降水 ${dd.popMax ?? "—"}%` : ""}</dd>
-      <dt>水温</dt><dd>${sstAvg != null ? `${sstAvg.toFixed(1)}℃・${wetsuit(sstAvg)}` : "—"}</dd>
+      <dt>水温</dt><dd>${sstAvg != null ? `${sstAvg.toFixed(1)}℃` : "—"}</dd>
       <dt>日の出</dt><dd>${dd ? `${hm(dd.rise)}／日の入 ${hm(dd.set)}` : "—"}</dd>
     </dl>
+    ${sstAvg != null ? `<div class="day-gear"><span class="icons">${gearFor(sstAvg).map(k => suitSVG(k, 22)).join("")}</span><span>${gearNames(sstAvg)}</span></div>` : ""}
     <div class="moonline">${moonSVG(age, 18)}<span>月齢 ${age.toFixed(1)}</span><span class="tide-name">${tideName(age)}</span></div>
     <div class="tides">${tides || "<span>潮汐データなし</span>"}</div>
   </article>`;
@@ -581,8 +735,8 @@ function chartSVG(hours, daily, extremes, now) {
     s += `<line x1="${L}" x2="${W - 12}" y1="${wy(v)}" y2="${wy(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${L - 4}" y="${wy(v) + 3}" text-anchor="end">${v}m</text>`;
   });
   const wl = hours.map((h, i) => `${i ? "L" : "M"}${x(i) + HOUR_W / 2},${wy(h.wave)}`).join(" ");
-  s += `<path d="${wl} L${x(n - 1) + HOUR_W / 2},${wy(0)} L${x(0) + HOUR_W / 2},${wy(0)} Z" fill="var(--accent)" fill-opacity="0.22"/>`;
-  s += `<path d="${wl}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
+  s += `<path d="${wl} L${x(n - 1) + HOUR_W / 2},${wy(0)} L${x(0) + HOUR_W / 2},${wy(0)} Z" fill="var(--sea)" fill-opacity="0.22"/>`;
+  s += `<path d="${wl}" fill="none" stroke="var(--sea)" stroke-width="2"/>`;
   hours.forEach((h, i) => {
     if (h.t.getHours() % 6 === 0) s += `<text x="${x(i) + HOUR_W / 2}" y="${wy(h.wave) - 5}" text-anchor="middle" style="fill:var(--fg)">${h.wave.toFixed(1)}</text>`;
   });
@@ -604,7 +758,7 @@ function chartSVG(hours, daily, extremes, now) {
   const wc = R.wind[0] + 14;
   hours.forEach((h, i) => {
     const cx = x(i) + HOUR_W / 2;
-    const col = h.windI.cls === "good" ? "var(--good)" : h.windI.cls === "ok" ? "var(--ok)" : h.windI.cls === "calm" ? "var(--accent)" : "var(--bad)";
+    const col = h.windI.cls === "good" ? "var(--good)" : h.windI.cls === "ok" ? "var(--ok)" : h.windI.cls === "calm" ? "var(--sea)" : "var(--bad)";
     const len = clamp(5 + h.windSpeed * 0.8, 5, 10);
     s += `<g transform="translate(${cx},${wc}) rotate(${(h.windDir + 180) % 360})"><line x1="0" y1="${len}" x2="0" y2="${-len}" stroke="${col}" stroke-width="2"/><path d="M0,${-len - 2} L-4,${-len + 4} L4,${-len + 4} Z" fill="${col}"/></g>`;
     s += `<text x="${cx}" y="${R.wind[1]}" text-anchor="middle">${Math.round(h.windSpeed)}</text>`;
@@ -695,6 +849,16 @@ async function refresh() {
     document.getElementById("now").innerHTML = `<div class="status err">予報データを取得できませんでした（${esc(e.message)}）。ネット接続を確認して「最新に更新」を押してください。</div>`;
   }
 }
+
+// hero waves: one extra wavelength on each side so the drift loops seamlessly
+function heroWave(id, y, amp, wl) {
+  let d = `M${-wl},${y}`;
+  for (let x = -wl; x < 1200 + wl * 2; x += wl) d += ` q${wl / 4},${-amp} ${wl / 2},0 t${wl / 2},0`;
+  document.getElementById(id + "f")?.setAttribute("d", d);
+  document.getElementById(id).setAttribute("d", d + ` L${1200 + wl * 2},300 L${-wl},300 Z`);
+}
+heroWave("wave1", 226, 7, 120);
+heroWave("wave2", 254, 10, 180);
 
 document.getElementById("camPlay").addEventListener("click", () => {
   const f = document.getElementById("camFrame");
