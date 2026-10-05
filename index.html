@@ -609,12 +609,14 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
   </section>
 
   <section id="videos">
-    <h2>動画で学ぶ <small>タップするとページ内で再生します</small></h2>
-    <div class="seg" role="tablist" aria-label="動画のレベル">
-      <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="true">初心者向け</button>
-      <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">中級・上級向け</button>
+    <h2>動画で学ぶ <small>新着は開くたびに最新を取得・タップでページ内再生</small></h2>
+    <div class="seg" role="tablist" aria-label="動画の種類">
+      <button type="button" role="tab" id="vtab-new" aria-controls="vids-new" aria-selected="true">新着</button>
+      <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="false">定番・初心者向け</button>
+      <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">定番・中上級向け</button>
     </div>
-    <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg"></div>
+    <div class="vids" id="vids-new" role="tabpanel" aria-labelledby="vtab-new"><p class="status">解説チャンネルの新着動画を取得しています…</p></div>
+    <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg" hidden></div>
     <div class="vids" id="vids-adv" role="tabpanel" aria-labelledby="vtab-adv" hidden></div>
   </section>
 
@@ -668,7 +670,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
   </section>
 
   <section>
-    <h2>サーフィンニュース <small>THE SURF NEWS・SURFMEDIA</small></h2>
+    <h2>サーフィンニュース <small>開くたびに最新を取得・2週間以内の記事だけ表示</small></h2>
     <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
   </section>
 
@@ -1269,17 +1271,17 @@ async function loadNews() {
     return j.items.map(it => ({ title: it.title, link: it.link, date: new Date(String(it.pubDate).replace(" ", "T") + "Z"), source: feed.name }));
   }));
   const items = results.filter(r => r.status === "fulfilled").flatMap(r => r.value)
-    .filter(it => /^https:\/\//.test(it.link))
+    .filter(it => /^https:\/\//.test(it.link) && !isNaN(it.date) && daysAgo(it.date) <= FRESH_DAYS.news)
     .sort((a, b) => b.date - a.date).slice(0, 12);
   if (!items.length) {
-    el.innerHTML = `<li class="status err">ニュースを取得できませんでした。<a href="https://www.surfnews.jp/" target="_blank" rel="noopener">THE SURF NEWS</a>・<a href="https://surfmedia.jp/" target="_blank" rel="noopener">SURFMEDIA</a> で直接ご覧ください。</li>`;
+    el.innerHTML = `<li class="status err">2週間以内のニュースを取得できませんでした。<a href="https://www.surfnews.jp/" target="_blank" rel="noopener">THE SURF NEWS</a>・<a href="https://surfmedia.jp/" target="_blank" rel="noopener">SURFMEDIA</a> で直接ご覧ください。</li>`;
     return;
   }
   el.innerHTML = items.map(it => `
     <li><a href="${esc(it.link)}" target="_blank" rel="noopener">
       <span class="t">${esc(it.title)}</span>
       <span class="s">${esc(it.source)}</span>
-      <span class="dt">${isNaN(it.date) ? "" : `${md(it.date)} ${hm(it.date)}`}</span>
+      <span class="dt">${md(it.date)}・${agoText(it.date)}</span>
     </a></li>`).join("");
 }
 
@@ -1332,34 +1334,76 @@ const VIDEOS = {
     { id: "w6DVFKYeBfA", topic: "スピード（英語）", title: "How to Surf: The Triangle of Speed", ch: "Surf Simply", len: "14:25" },
   ],
 };
-function renderVideos() {
-  for (const [k, list] of Object.entries(VIDEOS)) {
-    document.getElementById(`vids-${k}`).innerHTML = list.map(v => `
+const VIDEO_CHANNELS = [
+  { name: "ヒガシーサー・サーフィン図解", id: "UCB9qQ2r1nm87DOsWqSZcJmA" },
+  { name: "Surf Nation Japan", id: "UCGJksgL6G7iUfnFEITyAVJA" },
+  { name: "田中英義", id: "UCMtvagaOw0IeZJN2RgwyvJA" },
+  { name: "Surf Simply（英語）", id: "UC8bEqBo6HUYBETZZS2AsMlg" },
+  { name: "プロサーファー河村カイサ", id: "UCWxng9kI-8FtFCxl8wWQxAQ" },
+];
+const FRESH_DAYS = { news: 14, video: 45 };
+// calendar days between that date and today (local time)
+const daysAgo = d => Math.round((new Date().setHours(0, 0, 0, 0) - new Date(d).setHours(0, 0, 0, 0)) / 86400e3);
+const agoText = d => { const n = daysAgo(d); return n <= 0 ? "今日" : n === 1 ? "昨日" : `${n}日前`; };
+
+function vidCard(v) {
+  return `
       <article class="vid">
         <button type="button" class="vid-thumb" data-vid="${v.id}" aria-label="${esc(v.title)} を再生">
           <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
           <span class="vid-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l14 8-14 8z"/></svg></span>
-          <span class="vid-len">${v.len}</span>
+          ${v.len ? `<span class="vid-len">${v.len}</span>` : ""}
         </button>
         <div class="vid-body">
           <span class="vid-topic">${esc(v.topic)}</span>
           <h3>${esc(v.title)}</h3>
           <p>${esc(v.ch)}・<a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">YouTubeで開く</a></p>
         </div>
-      </article>`).join("");
-  }
-  document.querySelectorAll(".vid-thumb").forEach(b => b.addEventListener("click", () => {
-    const id = b.dataset.vid;
+      </article>`;
+}
+function bindVidThumbs(root) {
+  root.querySelectorAll(".vid-thumb[data-vid]").forEach(b => b.addEventListener("click", () => {
     const wrap = document.createElement("div");
     wrap.className = "vid-thumb";
-    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="YouTube 動画" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.vid}?autoplay=1&rel=0" title="YouTube 動画" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
     b.replaceWith(wrap);
   }));
+}
+function renderVideos() {
+  for (const [k, list] of Object.entries(VIDEOS)) {
+    const el = document.getElementById(`vids-${k}`);
+    el.innerHTML = list.map(vidCard).join("");
+    bindVidThumbs(el);
+  }
   const tabs = [...document.querySelectorAll('.seg [role="tab"]')];
   tabs.forEach(t => t.addEventListener("click", () => tabs.forEach(o => {
     o.setAttribute("aria-selected", o === t);
     document.getElementById(o.getAttribute("aria-controls")).hidden = o !== t;
   })));
+}
+// newest uploads from how-to channels, via each channel's public RSS feed
+async function loadLatestVideos() {
+  const el = document.getElementById("vids-new");
+  const results = await Promise.allSettled(VIDEO_CHANNELS.map(async c => {
+    const feed = `https://www.youtube.com/feeds/videos.xml?channel_id=${c.id}`;
+    const j = await (await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`)).json();
+    if (j.status !== "ok") throw new Error(j.message || "error");
+    return j.items.map(it => ({
+      id: (String(it.link).match(/[?&]v=([\w-]{11})/) || [])[1],
+      title: it.title, ch: c.name, date: new Date(String(it.pubDate).replace(" ", "T") + "Z"),
+    }));
+  }));
+  const vids = results.filter(r => r.status === "fulfilled").flatMap(r => r.value)
+    .filter(v => v.id && !/#shorts/i.test(v.title) && !isNaN(v.date) && daysAgo(v.date) <= FRESH_DAYS.video)
+    .sort((a, b) => b.date - a.date)
+    .filter((v, i, all) => all.slice(0, i).filter(o => o.ch === v.ch).length < 2) // 1チャンネル2本まで
+    .slice(0, 9);
+  if (!vids.length) {
+    el.innerHTML = `<p class="status">新着動画を取得できませんでした。「定番」タブの動画をご覧ください。</p>`;
+    return;
+  }
+  el.innerHTML = vids.map(v => vidCard({ ...v, topic: `新着・${agoText(v.date)}` })).join("");
+  bindVidThumbs(el);
 }
 
 // --- boards & volume ----------------------------------------------------------------
@@ -1434,6 +1478,7 @@ function calcVolume() {
 }
 (function setupLearn() {
   renderVideos();
+  loadLatestVideos();
   renderBoards();
   try {
     const saved = JSON.parse(localStorage.getItem("vol-inputs") || "null");
