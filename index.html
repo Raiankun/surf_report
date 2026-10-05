@@ -210,6 +210,17 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .steps li::before { content: counter(st); grid-row: span 2; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-display); display: grid; place-items: center; font-size: 15px; }
 .steps b { font-size: 15px; }
 .steps span { font-size: 13.5px; color: var(--muted); }
+.diagram { margin: 0; background: var(--bg); border-radius: 14px; padding: 12px; display: grid; gap: 6px; justify-items: center; }
+.diagram svg { width: 100%; max-width: 520px; height: auto; display: block; }
+.diagram figcaption { font-size: 12px; color: var(--muted); }
+.howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.howto-block { border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; }
+.howto-block h3, .trouble h3 { margin: 0 0 6px; font-size: 15px; color: var(--sea); }
+.howto-block ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: 13px; }
+.trouble dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.trouble dl > div { background: var(--bg); border-radius: 12px; padding: 10px 14px; }
+.trouble dt { font-weight: 700; font-size: 13.5px; color: var(--accent); }
+.trouble dd { margin: 2px 0 0; font-size: 13px; }
 .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .rule { background: var(--bg); border-radius: 14px; padding: 14px 16px; }
 .rule h3 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 16px; }
@@ -324,11 +335,13 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
   <div id="forecast"></div>
 
   <section id="guide">
-    <h2>はじめての人へ <small>用語・乗り方・安全とマナー</small></h2>
+    <h2>はじめての人へ <small>用語・乗り方・パドリング・横に滑る・安全とマナー</small></h2>
     <div class="panel guide">
       <div class="tabs" role="tablist" aria-label="初心者ガイド">
         <button type="button" role="tab" id="tab-words" aria-controls="pane-words" aria-selected="true">用語集</button>
         <button type="button" role="tab" id="tab-ride" aria-controls="pane-ride" aria-selected="false">乗り方の流れ</button>
+        <button type="button" role="tab" id="tab-paddle" aria-controls="pane-paddle" aria-selected="false">パドリング</button>
+        <button type="button" role="tab" id="tab-trim" aria-controls="pane-trim" aria-selected="false">横に滑る</button>
         <button type="button" role="tab" id="tab-safe" aria-controls="pane-safe" aria-selected="false">安全とマナー</button>
       </div>
 
@@ -397,6 +410,124 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
           <li><b>波から降りる・戻る</b><span>波が終わったら、ボードを前に飛ばさないよう後ろ側へ降ります。戻るときは、波に乗っている人の進路を横切らないようにパドルで回り込みます。</span></li>
         </ol>
         <p class="tip">最初はインサイドのスープで、「パドル→立つ」を何度も練習するのがおすすめ。立てるようになってから沖の波に挑戦しましょう。</p>
+      </div>
+
+      <div class="pane" id="pane-paddle" role="tabpanel" aria-labelledby="tab-paddle" hidden>
+        <p class="lead">波に乗れるかどうかは、<b>立つ前のパドリングで8割決まる</b>と言われます。正しい姿勢、いい位置、早めのスタートの3つを押さえましょう。</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 340 150" aria-hidden="true">
+            <rect x="0" y="92" width="340" height="58" fill="var(--sea1)" opacity=".35"/>
+            <line x1="0" y1="92" x2="340" y2="92" stroke="var(--sea)" stroke-width="2"/>
+            <path d="M40,90 L270,88 Q300,86 312,80 Q300,92 270,94 L40,94 Q34,92 40,90Z" fill="var(--sun)"/>
+            <rect x="70" y="78" width="96" height="12" rx="6" fill="var(--suit)"/>
+            <path d="M160,80 Q200,70 236,72 L238,86 Q200,88 162,90Z" fill="var(--suit)"/>
+            <line x1="182" y1="78" x2="226" y2="74" stroke="var(--accent)" stroke-width="2.4"/>
+            <circle cx="252" cy="64" r="11" fill="var(--skin)"/>
+            <path d="M241,62 C241,51 263,51 263,62 C259,57 245,57 241,62Z" fill="var(--hair)"/>
+            <path d="M226,76 Q238,96 236,118" stroke="var(--suit)" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <circle cx="236" cy="121" r="4.5" fill="var(--skin)"/>
+            <path d="M246,118 C256,108 258,96 250,88" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-dasharray="3 3" marker-end="url(#ah)"/>
+            <defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--accent)"/></marker></defs>
+            <g font-size="10.5" font-weight="700" fill="var(--fg)">
+              <path d="M312,82 L322,104" stroke="var(--fg)" stroke-width="1"/><text x="336" y="116" text-anchor="end">ノーズが少し浮く</text>
+              <text x="246" y="34" text-anchor="middle">あごを上げて前を見る</text>
+              <text x="112" y="66" text-anchor="middle">足はそろえて板の上</text>
+              <text x="150" y="132" text-anchor="middle">肩から大きく・深くかく</text>
+            </g>
+          </svg>
+          <figcaption>横から見たパドリングの姿勢</figcaption>
+        </figure>
+        <div class="howto">
+          <div class="howto-block"><h3>1. 寝る位置を決める</h3><ul>
+            <li>ボードのノーズ（先端）が<b>水面から2〜3cm浮く</b>位置が正解。</li>
+            <li>ノーズが沈んで水をかぶる → 体を少し<b>後ろ</b>へ。</li>
+            <li>ノーズが高く上がって進まない → 体を少し<b>前</b>へ。</li>
+            <li>板の中心線に、鼻・おへそ・両足をそろえるとまっすぐ進む。</li>
+          </ul></div>
+          <div class="howto-block"><h3>2. 腕のかき方</h3><ul>
+            <li>指を軽く閉じて、手のひらで水を<b>つかむ</b>感じ。</li>
+            <li>肩から大きく前に伸ばし、<b>胸の下まで深く</b>かく。</li>
+            <li>左右交互に、同じリズムで。水面をバシャバシャたたかない。</li>
+            <li>胸を軽く反らせると、腕が回しやすく前も見やすい。</li>
+          </ul></div>
+          <div class="howto-block"><h3>3. 待つ位置とタイミング</h3><ul>
+            <li>波が崩れ始める<b>ピークの少し横（ショルダー側）</b>で待つ。</li>
+            <li>セットの1本目は見送って、どこで崩れるかを確認するのも手。</li>
+            <li>波が<b>5〜6m後ろ</b>まで来たら、岸の方を向いて漕ぎ始める。</li>
+            <li>振り返って波を確認しながら、だんだんスピードを上げる。</li>
+          </ul></div>
+          <div class="howto-block"><h3>4. 乗れる瞬間</h3><ul>
+            <li>お尻（テール）が持ち上がり、ボードが前に傾く感覚が来る。</li>
+            <li>そこで止めずに<b>さらに2〜3かき</b>強く漕ぐ。これが一番大事。</li>
+            <li>ボードが自分で滑り出したら、テイクオフ（立ち上がる）。</li>
+          </ul></div>
+        </div>
+        <div class="trouble">
+          <h3>うまくいかないときは</h3>
+          <dl>
+            <div><dt>波に置いていかれる</dt><dd>漕ぎ始めが遅いか、最後の2〜3かきで止めている。もっと早く、最後まで漕ぐ。</dd></div>
+            <div><dt>ノーズが刺さって前に転ぶ（パーリング）</dt><dd>位置が前すぎるか、波が掘れすぎている。体を少し後ろにずらし、斜めに漕ぎ出す。</dd></div>
+            <div><dt>立ったら波が抜けていく</dt><dd>立つのが早すぎる。ボードが滑り出すまで漕ぎ続ける。</dd></div>
+            <div><dt>まっすぐ進まない</dt><dd>体が板の中心からずれている。足をそろえ、左右の腕を同じ強さでかく。</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-trim" role="tabpanel" aria-labelledby="tab-trim" hidden>
+        <p class="lead">立てるようになったら、次は<b>崩れていない斜面（ショルダー）を横に走る</b>練習です。まっすぐ岸へ向かうだけより、ずっと長く乗れます。</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 340 230" aria-hidden="true">
+            <defs><marker id="ahg" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--good)"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--muted)"/></marker></defs>
+            <rect width="340" height="230" fill="var(--sea1)" opacity=".18"/>
+            <path d="M0,196 C80,190 240,198 340,190 L340,230 L0,230Z" fill="var(--sand)"/>
+            <text x="170" y="220" text-anchor="middle" font-size="11" font-weight="700" fill="var(--fg)">岸（こちらを向いて乗る）</text>
+            <text x="170" y="16" text-anchor="middle" font-size="10.5" fill="var(--muted)">沖</text>
+            <path d="M10,104 C80,96 160,94 214,98" stroke="var(--sea)" stroke-width="10" stroke-linecap="round" fill="none" opacity=".75"/>
+            <path d="M214,98 C250,102 290,112 330,122 L330,150 C290,140 250,128 214,118Z" fill="var(--foam)" stroke="var(--line)"/>
+            <g fill="var(--line)"><circle cx="246" cy="118" r="2"/><circle cx="270" cy="126" r="2.4"/><circle cx="300" cy="132" r="2"/><circle cx="318" cy="140" r="1.6"/></g>
+            <circle cx="214" cy="104" r="7" fill="var(--accent)"/>
+            <text x="232" y="98" font-size="11" font-weight="700" fill="var(--accent)">ピーク</text>
+            <text x="300" y="166" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">スープ（崩れた波）</text>
+            <text x="96" y="88" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--sea)">ショルダー（まだ崩れていない）</text>
+            <path d="M242,62 L224,96" stroke="var(--good)" stroke-width="2.4" stroke-dasharray="5 4" fill="none" marker-end="url(#ahg)"/>
+            <text x="252" y="52" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--good)">①少し斜めにパドル</text>
+            <path d="M200,114 C176,128 130,128 54,118" stroke="var(--good)" stroke-width="3" fill="none" marker-end="url(#ahg)"/>
+            <text x="128" y="146" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--good)">②立ったら斜面を横へ</text>
+            <path d="M196,70 L150,70" stroke="var(--muted)" stroke-width="1.6" fill="none" marker-end="url(#ahm)"/>
+            <text x="174" y="62" text-anchor="middle" font-size="9.5" fill="var(--muted)">崩れていく向き</text>
+          </svg>
+          <figcaption>上から見た「ライト」の波（岸を向いて右へ走る）</figcaption>
+        </figure>
+        <div class="howto">
+          <div class="howto-block"><h3>波の向きを知る</h3><ul>
+            <li>沖から岸を向いて、<b>右へ崩れていく波がライト、左がレフト</b>。</li>
+            <li>波待ち中に、どちらへ崩れていくかを見ておく。</li>
+            <li>左足が前（レギュラー）の人はライトで<b>波に顔を向けて</b>乗れるので、はじめはこちらが簡単。右足が前（グーフィー）の人はレフト。</li>
+          </ul></div>
+          <div class="howto-block"><h3>斜めにテイクオフ</h3><ul>
+            <li>真岸に向けず、行きたい方向へ<b>10〜30°ほど</b>板を向けて漕ぐ。</li>
+            <li>立った瞬間から、もう横へ走り出せる。</li>
+            <li>最初はスープで、立ってから斜めに進む練習から。</li>
+          </ul></div>
+          <div class="howto-block"><h3>曲がるコツ</h3><ul>
+            <li><b>目線 → 肩 → 腰 → 足</b>の順に、行きたい方向へ向ける。体は見た方へ進む。</li>
+            <li>波に顔を向けている時は<b>つま先側</b>、背中を向けている時は<b>かかと側</b>に体重をのせる。</li>
+            <li>ひざを曲げて低く。棒立ちだとすぐ倒れる。</li>
+          </ul></div>
+          <div class="howto-block"><h3>スピードを保つ（トリム）</h3><ul>
+            <li>斜面の<b>真ん中あたり</b>をキープして走る。</li>
+            <li>遅くなって波に置いていかれそう → <b>前足</b>に体重、少し下へ。</li>
+            <li>速すぎて前に出すぎる → <b>後ろ足</b>に体重、斜面の上へ戻る。</li>
+            <li>慣れたら、斜面を上下にゆるく動いて加速する。</li>
+          </ul></div>
+        </div>
+        <ol class="steps">
+          <li><b>スープでまっすぐ立つ</b><span>崩れた白波で、パドル→立つを安定してできるまで繰り返す。</span></li>
+          <li><b>スープで体重移動</b><span>立ったあと、目線と体重で左右に進む向きを変えてみる。</span></li>
+          <li><b>うねりで斜めにテイクオフ</b><span>崩れる前の波を、ピークの少し横から斜めに漕いでつかまえる。</span></li>
+          <li><b>斜面を横に走る</b><span>ショルダーの真ん中をキープして、できるだけ長く横へ。</span></li>
+        </ol>
+        <p class="tip">波が前で崩れて行き止まりになったら、板を体から離さずに<b>波の後ろ側へ降りる</b>か、板を上に向けて波の裏へ抜けます（プルアウト）。前に飛び込むと、板が後ろから飛んできて危険です。</p>
       </div>
 
       <div class="pane" id="pane-safe" role="tabpanel" aria-labelledby="tab-safe" hidden>
