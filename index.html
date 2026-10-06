@@ -580,6 +580,22 @@ main { overflow-x: clip; }
 .map-pop .btn { justify-self: start; margin-top: 4px; }
 @media (max-width: 760px) { .drive-map { height: 300px; } }
 
+.fac-h { margin: 6px 0 0; font-size: 14.5px; }
+.fac-panel { padding: 14px 16px; margin-bottom: 14px; display: grid; gap: 8px; }
+.fac-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.fac-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; background: var(--bg); border-radius: 12px; padding: 9px 12px; }
+.fac-main { display: grid; gap: 1px; font-size: 14px; min-width: 0; }
+.fac-main small { font-size: 12px; color: var(--muted); }
+.fac-kind { justify-self: start; font-size: 10.5px; font-weight: 700; border-radius: 99px; padding: 0 8px; color: #fff; background: var(--sea); }
+.fac-kind.k-shop { background: var(--accent); } .fac-kind.k-both { background: var(--good); }
+.fac-side { display: grid; justify-items: end; gap: 2px; }
+.fac-time { font-family: var(--font-data); font-weight: 600; font-size: 14px; white-space: nowrap; }
+.fac-time.none { font-family: var(--font-body); font-weight: 400; font-size: 11.5px; color: var(--muted); }
+.fac-links { display: flex; gap: 10px; font-size: 12.5px; font-weight: 700; }
+.fac-pin { background: none; border: 0; }
+.fac-pin span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: #5b3fa0; color: #fff; font: 700 12px/1 sans-serif; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.35); }
+.map-legend .fac { background: #5b3fa0; border-radius: 3px; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -1110,8 +1126,9 @@ main { overflow-x: clip; }
         <h2>ポイントまでの所要時間 <small>地図の印をタップしてポイントを選べます</small></h2>
         <div class="panel drive-map-wrap">
           <div id="driveMap" class="drive-map" role="application" aria-label="ポイントの地図"></div>
-          <div class="map-legend"><span><i class="s5"></i>★4〜5</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span><span><i class="home"></i>出発地</span><span>色はいまの★</span></div>
+          <div class="map-legend"><span><i class="fac"></i>駐車場・ショップ</span><span><i class="s5"></i>★4〜5</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span><span><i class="home"></i>出発地</span><span>色はいまの★</span></div>
         </div>
+        <div class="panel fac-panel"><h3 class="fac-h" id="drFacH"></h3><div id="drFac"></div></div>
         <div class="panel tool">
           <div class="tool-in">
             <label for="drHome">出発地<select id="drHome">
@@ -1320,11 +1337,11 @@ const SPOTS = [
   { id: "jan", name: "ジャン", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市浜島町（南張の東）", wx: [34.3023, 136.735], marine: [34.3023, 136.735], facing: 165, swell: 180, pin: [34.30481, 136.72074], pinName: "近くの駐車場（浜から約1350m）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
     tide: { code: "TB", name: "鳥羽", km: 21 } },
-  { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190, pin: [34.60457, 138.19501], pinName: "近くの駐車場（浜から約100m）",
+  { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190, pin: [34.61307, 138.1857], pinName: "すすき原駐車場（ロングビーチの市営無料駐車場）",
     jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" },
     tide: { code: "OM", name: "御前崎", km: 2 },
     cam: { title: "御前崎のカメラ", links: [["御前埼灯台", "https://camera.mics.kaiho.mlit.go.jp/camstream/omaesaki_lt/", "海上保安庁・ライブ映像"], ["御前崎 坂下", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=96", "BCM・静止画"], ["御前崎 メイン", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=95", "BCM・静止画"]] } },
-  { id: "shizunami", name: "静波", group: "東海（静岡・愛知）", place: "静岡県牧之原市", wx: [34.733, 138.232], marine: [34.733, 138.232], facing: 115, swell: 140, pin: [34.73504, 138.22811], pinName: "近くの駐車場（浜から約400m）",
+  { id: "shizunami", name: "静波", group: "東海（静岡・愛知）", place: "静岡県牧之原市", wx: [34.733, 138.232], marine: [34.733, 138.232], facing: 115, swell: 140, pin: [34.7311, 138.23246], pinName: "静波海水浴場",
     jma: { office: "220000", officeName: "静岡地方気象台", area: "220010", areaName: "静岡県中部", city: "2222600", cityName: "牧之原市" },
     tide: { code: "OM", name: "御前崎", km: 13 },
     cam: { title: "静波のカメラ", links: [["静波 新堤", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=106", "BCM・静止画"]] } },
@@ -1332,28 +1349,28 @@ const SPOTS = [
     jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" },
     tide: { code: "I4", name: "赤羽根", km: 9 },
     cam: { title: "伊良湖のカメラ", links: [["伊良湖岬（伊勢湾海上交通センター）", "https://camera.mics.kaiho.mlit.go.jp/camstream/isewan_martis_no2/", "海上保安庁・ライブ映像"]] } },
-  { id: "akabane", name: "赤羽根", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.603, 137.178], marine: [34.603, 137.178], facing: 175, swell: 170, pin: [34.60742, 137.18985], pinName: "道の駅あかばねロコステーション（浜から約1200m）",
+  { id: "akabane", name: "赤羽根", group: "東海（静岡・愛知）", place: "愛知県田原市", wx: [34.603, 137.178], marine: [34.603, 137.178], facing: 175, swell: 170, pin: [34.60826, 137.19879], pinName: "太平洋ロングビーチ駐車場",
     jma: { office: "230000", officeName: "名古屋地方気象台", area: "230020", areaName: "愛知県東部", city: "2323100", cityName: "田原市" },
     tide: { code: "I4", name: "赤羽根", km: 1 },
     cam: { title: "赤羽根のカメラ", links: [["赤羽根 ロングビーチ", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=9", "BCM・静止画"]] } },
-  { id: "isonoura", name: "磯ノ浦", group: "和歌山", place: "和歌山県和歌山市", wx: [34.260, 135.095], marine: [34.260, 135.095], facing: 285, swell: 210, pin: [34.25983, 135.10547], pinName: "近くの駐車場（浜から約950m）",
+  { id: "isonoura", name: "磯ノ浦", group: "和歌山", place: "和歌山県和歌山市", wx: [34.260, 135.095], marine: [34.260, 135.095], facing: 285, swell: 210, pin: [34.26015, 135.09567], pinName: "マリンパーク磯の浦駐車場",
     jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3020100", cityName: "和歌山市" },
     tide: { code: "WY", name: "和歌山", km: 7 },
     cam: { title: "磯ノ浦のカメラ", links: [["磯ノ浦", "https://id.namiaru.com/isonoura.jpg", "なみある？・静止画"], ["磯ノ浦", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=52", "BCM・静止画"]] } },
   { id: "senri", name: "千里の浜", group: "和歌山", place: "和歌山県みなべ町", wx: [33.785, 135.325], marine: [33.785, 135.325], facing: 215, swell: 200, pin: [33.79094, 135.32725], pinName: "近くの駐車場（浜から約700m）",
     jma: { office: "300000", officeName: "和歌山地方気象台", area: "300010", areaName: "和歌山県北部", city: "3039100", cityName: "みなべ町" },
     tide: { code: "SR", name: "白浜", km: 13 } },
-  { id: "hacchohama", name: "八丁浜", group: "京都（丹後）", place: "京都府京丹後市網野町", wx: [35.689, 135.023], marine: [35.689, 135.023], facing: 350, swell: 340, pin: [35.68943, 135.02319], pinName: "八丁浜シーサイドパークメイン駐車場（浜のすぐそば）",
+  { id: "hacchohama", name: "八丁浜", group: "京都（丹後）", place: "京都府京丹後市網野町", wx: [35.689, 135.023], marine: [35.689, 135.023], facing: 350, swell: 340, pin: [35.69059, 135.01998], pinName: "八丁浜シーサイドパーク",
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
     tide: { code: "T6", name: "津居山", km: 18 },
     cam: { title: "網野町のカメラ", links: [["京丹後市網野町", "https://weathernews.jp/onebox/livecam/kinki/kyoto/7CDDE90867A2/", "ウェザーニュース・ライブカメラ"]] } },
-  { id: "shishikui", name: "宍喰", group: "四国（徳島・高知）", place: "徳島県海陽町", wx: [33.565, 134.318], marine: [33.565, 134.318], facing: 120, swell: 140, pin: [33.55818, 134.31323], pinName: "近くの駐車場（浜から約900m）",
+  { id: "shishikui", name: "宍喰", group: "四国（徳島・高知）", place: "徳島県海陽町", wx: [33.565, 134.318], marine: [33.565, 134.318], facing: 120, swell: 140, pin: [33.56204, 134.3084], pinName: "宍喰大橋北側のサーファー用駐車場",
     jma: { office: "360000", officeName: "徳島地方気象台", area: "360020", areaName: "徳島県南部", city: "3638800", cityName: "海陽町" },
     tide: { code: "L7", name: "甲浦", km: 2 },
     cam: { title: "宍喰のカメラ", links: [["宍喰ライブカメラ", "http://cam11.kaifu-intra.jp/local/cam11.html", "海陽町・ライブ映像"]] } },
-  { id: "ikumi", name: "生見", group: "四国（徳島・高知）", place: "高知県東洋町", wx: [33.548, 134.290], marine: [33.548, 134.290], facing: 135, swell: 150, pin: [33.54646, 134.2875], pinName: "近くの駐車場（浜から約300m）",
+  { id: "ikumi", name: "生見", group: "四国（徳島・高知）", place: "高知県東洋町", wx: [33.5285, 134.2835], marine: [33.5285, 134.2835], facing: 135, swell: 150, pin: [33.52761, 134.28126], pinName: "生見中央駐車場",
     jma: { office: "390000", officeName: "高知地方気象台", area: "390020", areaName: "高知県東部", city: "3930100", cityName: "東洋町" },
-    tide: { code: "L7", name: "甲浦", km: 1 },
+    tide: { code: "L7", name: "甲浦", km: 3 },
     cam: { title: "生見のカメラ", links: [["生見ライブカメラ", "http://www.town.toyo.kochi.jp/webcam_toyo.html", "東洋町・ライブ映像"], ["生見ライブカメラ（操作できる映像）", "http://webcam.town.toyo.kochi.jp/viewer/live/index.html", "東洋町"], ["生見", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=58", "BCM・静止画"]] } },
   { id: "niyodo", name: "仁淀川河口", group: "四国（徳島・高知）", place: "高知県土佐市・高知市", wx: [33.497, 133.478], marine: [33.497, 133.478], facing: 170, swell: 170, pin: [33.50023, 133.48886], pinName: "近くの駐車場（浜から約1050m）",
     jma: { office: "390000", officeName: "高知地方気象台", area: "390010", areaName: "高知県中部", city: "3920500", cityName: "土佐市" },
@@ -1361,13 +1378,13 @@ const SPOTS = [
   { id: "irino", name: "入野", group: "四国（徳島・高知）", place: "高知県黒潮町", wx: [33.021, 133.016], marine: [33.021, 133.016], facing: 160, swell: 180, pin: [33.02135, 133.01475], pinName: "近くの駐車場（浜から約100m）",
     jma: { office: "390000", officeName: "高知地方気象台", area: "390030", areaName: "高知県西部", city: "3942800", cityName: "黒潮町" },
     tide: { code: "L6", name: "高知下田", km: 10 } },
-  { id: "ayukawa", name: "鮎川", group: "福井（福井市・三国）", place: "福井県福井市・越前海岸", wx: [36.135, 136.040], marine: [36.135, 136.040], facing: 300, swell: 310,
+  { id: "ayukawa", name: "鮎川", group: "福井（福井市・三国）", place: "福井県福井市鮎川町・越前海岸", wx: [36.091, 136.037], marine: [36.091, 136.037], facing: 300, swell: 310,
     jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1820100", cityName: "福井市" },
-    tide: { code: "ZG", name: "三国", km: 16 },
+    tide: { code: "ZG", name: "三国", km: 20 },
     cam: { title: "鮎川周辺のカメラ", links: [["鉾島（鮎川町）道路カメラ", "https://www.hozen.pref.fukui.lg.jp/hozen/yuki/assets/images/camera/365.jpg", "福井県・静止画"]] } },
-  { id: "hamaji", name: "浜地", group: "福井（福井市・三国）", place: "福井県坂井市三国町", wx: [36.235, 136.135], marine: [36.235, 136.135], facing: 270, swell: 290, pin: [36.23639, 136.13129], pinName: "近くの駐車場（浜から約350m）",
+  { id: "hamaji", name: "浜地", group: "福井（福井市・三国）", place: "福井県坂井市三国町浜地", wx: [36.2496, 136.1603], marine: [36.2496, 136.1603], facing: 270, swell: 290, pin: [36.24958, 136.16029], pinName: "浜地海水浴場駐車場",
     jma: { office: "180000", officeName: "福井地方気象台", area: "180010", areaName: "福井県嶺北", city: "1821000", cityName: "坂井市" },
-    tide: { code: "ZG", name: "三国", km: 2 } },
+    tide: { code: "ZG", name: "三国", km: 1 } },
   { id: "kotohiki", name: "琴引浜", group: "京都（丹後）", place: "京都府京丹後市網野町掛津", wx: [35.7, 135.04], marine: [35.7, 135.04], facing: 22, swell: 22, pin: [35.70199, 135.05023], pinName: "近くの駐車場（浜から約950m）",
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
     tide: { code: "T6", name: "津居山", km: 19 },
@@ -1375,32 +1392,32 @@ const SPOTS = [
   { id: "hamazume", name: "浜詰", group: "京都（丹後）", place: "京都府京丹後市網野町浜詰", wx: [35.6643, 134.965], marine: [35.6643, 134.965], facing: 45, swell: 22, pin: [35.66502, 134.96675], pinName: "近くの駐車場（浜から約200m）",
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
     tide: { code: "T6", name: "津居山", km: 12 } },
-  { id: "hakoishi", name: "箱石", group: "京都（丹後）", place: "京都府京丹後市久美浜町箱石", wx: [35.6547, 134.946], marine: [35.6547, 134.946], facing: 0, swell: 22, pin: [35.6527, 134.94533], pinName: "近くの駐車場（浜から約250m）",
+  { id: "hakoishi", name: "箱石", group: "京都（丹後）", place: "京都府京丹後市久美浜町箱石", wx: [35.6547, 134.946], marine: [35.6547, 134.946], facing: 0, swell: 22, pin: [35.65377, 134.94506], pinName: "箱石浜海水浴場",
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
     tide: { code: "T6", name: "津居山", km: 10 } },
-  { id: "kazuranohama", name: "葛野浜", group: "京都（丹後）", place: "京都府京丹後市久美浜町葛野", wx: [35.6457, 134.919], marine: [35.6457, 134.919], facing: 338, swell: 0, pin: [35.64515, 134.92054], pinName: "近くの駐車場（浜から約150m）",
+  { id: "kazuranohama", name: "葛野浜", group: "京都（丹後）", place: "京都府京丹後市久美浜町葛野", wx: [35.6457, 134.919], marine: [35.6457, 134.919], facing: 338, swell: 0, pin: [35.64589, 134.90451], pinName: "小天橋海水浴場駐車場",
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
     tide: { code: "T6", name: "津居山", km: 8 } },
-  { id: "shotenkyo", name: "小天橋", group: "京都（丹後）", place: "京都府京丹後市久美浜町（小天橋）", wx: [35.6453, 134.908], marine: [35.6453, 134.908], facing: 0, swell: 338, pin: [35.64546, 134.90351], pinName: "近くの駐車場（浜から約400m）",
+  { id: "shotenkyo", name: "小天橋", group: "京都（丹後）", place: "京都府京丹後市久美浜町（小天橋）", wx: [35.6453, 134.908], marine: [35.6453, 134.908], facing: 0, swell: 338, pin: [35.64589, 134.90451], pinName: "小天橋海水浴場駐車場",
     jma: { office: "260000", officeName: "京都地方気象台", area: "260020", areaName: "京都府北部", city: "2621200", cityName: "京丹後市" },
     tide: { code: "T6", name: "津居山", km: 7 } },
   { id: "nabae", name: "難波江", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町難波江", wx: [35.505, 135.508], marine: [35.505, 135.508], facing: 68, swell: 45, pin: [35.50752, 135.50693], pinName: "近くの駐車場（浜から約300m）",
     jma: { office: "180000", officeName: "福井地方気象台", area: "180020", areaName: "福井県嶺南", city: "1848100", cityName: "高浜町" },
     tide: { code: "MZ", name: "舞鶴", km: 12 },
     cam: { title: "難波江のカメラ", links: [["難波江", "https://www.youtube.com/@tbase1379/streams", "Tbase難波江・YouTubeライブ"]] } },
-  { id: "takahama", name: "高浜", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町", wx: [35.4907, 135.528], marine: [35.52, 135.525], facing: 22, swell: 0, pin: [35.4895, 135.5192], pinName: "近くの駐車場（浜から約800m）",
+  { id: "takahama", name: "高浜", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町", wx: [35.4907, 135.528], marine: [35.52, 135.525], facing: 22, swell: 0, pin: [35.49458, 135.5529], pinName: "城山公園",
     jma: { office: "180000", officeName: "福井地方気象台", area: "180020", areaName: "福井県嶺南", city: "1848100", cityName: "高浜町" },
     tide: { code: "MZ", name: "舞鶴", km: 13 },
     cam: { title: "高浜周辺のカメラ", links: [["白浜（鳥居浜）", "https://www.bcm-surfpatrol.com/wave-detail/13/142/", "BCM サーフパトロール"], ["難波江", "https://www.youtube.com/@tbase1379/streams", "Tbase難波江・YouTubeライブ"]] } },
-  { id: "toriigahama", name: "鳥居ヶ浜", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町宮崎（白浜）", wx: [35.4903, 135.558], marine: [35.52, 135.555], facing: 0, swell: 0, pin: [35.49151, 135.54391], pinName: "近くの駐車場（浜から約1300m）",
+  { id: "toriigahama", name: "鳥居ヶ浜", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町宮崎（白浜）", wx: [35.4903, 135.558], marine: [35.52, 135.555], facing: 0, swell: 0, pin: [35.49458, 135.5529], pinName: "城山公園（鳥居浜のすぐ北）",
     jma: { office: "180000", officeName: "福井地方気象台", area: "180020", areaName: "福井県嶺南", city: "1848100", cityName: "高浜町" },
     tide: { code: "MZ", name: "舞鶴", km: 16 },
     cam: { title: "鳥居ヶ浜のカメラ", links: [["白浜（鳥居浜）", "https://www.bcm-surfpatrol.com/wave-detail/13/142/", "BCM サーフパトロール"], ["和田浜", "http://wakasa-takahama.jp/wada-livecamera/", "Water Safety・ライブカメラ（東隣）"]] } },
-  { id: "wada", name: "和田", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町和田", wx: [35.4923, 135.573], marine: [35.52, 135.575], facing: 338, swell: 0, pin: [35.4991, 135.57749], pinName: "近くの駐車場（浜から約850m）",
+  { id: "wada", name: "和田", group: "福井（若狭・高浜）", place: "福井県大飯郡高浜町和田", wx: [35.4923, 135.573], marine: [35.52, 135.575], facing: 338, swell: 0, pin: [35.49278, 135.57493], pinName: "若狭和田ビーチ",
     jma: { office: "180000", officeName: "福井地方気象台", area: "180020", areaName: "福井県嶺南", city: "1848100", cityName: "高浜町" },
     tide: { code: "MZ", name: "舞鶴", km: 17 },
     cam: { title: "和田浜のカメラ", links: [["和田浜", "http://wakasa-takahama.jp/wada-livecamera/", "Water Safety・ライブカメラ"], ["白浜（鳥居浜）", "https://www.bcm-surfpatrol.com/wave-detail/13/142/", "BCM サーフパトロール（西隣）"]] } },
-  { id: "suisho", name: "水晶浜", group: "福井（敦賀・美浜）", place: "福井県三方郡美浜町竹波", wx: [35.6856, 135.977], marine: [35.6856, 135.977], facing: 293, swell: 293, pin: [35.69505, 135.97666], pinName: "近くの駐車場（浜から約1050m）",
+  { id: "suisho", name: "水晶浜", group: "福井（敦賀・美浜）", place: "福井県三方郡美浜町竹波", wx: [35.6856, 135.977], marine: [35.6856, 135.977], facing: 293, swell: 293, pin: [35.68594, 135.97752], pinName: "水晶浜海水浴場",
     jma: { office: "180000", officeName: "福井地方気象台", area: "180020", areaName: "福井県嶺南", city: "1844200", cityName: "美浜町" },
     tide: { code: "XM", name: "敦賀", km: 8 },
     cam: { title: "水晶浜のカメラ", links: [["水晶浜", "https://www.hozen.pref.fukui.lg.jp/hozen/yuki/assets/images/camera/574.jpg", "福井県 道路カメラ・静止画"]] } },
@@ -2730,6 +2747,25 @@ const SPOT_INFO = {
   niyodo: {"desc": "玉石と砂の河口のポイント。南東・南・南西のうねりに反応し、北・北西の風がオフショア。ベストシーズンは4〜10月。レベルは中級者〜上級者向け。", "type": "玉石と砂の河口のポイント", "wave": "", "season": "4〜10月", "level": "中級者〜上級者向け", "facilities": "駐車場", "extra": ["地元のサーファーが多いポイント。あいさつとマナーを大切に"], "src": "高知県/438"},
   irino: {"desc": "砂浜のビーチブレイクで、楽しく乗りやすい「ファンウェイブ」が多い。東・南東・南のうねりに反応し、北・西・北西の風がオフショア。ベストシーズンは4〜11月。レベルは初心者〜中級者向け。", "type": "砂浜のビーチブレイク", "wave": "ファンウェイブ（乗りやすい）", "season": "4〜11月", "level": "初心者〜中級者向け", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "高知県/444"},
 };
+// 駐車場・サーフショップの候補（ユーザーのまとめリストより。位置は公式サイトの地図・住所、OpenStreetMap で確認できたものだけ。a=1 は付近までの目安）
+const FACILITIES = {"kou": [{"n": "Red Bee","k": "shop","note": "サーフショップ（このサイトの国府の浜の目的地）","p": [34.32815,136.87525],"gq": "Red Bee 志摩市"},{"n": "Surfer's home HANA","k": "both","note": "駐車場・シャワー・トイレ・ショップ・レンタル・スクール。海まで徒歩すぐ","gq": "Surfers home HANA 志摩市","p": [34.33512,136.87328]},{"n": "LE-BA SURF","k": "both","note": "有料駐車場・シャワー・トイレ・ショップ","gq": "LE-BA SURF 志摩市","p": [34.32808,136.87567]},{"n": "しらほ駐車場","k": "parking","note": "冷水・温水シャワーあり","gq": "しらほ駐車場 国府の浜"}],"ichigo": [{"n": "市後浜駐車場","k": "parking","note": "","gq": "市後浜駐車場 志摩市","p": [34.30615,136.88581]},{"n": "LE-BA SURF","k": "both","note": "国府の浜のショップ（有料駐車場・シャワー）","p": [34.32808,136.87567],"gq": "LE-BA SURF 志摩市"},{"n": "Surfer's home HANA","k": "both","note": "国府の浜のショップ（駐車場・シャワー）","p": [34.33512,136.87328],"gq": "Surfers home HANA 志摩市"}],"nanbari": [{"n": "南張海浜公園","k": "parking","note": "南張海水浴場周辺。現地の指定駐車場所を確認","gq": "南張海浜公園 志摩市"}],"isonoura": [{"n": "マリンパーク磯の浦駐車場","k": "parking","note": "約1,500台・1日1,000円目安・温水シャワー・更衣室・ロッカー","gq": "マリンパーク磯の浦駐車場","p": [34.26015,135.09567]},{"n": "アップルパーク磯の浦SURF駐車場","k": "parking","note": "","gq": "アップルパーク磯の浦"},{"n": "マキノ駐車場","k": "parking","note": "","gq": "マキノ駐車場 磯ノ浦"},{"n": "POWER SURF","k": "shop","note": "","gq": "POWER SURF 磯ノ浦"},{"n": "ROYAL SURF","k": "shop","note": "","gq": "ROYAL SURF 磯ノ浦"}],"senri": [{"n": "千里海岸の駐車場","k": "parking","note": "小規模。現地ルールを確認","gq": "千里の浜 みなべ町"}],"hacchohama": [{"n": "八丁浜シーサイドパーク","k": "parking","note": "","gq": "八丁浜シーサイドパーク","p": [35.69059,135.01998]},{"n": "八丁浜中央駐車場","k": "parking","note": "夏季は約100台で運用","gq": "八丁浜中央駐車場"}],"kotohiki": [{"n": "琴引浜掛津駐車場","k": "parking","note": "夏季は約500台規模","gq": "琴引浜駐車場 京丹後市","p": [35.70334,135.05205],"a": 1}],"hamazume": [{"n": "浜詰・夕日ヶ浦の駐車場","k": "parking","note": "","gq": "浜詰海岸 京丹後市"},{"n": "京丹後135°EAST","k": "shop","note": "サーフショップ・スクール","gq": "京丹後135EAST"}],"hakoishi": [{"n": "箱石海水浴場","k": "parking","note": "周辺の駐車場","gq": "箱石浜 京丹後市","p": [35.65377,134.94506]}],"kazuranohama": [{"n": "葛野浜・小天橋海水浴場駐車場","k": "parking","note": "海水浴シーズンは約250台・有料","gq": "小天橋駐車場 京丹後市","p": [35.64589,134.90451],"a": 1}],"shotenkyo": [{"n": "小天橋海水浴場駐車場","k": "parking","note": "海水浴シーズンは約250台・有料","gq": "小天橋海水浴場","p": [35.64589,134.90451]}],"nabae": [{"n": "難波江海水浴場","k": "parking","note": "周辺の駐車場","gq": "難波江海水浴場","p": [35.50407,135.50415],"a": 1},{"n": "FLX","k": "shop","note": "高浜町難波江68-7-1。ポイントのすぐ近く","gq": "FLX 高浜町 難波江","p": [35.5049,135.50366],"a": 1}],"takahama": [{"n": "城山公園","k": "parking","note": "","gq": "城山公園 高浜町","p": [35.49458,135.5529]},{"n": "高浜海水浴場","k": "parking","note": "高浜海岸周辺","gq": "高浜海水浴場 福井","p": [35.49413,135.5527],"a": 1},{"n": "FLX","k": "shop","note": "高浜町難波江のサーフショップ","p": [35.5049,135.50366],"a": 1,"gq": "FLX 高浜町 難波江"}],"toriigahama": [{"n": "城山公園","k": "parking","note": "鳥居浜のすぐ北","p": [35.49458,135.5529],"gq": "城山公園 高浜町"},{"n": "鳥居浜","k": "parking","note": "指定駐車場所を利用","gq": "鳥居浜 高浜町"},{"n": "FLX","k": "shop","note": "高浜町難波江のサーフショップ","p": [35.5049,135.50366],"a": 1,"gq": "FLX 高浜町 難波江"}],"wada": [{"n": "若狭和田ビーチ","k": "parking","note": "周辺の駐車場","gq": "若狭和田ビーチ","p": [35.49278,135.57493]},{"n": "FLX","k": "shop","note": "高浜町難波江のサーフショップ","p": [35.5049,135.50366],"a": 1,"gq": "FLX 高浜町 難波江"}],"suisho": [{"n": "水晶浜（竹波観光協会駐車場など）","k": "parking","note": "約2,000台規模。夏季有料（平日1,000円・土日2,000円、2026年度）","gq": "水晶浜海水浴場","p": [35.68594,135.97752]}],"era": [{"n": "江良海岸","k": "parking","note": "小規模。現地の駐車ルールを優先","gq": "江良海岸 福井県"}],"yokohama": [{"n": "横浜海岸","k": "parking","note": "住宅・漁業関係エリアへの迷惑駐車を避ける","gq": "横浜海岸 福井県"}],"ayukawa": [{"n": "鮎川海水浴場","k": "parking","note": "周辺の駐車場","gq": "鮎川海水浴場 福井"}],"hamaji": [{"n": "浜地海水浴場駐車場","k": "parking","note": "約600台・海水浴場営業期間は有料","gq": "浜地海水浴場","p": [36.24958,136.16029]},{"n": "L.A.SURF（レゼールサーフ）","k": "shop","note": "","gq": "L.A.SURF 三国町","p": [36.22451,136.1352]}],"takasu": [{"n": "鷹巣海水浴場","k": "parking","note": "周辺の駐車場","gq": "鷹巣海水浴場 福井"}],"oshima": [{"n": "雄島周辺の駐車場","k": "parking","note": "","gq": "雄島 福井県坂井市","p": [36.24272,136.13388],"a": 1},{"n": "L.A.SURF（レゼールサーフ）","k": "shop","note": "三国エリアのサーフショップ","p": [36.22451,136.1352],"gq": "L.A.SURF 三国町"}],"omaezaki": [{"n": "御前崎ロングビーチ 市営駐車場","k": "parking","note": "無料市営駐車場が合計400台以上・トイレあり","gq": "御前崎ロングビーチ","p": [34.61307,138.1857]},{"n": "灯台下駐車場（岬の広場）","k": "parking","note": "市営無料駐車場","p": [34.60442,138.21606],"gq": "御前崎 灯台下駐車場"},{"n": "GARAGE 1122 Surf Store","k": "shop","note": "","gq": "GARAGE 1122 Surf Store"}],"shizunami": [{"n": "静波海水浴場の駐車場","k": "parking","note": "","gq": "静波海水浴場","p": [34.7311,138.23246]},{"n": "ジャックオーシャンスポーツ","k": "shop","note": "","gq": "ジャックオーシャンスポーツ"}],"irago": [{"n": "太平洋ロングビーチ駐車場","k": "parking","note": "約185台・無料・シャワーあり","gq": "太平洋ロングビーチ 田原市","p": [34.60826,137.19879]},{"n": "MIC SURF SHOP","k": "shop","note": "","gq": "MIC SURF SHOP 赤羽根"},{"n": "KEEPER SURF STATION","k": "shop","note": "","gq": "KEEPER SURF STATION 赤羽根"},{"n": "THE SURFSPOT","k": "shop","note": "","gq": "THE SURFSPOT 田原市"}],"akabane": [{"n": "太平洋ロングビーチ駐車場","k": "parking","note": "約185台・無料・シャワーあり","gq": "太平洋ロングビーチ 田原市","p": [34.60826,137.19879]},{"n": "MIC SURF SHOP","k": "shop","note": "","gq": "MIC SURF SHOP 赤羽根"},{"n": "KEEPER SURF STATION","k": "shop","note": "","gq": "KEEPER SURF STATION 赤羽根"},{"n": "THE SURFSPOT","k": "shop","note": "","gq": "THE SURFSPOT 田原市"}],"shishikui": [{"n": "宍喰大橋北側のサーファー用駐車場","k": "parking","note": "道の駅宍喰温泉への長時間駐車は避ける","gq": "宍喰海岸","p": [33.56204,134.3084]},{"n": "BEACH HOUSE shishikui","k": "shop","note": "","gq": "BEACH HOUSE shishikui"}],"ikumi": [{"n": "生見中央駐車場","k": "parking","note": "有料駐車場を利用","gq": "生見サーフィンビーチ","p": [33.52761,134.28126]},{"n": "みちしおパーキング","k": "parking","note": "","gq": "みちしお 生見 サーフィン","p": [33.52795,134.2829]}],"niyodo": [{"n": "仁淀川河口の指定駐車エリア","k": "parking","note": "当日の規制・工事状況を確認","gq": "仁淀川河口 サーフィン"}],"irino": [{"n": "入野海水浴場駐車場","k": "parking","note": "普通車147台・無料・トイレ・シャワー100円・更衣室","gq": "入野海水浴場 黒潮町","p": [33.02135,133.01475],"a": 1}],"jan": []};
+// list of car parks / surf shops for a spot, with drive time from the chosen starting point
+const FAC_KIND = { parking: "駐車場", shop: "ショップ", both: "駐車場＋ショップ" };
+function facilitiesHTML(sp) {
+  const list = FACILITIES[sp.id] || [];
+  if (!list.length) return `<p class="status">このポイントの駐車場・ショップの候補はまだありません。現地の案内に従ってください。</p>`;
+  const o = typeof drOrigin === "function" ? drOrigin() : null;
+  return `<ul class="fac-list">${list.map(f => {
+    const km = o && f.p ? distKm(o.pos, f.p) : null;
+    const gmap = f.p ? `https://www.google.com/maps/search/?api=1&query=${f.p[0]},${f.p[1]}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.gq)}`;
+    return `<li>
+      <div class="fac-main"><span class="fac-kind k-${f.k}">${FAC_KIND[f.k] || ""}</span><b>${esc(f.n)}</b>${f.note ? `<small>${esc(f.note)}</small>` : ""}</div>
+      <div class="fac-side">${km != null ? `<span class="fac-time">${f.a ? "約" : ""}${fmtMin(driveMin(km))}</span>` : `<span class="fac-time none">位置未確認</span>`}
+        <span class="fac-links"><a href="${gmap}" target="_blank" rel="noopener">地図</a>${f.p ? `<a href="https://www.google.com/maps/dir/?api=1${o?.name ? `&origin=${encodeURIComponent(o.name)}` : ""}&destination=${f.p[0]},${f.p[1]}&travelmode=driving" target="_blank" rel="noopener">ルート</a>` : ""}</span></div>
+    </li>`; }).join("")}</ul>
+    <p class="spot-src">時間は${o ? `「${esc(o.name || "現在地")}」から` : ""}の車の目安（「便利」→「所要時間」で出発地を変えられます）。料金・営業時間・サーファーの利用可否は季節で変わるので、当日の現地案内を優先してください。路上や漁港・住宅前への駐車はしないこと。</p>`;
+}
+
 // --- spot guide ----------------------------------------------------------------------
 // 確かな情報だけを載せる。未登録の項目は表示しない（あとから追記できる）
 const SPOT_GUIDE = {
@@ -2801,6 +2837,8 @@ function renderSpotGuide() {
       <dt>目的地</dt><dd>${SPOT.pinName ? esc(SPOT.pinName) : "浜の位置（近くの駐車場は未登録）"}</dd>
     </dl>
     ${g.notes?.length ? `<ul>${g.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
+    <h3 class="fac-h">駐車場・サーフショップ</h3>
+    ${facilitiesHTML(SPOT)}
     <div class="spot-links">
       <a href="${mapURL(SPOT)}" target="_blank" rel="noopener">${SPOT.pin ? "目的地を地図で見る" : "地図で見る"} ↗</a>
       <a href="https://www.google.com/maps/dir/?api=1&destination=${spotPos(SPOT)[0]},${spotPos(SPOT)[1]}&travelmode=driving" target="_blank" rel="noopener">ここまでのルート ↗</a>
@@ -3112,6 +3150,8 @@ function drOrigin() {
 }
 function renderDrive() {
   renderDriveMap();
+  document.getElementById("drFacH").textContent = `${SPOT.name}の駐車場・サーフショップ`;
+  document.getElementById("drFac").innerHTML = facilitiesHTML(SPOT);
   const out = document.getElementById("drOut"), o = drOrigin();
   if (!o) { out.innerHTML = `<p class="status">「現在地」を選ぶと、このスマホの位置情報を一度だけ使って計算します（位置はこのスマホの中にだけ保存されます）。</p><button type="button" class="btn" id="drLocate">現在地を使う</button>`;
     document.getElementById("drLocate").addEventListener("click", locateHome); return; }
@@ -3173,7 +3213,16 @@ async function renderDriveMap() {
       ${km != null ? `<span>車で約${fmtMin(driveMin(km))}（${Math.round(km * 1.35)}km）</span>` : ""}
       <button type="button" class="btn" data-open-spot="${sp.id}">この予報を見る</button></div>`);
     m.on("click", () => { if (sp.id !== SPOT.id) selectSpot(sp.id); });
+    m.on("dblclick", () => driveMap.setView(spotPos(sp), 14));
     m.addTo(driveLayer); pts.push(spotPos(sp));
+  });
+  (FACILITIES[SPOT.id] || []).filter(f => f.p).forEach(f => {
+    L.marker(f.p, { icon: L.divIcon({ className: "fac-pin", html: `<span>${f.k === "shop" ? "S" : "P"}</span>`, iconSize: [22, 22] }) })
+      .bindTooltip(f.n, { direction: "top", offset: [0, -10] })
+      .bindPopup(`<div class="map-pop"><b>${esc(f.n)}</b><small>${esc(FAC_KIND[f.k] || "")}${f.note ? `・${esc(f.note)}` : ""}</small>
+        ${o ? `<span>車で${f.a ? "約" : ""}${fmtMin(driveMin(distKm(o.pos, f.p)))}</span>` : ""}
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${f.p[0]},${f.p[1]}&travelmode=driving" target="_blank" rel="noopener">ここまでのルート ↗</a></div>`)
+      .addTo(driveLayer);
   });
   if (o) {
     L.circleMarker(o.pos, { radius: 9, color: "#ffffff", weight: 3, fillColor: "#3d5fb2", fillOpacity: 1 })
