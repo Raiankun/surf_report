@@ -17,14 +17,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: 秋の夕暮れの国府白浜 — illustrated hero (sunset, waves, 阿児の松原), now panel + gear, live cam + JMA, 4-day timeline, day cards, news */
+/* Layout: dusk-sea app — slim illustrated header bar, tab bar (bottom on phones), overview matrix first, spot detail with sub tabs */
 :root {
   --bg: #ecefe9;
   --surface: #fbfaf5;
   --fg: #1f2a2f;
   --muted: #66727a;
   --line: #dcd9cc;
-  --accent: #d75f2a;   /* 柿色 */
+  --accent: #d75f2a;   /* 夕焼けのオレンジ */
   --sea: #23718a;
   --tide: #3d5fb2;
   --sun: #e39a2d;
@@ -89,27 +89,19 @@ button { font: inherit; cursor: pointer; }
 .label { font-size: 11px; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
 a { color: var(--accent); }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
-section > h2 { font-family: var(--font-display); font-weight: 400; font-size: 21px; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+section > h2 { font-family: var(--font-body); font-weight: 700; font-size: 19px; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 section > h2::before { content: ""; width: 12px; height: 12px; flex: none; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
 section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--muted); }
 
-/* hero */
-.hero { position: relative; border-radius: 24px; overflow: hidden; min-height: clamp(210px, 32vw, 280px); display: flex; flex-direction: column; justify-content: space-between; padding: 22px clamp(18px, 4vw, 34px); color: var(--hero-fg); isolation: isolate; }
+/* header bar */
+.hero { position: relative; border-radius: 20px; overflow: hidden; padding: 12px clamp(14px, 3vw, 22px); color: var(--hero-fg); isolation: isolate; }
 .hero > svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
-.hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-.hero .place { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; }
-.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 7vw, 54px); line-height: 1.1; margin: 4px 0 0; letter-spacing: 0.02em; text-wrap: balance; }
-.hero .sub { font-size: 13px; margin: 6px 0 0; font-weight: 500; max-width: 34em; }
-.meta { font-family: var(--font-data); font-size: 12px; display: grid; gap: 6px; justify-items: end; }
+.hero-bar { display: flex; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
+.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1; margin: 0; letter-spacing: 0.04em; }
+.meta { font-family: var(--font-data); font-size: 12px; display: flex; align-items: center; gap: 8px; margin-left: auto; }
 .wave-anim { animation: drift var(--dur, 9s) linear infinite; }
 @keyframes drift { to { transform: translateX(var(--shift, -240px)); } }
-.leaf { animation: fall var(--dur, 12s) linear infinite; animation-delay: var(--delay, 0s); transform-box: fill-box; }
-@keyframes fall {
-  0% { transform: translate(0, -30px) rotate(0deg); opacity: 0; }
-  10% { opacity: 1; }
-  100% { transform: translate(var(--dx, -120px), 300px) rotate(540deg); opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) { .wave-anim, .leaf { animation: none; } .leaf { opacity: 0.9; } }
+@media (prefers-reduced-motion: reduce) { .wave-anim { animation: none; } }
 
 /* now panel */
 .now { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr); gap: 22px; padding: 24px; }
@@ -130,13 +122,13 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 /* gear */
 .gear { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 26px; padding: 20px 24px; align-items: center; }
 .gear-temp { display: grid; justify-items: center; gap: 2px; padding-right: 26px; border-right: 2px dashed var(--line); }
-.gear-temp .big { font-family: var(--font-display); font-size: 44px; line-height: 1; color: var(--sea); }
+.gear-temp .big { font-family: var(--font-data); font-weight: 600; font-size: 40px; line-height: 1; color: var(--sea); }
 .gear-temp .big small { font-size: 18px; }
 .gear-temp .d { font-size: 12px; color: var(--muted); text-align: center; }
 .outfits { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; }
 .outfit { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: center; min-width: 0; }
 .outfit svg { display: block; }
-.outfit .nm { font-family: var(--font-display); font-size: 18px; line-height: 1.2; }
+.outfit .nm { font-weight: 700; font-size: 17px; line-height: 1.2; }
 .outfit .or { font-size: 11px; font-weight: 700; color: var(--accent); }
 .outfit .ds { font-size: 12px; color: var(--muted); max-width: 18em; }
 .gear-tip { grid-column: 1 / -1; font-size: 13px; background: var(--bg); border-radius: 12px; padding: 8px 14px; }
@@ -171,7 +163,9 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 
 /* timeline */
 .chart-box { overflow-x: auto; }
-.chart-box svg { display: block; }
+.chart-box { display: flex; }
+.chart-box svg { display: block; flex: none; }
+.chart-labels { position: sticky; left: 0; z-index: 2; flex: none; width: 64px; margin-right: -64px; background: linear-gradient(90deg, var(--surface) 78%, transparent); }
 .chart-box text { font-family: var(--font-data); fill: var(--muted); font-size: 10px; }
 .chart-box .rowlabel { font-family: var(--font-body); font-weight: 700; fill: var(--fg); font-size: 11px; }
 .chart-box .daylabel { font-family: var(--font-body); font-weight: 700; fill: var(--fg); font-size: 12px; }
@@ -182,7 +176,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 /* day cards */
 .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .day { padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
-.day h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.day h3 { margin: 0; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .day h3 .stars { font-size: 15px; }
 .best { font-size: 14px; }
 .best b { font-family: var(--font-data); font-size: 17px; color: var(--accent); }
@@ -216,7 +210,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .tip { background: var(--bg); border-radius: 12px; padding: 10px 14px; }
 .steps { list-style: none; counter-reset: st; margin: 0; padding: 0; display: grid; gap: 12px; }
 .steps li { counter-increment: st; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 2px 12px; }
-.steps li::before { content: counter(st); grid-row: span 2; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-display); display: grid; place-items: center; font-size: 15px; }
+.steps li::before { content: counter(st); grid-row: span 2; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-data); font-weight: 600; display: grid; place-items: center; font-size: 14px; }
 .steps b { font-size: 15px; }
 .steps span { font-size: 13.5px; color: var(--muted); }
 .diagram { margin: 0; background: var(--bg); border-radius: 14px; padding: 12px; display: grid; gap: 6px; justify-items: center; }
@@ -232,7 +226,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .trouble dd { margin: 2px 0 0; font-size: 13px; }
 .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .rule { background: var(--bg); border-radius: 14px; padding: 14px 16px; }
-.rule h3 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 16px; }
+.rule h3 { margin: 0 0 6px; font-weight: 700; font-size: 15px; }
 .rule.rip h3 { color: var(--bad); }
 .rule ul { margin: 0; padding-left: 1.1em; display: grid; gap: 5px; font-size: 13px; }
 .beginner { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; background: var(--bg); border-radius: 12px; padding: 8px 12px; }
@@ -271,7 +265,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .board.pick { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .board-art { display: flex; align-items: flex-end; height: 230px; }
 .board-art svg { max-width: 100%; height: auto; }
-.board h3 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 400; font-size: 15px; }
+.board h3 { margin: 6px 0 0; font-weight: 700; font-size: 15px; }
 .board-spec { font-family: var(--font-data); font-size: 11.5px; }
 .board-who { font-size: 11px; font-weight: 700; color: #fff; background: var(--sea); border-radius: 99px; padding: 0 8px; }
 .board p { margin: 4px 0 0; font-size: 12px; color: var(--muted); text-align: left; }
@@ -284,7 +278,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .calc-in input[type="range"] { width: 100%; accent-color: var(--accent); }
 .calc-in select:focus-visible, .calc-in input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .calc-out { display: grid; gap: 8px; align-content: center; justify-items: start; background: var(--surface); border-radius: 14px; padding: 18px 20px; }
-.liters { font-family: var(--font-display); font-size: clamp(40px, 8vw, 56px); line-height: 1; color: var(--accent); }
+.liters { font-family: var(--font-data); font-weight: 600; font-size: clamp(38px, 8vw, 52px); line-height: 1; color: var(--accent); }
 .liters small { font-size: .4em; color: var(--muted); }
 .rec { font-size: 14px; }
 .rec span { font-size: 12.5px; color: var(--muted); }
@@ -328,7 +322,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 .spot-card.current { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
 .spot-card .nm { font-weight: 700; font-size: 15px; }
 .spot-card .pl { font-size: 11.5px; color: var(--muted); grid-column: 1; }
-.spot-card .sz { font-family: var(--font-display); font-size: 20px; color: var(--sea); grid-row: span 2; grid-column: 2; align-self: center; text-align: right; }
+.spot-card .sz { font-family: var(--font-body); font-weight: 700; font-size: 20px; color: var(--sea); grid-row: span 2; grid-column: 2; align-self: center; text-align: right; }
 .spot-card .ln { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 4px; }
 .spot-card .stars { font-size: 13px; letter-spacing: 1px; }
 
@@ -375,6 +369,52 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 /* when opened from the home screen */
 @media (display-mode: standalone) { .wrap { padding-top: max(18px, env(safe-area-inset-top, 0px)); } }
 
+/* overview matrix */
+.picks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+.picks .label { flex: none; white-space: nowrap; }
+.pick-chip { display: grid; grid-template-columns: auto auto; align-items: baseline; gap: 0 6px; text-align: left; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 14px; padding: 8px 12px; }
+.pick-chip .stars { font-size: 12px; letter-spacing: 0; grid-row: span 2; align-self: center; }
+.pick-chip b { font-size: 14px; }
+.pick-chip small { grid-column: 2; font-size: 11.5px; color: var(--muted); }
+.pick-chip:hover, .pick-chip:focus-visible { outline: 2px solid var(--accent); }
+.ov-wrap { overflow-x: auto; padding: 4px 0; }
+.ov { width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; }
+.ov th, .ov td { padding: 3px 3px; text-align: center; }
+.ov thead th { font-size: 11px; color: var(--muted); font-weight: 700; }
+.ov .ov-day { font-size: 12.5px; color: var(--fg); padding-top: 8px; }
+.ov .ov-day small { color: var(--muted); font-weight: 400; }
+.ov .ov-day + .ov-day, .ov td:nth-child(5) { border-left: 2px solid var(--line); }
+.ov .ov-group th { text-align: left; font-size: 11.5px; letter-spacing: .06em; color: var(--muted); padding: 12px 12px 4px; }
+.ov .ov-name { text-align: left; width: 40%; padding-left: 12px; }
+.ov .ov-name button { border: 0; background: none; color: var(--fg); font: inherit; font-weight: 700; font-size: 14px; text-align: left; padding: 4px 0; display: grid; }
+.ov .ov-name small { font-weight: 400; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+.ov .ov-name button { max-width: 100%; }
+.ov tr.current .ov-name button { color: var(--accent); }
+.ov tbody tr:not(.ov-group):hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.cell { width: 100%; min-width: 30px; height: 32px; border: 0; border-radius: 8px; font-family: var(--font-data); font-weight: 600; font-size: 13px; display: grid; place-items: center; color: #fff; }
+.cell.none { background: var(--bg); color: var(--muted); }
+.cell.s5, .ov-legend .s5 { background: var(--good); box-shadow: inset 0 0 0 2px color-mix(in srgb, #fff 45%, transparent); }
+.cell.s4, .ov-legend .s4 { background: color-mix(in srgb, var(--good) 75%, var(--surface)); }
+.cell.s3, .ov-legend .s3 { background: var(--ok); }
+.cell.s2, .ov-legend .s2 { background: color-mix(in srgb, var(--star) 45%, var(--surface)); color: var(--fg); }
+.cell.s1, .ov-legend .s1 { background: var(--line); color: var(--muted); }
+.cell.past { opacity: .35; }
+.cell:hover, .cell:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; }
+.ov-legend i { border-radius: 4px; }
+
+/* detail sub tabs */
+.subtabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 62px); z-index: 10; }
+.subtabs button { flex: 1; border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 13.5px; padding: 8px 4px; border-radius: 10px; white-space: nowrap; }
+.subtabs button[aria-selected="true"] { background: var(--sea); color: #fff; }
+.subtabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.subpane { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; }
+.subpane > * { min-width: 0; }
+.quick { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13.5px; align-items: center; }
+.more { grid-column: 1 / -1; }
+.more summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--sea); padding: 6px 0; }
+.more[open] summary { margin-bottom: 12px; }
+.now:has(.more) { grid-template-columns: minmax(0, 1fr); }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -399,12 +439,18 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
   .tabbar button { flex-direction: column; gap: 2px; font-size: 10.5px; padding: 6px 2px; border-radius: 12px; }
   .tabbar button[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
   .tabbar svg { width: 22px; height: 22px; }
-  .hero { min-height: 0; padding: 16px 16px 18px; gap: 10px; }
-  .hero .sub { display: none; }
-  .hero h1 { font-size: 30px; }
-  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-  .spot-pick { flex: 1 1 100%; }
+  .hero { padding: 10px 12px; border-radius: 16px; }
+  .hero h1 { font-size: 22px; }
+  .spot-pick { order: 3; flex: 1 1 100%; }
   .spot-pick select { flex: 1; max-width: none; }
+  .subtabs { top: env(safe-area-inset-top, 0px); }
+  .ov .ov-name { width: auto; min-width: 104px; padding-left: 8px; }
+  .ov .ov-name button { font-size: 13px; }
+  .cell { min-width: 28px; height: 30px; }
+  .picks { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding: 2px 16px 4px; scrollbar-width: none; }
+  .picks::-webkit-scrollbar { display: none; }
+  .pick-chip { flex: none; }
+  #view-list h2 small { display: none; }
   .view { gap: 24px; }
   .now, .duo { grid-template-columns: minmax(0, 1fr); }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -426,7 +472,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 <body>
 <div class="wrap">
   <header class="hero">
-    <svg class="scene" viewBox="0 0 1200 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
+    <svg class="scene" viewBox="0 0 1200 300" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
       <defs>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" style="stop-color:var(--sky1)"/><stop offset="1" style="stop-color:var(--sky2)"/>
@@ -453,32 +499,21 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
         <path d="M28,212 C26,196 24,182 22,166" stroke="var(--pine)" stroke-width="4" fill="none"/>
         <ellipse cx="22" cy="164" rx="22" ry="7"/><ellipse cx="38" cy="184" rx="16" ry="6"/>
       </g>
-      <g>
-        <g transform="translate(760,10)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf1)" style="--dur:11s;--delay:0s;--dx:-140px"/></g>
-        <g transform="translate(1010,0)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf2)" style="--dur:13s;--delay:-4s;--dx:-180px"/></g>
-        <g transform="translate(1130,20)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf1)" style="--dur:10s;--delay:-7s;--dx:-110px"/></g>
-        <g transform="translate(600,0)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf2)" style="--dur:14s;--delay:-9s;--dx:-90px"/></g>
-        <g transform="translate(400,5)"><path class="leaf" d="M0,-8 L2,-3 L7,-4 L4,0 L6,5 L1,3 L0,8 L-1,3 L-6,5 L-4,0 L-7,-4 L-2,-3Z" fill="var(--leaf1)" style="--dur:12s;--delay:-2s;--dx:-130px"/></g>
-      </g>
     </svg>
-    <div class="hero-top">
-      <div>
-        <div class="place" id="place">伊勢志摩・志摩市阿児町国府</div>
-        <h1 id="title">国府の浜 波予報</h1>
-        <p class="sub">波・風・潮・水温から、今日いつ入るか、何を着るかまで</p>
-      </div>
+    <div class="hero-bar">
+      <h1>波予報</h1>
+      <label class="spot-pick" for="spot"><span>ポイント</span><select id="spot"></select></label>
       <div class="meta">
-        <label class="spot-pick" for="spot"><span>ポイント</span><select id="spot"></select></label>
         <span id="updated">読み込み中…</span>
-        <button class="btn" id="reload" type="button">最新に更新</button>
+        <button class="btn" id="reload" type="button">更新</button>
       </div>
     </div>
   </header>
 
   <nav class="tabbar" role="tablist" aria-label="表示の切り替え">
+    <button type="button" role="tab" id="vt-list" aria-controls="view-list" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>一覧</span></button>
     <button type="button" role="tab" id="vt-forecast" aria-controls="view-forecast" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 15c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/><path d="M2 9c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/></svg><span>波予報</span></button>
     <button type="button" role="tab" id="vt-live" aria-controls="view-live" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg><span>ライブ・潮</span></button>
-    <button type="button" role="tab" id="vt-spots" aria-controls="view-spots" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span>ポイント</span></button>
     <button type="button" role="tab" id="vt-learn" aria-controls="view-learn" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><span>学ぶ</span></button>
     <button type="button" role="tab" id="vt-videos" aria-controls="view-videos" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z"/></svg><span>動画</span></button>
     <button type="button" role="tab" id="vt-news" aria-controls="view-news" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg><span>ニュース</span></button>
@@ -490,42 +525,80 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
     <button type="button" class="install-close" id="installClose" aria-label="閉じる">×</button>
   </div>
   <main id="main">
-    <div class="view" id="view-forecast" role="tabpanel" aria-labelledby="vt-forecast">
-    <div id="now"><div class="status">予報データを取得しています…</div></div>
-    <section id="logSec">
-      <h2>答え合わせ <small>実際の波を記録して、予報のクセを補正</small></h2>
-      <div class="panel logbox">
-        <div class="log-head">
-          <div class="calib" id="calibInfo"></div>
-          <button type="button" class="btn" id="logOpen">いまの波を記録する</button>
+    <div class="view" id="view-list" role="tabpanel" aria-labelledby="vt-list" hidden>
+      <section>
+        <h2>どこに行く？ <small>今日・明日の朝・昼・夕の★（マスをタップで詳しい予報）</small></h2>
+        <div class="picks" id="picks"></div>
+        <div class="panel ov-wrap" id="overview"><div class="status">全ポイントの予報を取得しています…</div></div>
+        <div class="legend ov-legend">
+          <span><i class="s5"></i>★5</span><span><i class="s4"></i>★4</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span>
+          <span>朝 5〜9時・昼 10〜14時・夕 15〜18時</span>
         </div>
-        <p class="log-toast" id="logToast" aria-live="polite"></p>
-        <form id="logForm" class="log-form" hidden>
-          <div class="log-pred" id="logPred"></div>
-          <div class="log-fields">
-            <label for="logHour">時間<select id="logHour"></select></label>
-            <label for="logSize">実際のサイズ<select id="logSize"></select></label>
-            <label for="logFace">波の面<select id="logFace"></select></label>
-            <label for="logStars">自分の評価<select id="logStars"><option value="5">★★★★★ 最高</option><option value="4">★★★★ 良い</option><option value="3" selected>★★★ まずまず</option><option value="2">★★ いまいち</option><option value="1">★ 厳しい</option></select></label>
-            <label for="logMemo" class="wide">メモ（任意）<input id="logMemo" type="text" maxlength="60" placeholder="例：ダンパー気味、人が多い"></label>
-          </div>
-          <p class="log-msg" id="logMsg" aria-live="polite"></p>
-          <div class="log-actions"><button type="submit" class="btn">保存する</button><button type="button" class="btn ghost" id="logCancel">やめる</button></div>
-        </form>
-        <details class="log-list">
-          <summary>このポイントの記録（<span id="logCount">0</span>件）</summary>
-          <div id="logList"></div>
-          <div class="log-tools">
-            <button type="button" class="btn ghost" id="logExport">全記録をコピー（仲間に共有）</button>
-            <label for="logImport">仲間の記録を読み込む</label>
-            <textarea id="logImport" rows="3" placeholder="コピーされた記録をここに貼り付け"></textarea>
-            <button type="button" class="btn ghost" id="logImportBtn">読み込む</button>
-            <p class="log-msg" id="logToolsMsg" aria-live="polite"></p>
-          </div>
-        </details>
+      </section>
+    </div>
+    <div class="view" id="view-forecast" role="tabpanel" aria-labelledby="vt-forecast" hidden>
+      <div class="subtabs" role="tablist" aria-label="詳しい予報">
+        <button type="button" role="tab" id="st-today" aria-controls="sp-today" aria-selected="true">今日</button>
+        <button type="button" role="tab" id="st-week" aria-controls="sp-week" aria-selected="false">週間</button>
+        <button type="button" role="tab" id="st-gear" aria-controls="sp-gear" aria-selected="false">装備・記録</button>
+        <button type="button" role="tab" id="st-guide" aria-controls="sp-guide" aria-selected="false">ガイド</button>
       </div>
-    </section>
-    <div id="forecast"></div>
+      <div class="subpane" id="sp-today" role="tabpanel" aria-labelledby="st-today">
+        <div id="now"><div class="status">予報データを取得しています…</div></div>
+        <div id="chartToday"></div>
+      </div>
+      <div class="subpane" id="sp-week" role="tabpanel" aria-labelledby="st-week" hidden>
+        <div id="week"></div>
+      </div>
+      <div class="subpane" id="sp-gear" role="tabpanel" aria-labelledby="st-gear" hidden>
+        <div id="gear"></div>
+      <section id="logSec">
+        <h2>答え合わせ <small>実際の波を記録して、予報のクセを補正</small></h2>
+        <div class="panel logbox">
+          <div class="log-head">
+            <div class="calib" id="calibInfo"></div>
+            <button type="button" class="btn" id="logOpen">いまの波を記録する</button>
+          </div>
+          <p class="log-toast" id="logToast" aria-live="polite"></p>
+          <form id="logForm" class="log-form" hidden>
+            <div class="log-pred" id="logPred"></div>
+            <div class="log-fields">
+              <label for="logHour">時間<select id="logHour"></select></label>
+              <label for="logSize">実際のサイズ<select id="logSize"></select></label>
+              <label for="logFace">波の面<select id="logFace"></select></label>
+              <label for="logStars">自分の評価<select id="logStars"><option value="5">★★★★★ 最高</option><option value="4">★★★★ 良い</option><option value="3" selected>★★★ まずまず</option><option value="2">★★ いまいち</option><option value="1">★ 厳しい</option></select></label>
+              <label for="logMemo" class="wide">メモ（任意）<input id="logMemo" type="text" maxlength="60" placeholder="例：ダンパー気味、人が多い"></label>
+            </div>
+            <p class="log-msg" id="logMsg" aria-live="polite"></p>
+            <div class="log-actions"><button type="submit" class="btn">保存する</button><button type="button" class="btn ghost" id="logCancel">やめる</button></div>
+          </form>
+          <details class="log-list">
+            <summary>このポイントの記録（<span id="logCount">0</span>件）</summary>
+            <div id="logList"></div>
+            <div class="log-tools">
+              <button type="button" class="btn ghost" id="logExport">全記録をコピー（仲間に共有）</button>
+              <label for="logImport">仲間の記録を読み込む</label>
+              <textarea id="logImport" rows="3" placeholder="コピーされた記録をここに貼り付け"></textarea>
+              <button type="button" class="btn ghost" id="logImportBtn">読み込む</button>
+              <p class="log-msg" id="logToolsMsg" aria-live="polite"></p>
+            </div>
+          </details>
+        </div>
+      </section>
+      </div>
+      <div class="subpane" id="sp-guide" role="tabpanel" aria-labelledby="st-guide" hidden>
+      <section>
+        <h2>ポイントガイド <small id="guideSub"></small></h2>
+        <div class="panel spot-guide" id="spotGuide"></div>
+      </section>
+      <section>
+        <div class="settings">
+          <label for="facing">ビーチの向き（沖の方角）</label>
+          <input id="facing" type="number" min="0" max="359" step="5" value="110"> °
+          <span id="facingNote"></span>
+        </div>
+      </section>
+      </div>
     </div>
     <div class="view" id="view-live" role="tabpanel" aria-labelledby="vt-live" hidden>
     <div class="duo">
@@ -542,23 +615,6 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
     <section>
       <h2>潮見表 <small id="tideSub">満潮・干潮・潮回り（7日間）</small></h2>
       <div class="panel tide-wrap" id="tideTable"><div class="status">潮汐データを取得しています…</div></div>
-    </section>
-    </div>
-    <div class="view" id="view-spots" role="tabpanel" aria-labelledby="vt-spots" hidden>
-    <section>
-      <h2>いまの波情報 <small>全ポイントの現在の予報・タップで切り替え</small></h2>
-      <div id="spotList"><div class="status">全ポイントの予報を取得しています…</div></div>
-    </section>
-    <section>
-      <h2>ポイントガイド <small id="guideSub"></small></h2>
-      <div class="panel spot-guide" id="spotGuide"></div>
-    </section>
-    <section>
-      <div class="settings">
-        <label for="facing">ビーチの向き（沖の方角）</label>
-        <input id="facing" type="number" min="0" max="359" step="5" value="110"> °
-        <span id="facingNote"></span>
-      </div>
     </section>
     </div>
     <div class="view" id="view-learn" role="tabpanel" aria-labelledby="vt-learn" hidden>
@@ -1003,7 +1059,7 @@ const GEAR = {
   spring:     { name: "スプリング", desc: "半袖・半ズボンのウェット", fit: { torso: true, arms: "short", legs: "short" } },
   seagull:    { name: "シーガル", desc: "半袖・長ズボン。足元が冷える日に", fit: { torso: true, arms: "short", legs: "long" } },
   longspring: { name: "ロングスプリング", desc: "長袖・半ズボン。腕の冷えと日焼けを防ぐ", fit: { torso: true, arms: "long", legs: "short" } },
-  full32:     { name: "3/2mm フルスーツ", desc: "長袖・長ズボン。秋の定番", fit: { torso: true, arms: "long", legs: "long" } },
+  full32:     { name: "3/2mm フルスーツ", desc: "長袖・長ズボン。春と秋の定番", fit: { torso: true, arms: "long", legs: "long" } },
   full53:     { name: "5/3mm フルスーツ", desc: "厚手のフルスーツ。ブーツもあると安心", fit: { torso: true, arms: "long", legs: "long", boots: true } },
   semidry:    { name: "セミドライ", desc: "冬用の保温スーツ。ブーツ・グローブ・キャップも", fit: { torso: true, arms: "long", legs: "long", boots: true, gloves: true, hood: true } },
 };
@@ -1051,7 +1107,7 @@ function gearTip(sst, today, cur) {
   if (today.tmin <= 16 && sst >= 19) return `朝の気温は ${Math.round(today.tmin)}℃ まで下がります。上がったあとの上着やポンチョがあると快適です。`;
   if ((today.uv ?? 0) >= 6) return `日差しが強め（UV ${Math.round(today.uv)}）。顔と首の日焼け止めをしっかり。`;
   if (sst - today.tmax >= 3) return "海の中のほうが暖かい日。着替えは手早く。";
-  return "秋の海は日ごとに冷えていきます。水温の下がり具合をチェックしておきましょう。";
+  return "水温は季節の変わり目に大きく動きます。ときどき水温の推移をチェックしておきましょう。";
 }
 const WX = c => c === 0 ? "快晴" : c <= 2 ? "晴れ" : c === 3 ? "くもり" : c <= 48 ? "霧" : c <= 57 ? "霧雨" : c <= 67 ? "雨" : c <= 77 ? "雪" : c <= 82 ? "にわか雨" : c <= 86 ? "にわか雪" : "雷雨";
 const WX_CHAR = c => c <= 1 ? ["晴", "var(--sun)"] : c <= 3 ? ["曇", "var(--muted)"] : c <= 48 ? ["霧", "var(--muted)"] : c <= 67 || (c >= 80 && c <= 82) ? ["雨", "var(--tide)"] : c <= 86 ? ["雪", "var(--tide)"] : ["雷", "var(--bad)"];
@@ -1230,6 +1286,7 @@ async function loadOfficialTides(spot, hours) {
 
 // --- render forecast ---------------------------------------------------------
 let DATA = null;
+let detailsOpen = false;
 
 function render() {
   const { hours, daily } = DATA;
@@ -1243,7 +1300,7 @@ function render() {
   const sstDay = byDay[cur.key].map(h => h.sst).filter(v => v != null);
 
   const gearT = cur.sst ?? (sstDay.length ? sstDay[0] : null);
-  const gearHTML = gearT == null ? "" : `
+  document.getElementById("gear").innerHTML = gearT == null ? "" : `
   <section>
     <h2>今日のおすすめの格好 <small>水温と気温から</small></h2>
     <div class="panel gear">
@@ -1256,51 +1313,70 @@ function render() {
     </div>
   </section>`;
 
-  document.getElementById("now").innerHTML = `<div class="stack">
+  const nextTide = extremes.find(e => e.t > now);
+  document.getElementById("now").innerHTML = `
   <section class="panel now" aria-label="現在の状況">
     <div class="verdict">
-      <div class="label">${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
+      <div class="label">${esc(SPOT.name)}・${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
       <div class="size-word">${sizeWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
+      <div class="quick">
+        <span><span class="pill ${cur.windI.cls}">${cur.windI.type}</span> ${cur.windSpeed.toFixed(0)}m/s</span>
+        <span>${cur.wave.toFixed(1)}m・${Math.round(cur.period)}秒</span>
+        ${nextTide ? `<span>${nextTide.hi ? "満潮" : "干潮"} ${hm(nextTide.t)}</span>` : ""}
+        ${cur.sst != null ? `<span>水温 ${cur.sst.toFixed(0)}℃</span>` : ""}
+      </div>
       <div class="verdict-text">${summaryText(cur, curWin)}</div>
       ${beginnerHTML(cur)}
     </div>
-    <div class="facts">
-      <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m${cur.swell2H >= 0.3 && cur.swell2P ? `<br>2つ目のうねり ${cur.swell2H.toFixed(1)}m・${Math.round(cur.swell2P)}秒・${dirName(cur.swell2Dir)}から` : ""}</span></div>
-      <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
-      <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
-      <div class="fact"><span class="label">潮位${DATA.tideJ ? `（${esc(DATA.tideJ.station.name)}）` : ""}</span><span class="v">${cur.tide != null ? (DATA.tideJ ? "" : cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
-      <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? gearNames(cur.sst) : ""}${sstDay.length ? `<br>今日 ${Math.min(...sstDay).toFixed(1)}〜${Math.max(...sstDay).toFixed(1)}℃` : ""}</span></div>
-      <div class="fact"><span class="label">天気・気温</span><span class="v">${Math.round(cur.temp)}<small> ℃</small></span><span class="d">${WX(cur.code)}・降水 ${cur.pop ?? "—"}%${today ? `<br>最高 ${Math.round(today.tmax)}℃／最低 ${Math.round(today.tmin)}℃・UV ${Math.round(today.uv ?? 0)}` : ""}</span></div>
-      <div class="fact"><span class="label">月齢・潮</span><span class="v">${moonSVG(age, 22)}${age.toFixed(1)}</span><span class="d"><span class="tide-name">${tideName(age)}</span> ${phaseName(age)}<br>次の満月 ${md(nextPhase(now, SYNODIC / 2))}・新月 ${md(nextPhase(now, SYNODIC - 0.0001))}</span></div>
-      <div class="fact"><span class="label">日の出・日の入</span><span class="v">${today ? hm(today.rise) : "—"}</span><span class="d">${today ? `日の入 ${hm(today.set)}` : ""}</span></div>
-    </div>
-  </section>${gearHTML}</div>`;
+    <details class="more"${detailsOpen ? " open" : ""}>
+      <summary>詳しい数値（うねり・潮・天気・月齢など）</summary>
+      <div class="facts">
+        <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m${cur.swell2H >= 0.3 && cur.swell2P ? `<br>2つ目のうねり ${cur.swell2H.toFixed(1)}m・${Math.round(cur.swell2P)}秒・${dirName(cur.swell2Dir)}から` : ""}</span></div>
+        <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
+        <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
+        <div class="fact"><span class="label">潮位${DATA.tideJ ? `（${esc(DATA.tideJ.station.name)}）` : ""}</span><span class="v">${cur.tide != null ? (DATA.tideJ ? "" : cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
+        <div class="fact"><span class="label">水温</span><span class="v">${cur.sst != null ? cur.sst.toFixed(1) : "—"}<small> ℃</small></span><span class="d">${cur.sst != null ? gearNames(cur.sst) : ""}${sstDay.length ? `<br>今日 ${Math.min(...sstDay).toFixed(1)}〜${Math.max(...sstDay).toFixed(1)}℃` : ""}</span></div>
+        <div class="fact"><span class="label">天気・気温</span><span class="v">${Math.round(cur.temp)}<small> ℃</small></span><span class="d">${WX(cur.code)}・降水 ${cur.pop ?? "—"}%${today ? `<br>最高 ${Math.round(today.tmax)}℃／最低 ${Math.round(today.tmin)}℃・UV ${Math.round(today.uv ?? 0)}` : ""}</span></div>
+        <div class="fact"><span class="label">月齢・潮</span><span class="v">${moonSVG(age, 22)}${age.toFixed(1)}</span><span class="d"><span class="tide-name">${tideName(age)}</span> ${phaseName(age)}<br>次の満月 ${md(nextPhase(now, SYNODIC / 2))}・新月 ${md(nextPhase(now, SYNODIC - 0.0001))}</span></div>
+        <div class="fact"><span class="label">日の出・日の入</span><span class="v">${today ? hm(today.rise) : "—"}</span><span class="d">${today ? `日の入 ${hm(today.set)}` : ""}</span></div>
+      </div>
+    </details>
+  </section>`;
+  document.querySelector("#now .more").addEventListener("toggle", e => { detailsOpen = e.target.open; });
 
-  const dayCards = Object.keys(byDay).map(k => dayCard(k, byDay[k], daily[k], extremes)).join("");
-  document.getElementById("forecast").innerHTML = `
-    <div class="stack">
-      <section>
-        <h2>時間ごとの予報</h2>
-        <div class="panel chart-box" id="chartBox">${chartSVG(hours, daily, extremes, now)}</div>
-        <div class="legend">
+  const legend = `<div class="legend">
           <span><i style="background:var(--good)"></i>★4〜5</span>
           <span><i style="background:var(--ok)"></i>★3</span>
           <span><i style="background:var(--star)"></i>★2</span>
           <span><i style="background:var(--bad)"></i>★1</span>
           <span><i style="background:var(--night)"></i>夜間</span>
           <span>風の矢印は風が吹いていく向き・数字は m/s</span>
-        </div>
-      </section>
+        </div>`;
+  const nowIdx = Math.max(0, hours.indexOf(cur));
+  const twoDays = hours.slice(0, 48);
+  document.getElementById("chartToday").innerHTML = `
+      <section>
+        <h2>今日・明日の時間ごとの予報</h2>
+        <div class="panel chart-box" data-now-x="${nowIdx * HOUR_W}">${chartSVG(twoDays, daily, extremes.filter(e => e.t < new Date(twoDays[twoDays.length - 1].t.getTime() + 3600e3)), now)}</div>
+        ${legend}
+      </section>`;
+  const dayCards = Object.keys(byDay).map(k => dayCard(k, byDay[k], daily[k], extremes)).join("");
+  document.getElementById("week").innerHTML = `
+    <div class="stack">
       <section>
         <h2>週間予報 <small>7日間・日ごとのまとめ</small></h2>
         <div class="days">${dayCards}</div>
       </section>
+      <section>
+        <h2>7日間の時間ごとの予報</h2>
+        <div class="panel chart-box" data-now-x="${nowIdx * HOUR_W}">${chartSVG(hours, daily, extremes, now)}</div>
+        ${legend}
+      </section>
     </div>`;
   renderTideTable(byDay, daily, extremes);
   renderLog();
-  const box = document.getElementById("chartBox");
-  box.scrollLeft = Math.max(0, hours.indexOf(cur) * HOUR_W - 120);
+  scrollActiveChart();
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
 }
 
@@ -1401,7 +1477,8 @@ function chartSVG(hours, daily, extremes, now) {
   const x = i => L + i * HOUR_W;
   const t0 = hours[0].t.getTime();
   const xt = t => L + (t.getTime() - t0) / 3600e3 * HOUR_W + HOUR_W / 2;
-  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${DAYS}日間の時間ごとの天気、スコア、波高、潮位、風">`;
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${Math.round(n / 24)}日間の時間ごとの天気、スコア、波高、潮位、風">`;
+  let labels = ""; // row labels, repeated in a column that stays put while the chart scrolls
 
   // night shading
   hours.forEach((h, i) => {
@@ -1412,6 +1489,7 @@ function chartSVG(hours, daily, extremes, now) {
   // row labels + grid lines
   [["天気", R.wx], ["スコア", R.score], ["波高", R.wave], ["潮位", R.tide], ["風", R.wind]].forEach(([lab, [a, b]]) => {
     s += `<text class="rowlabel" x="8" y="${a + 13}">${lab}</text>`;
+    labels += `<text class="rowlabel" x="8" y="${a + 13}">${lab}</text>`;
     s += `<line x1="${L}" x2="${W - 12}" y1="${b + 3}" y2="${b + 3}" stroke="var(--line)"/>`;
   });
   // day separators + hour ticks
@@ -1448,6 +1526,7 @@ function chartSVG(hours, daily, extremes, now) {
   const wy = v => R.wave[1] - (v / maxWave) * (R.wave[1] - R.wave[0] - 14);
   [0.5, 1, 1.5, 2, 3, 4].filter(v => v <= maxWave).forEach(v => {
     s += `<line x1="${L}" x2="${W - 12}" y1="${wy(v)}" y2="${wy(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${L - 4}" y="${wy(v) + 3}" text-anchor="end">${v}m</text>`;
+    labels += `<text x="${L - 4}" y="${wy(v) + 3}" text-anchor="end">${v}m</text>`;
   });
   const wl = hours.map((h, i) => `${i ? "L" : "M"}${x(i) + HOUR_W / 2},${wy(h.wave)}`).join(" ");
   s += `<path d="${wl} L${x(n - 1) + HOUR_W / 2},${wy(0)} L${x(0) + HOUR_W / 2},${wy(0)} Z" fill="var(--sea)" fill-opacity="0.22"/>`;
@@ -1482,7 +1561,7 @@ function chartSVG(hours, daily, extremes, now) {
   // now marker
   const nx = xt(new Date(now.getTime() - 1800e3));
   if (nx > L && nx < W) s += `<line x1="${nx}" x2="${nx}" y1="${R.wx[0]}" y2="${R.wind[1] + 3}" stroke="var(--fg)" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${nx + 4}" y="${R.score[0] + 10}" style="fill:var(--fg)">いま</text>`;
-  return s + "</svg>";
+  return `<div class="chart-labels" aria-hidden="true"><svg width="${L}" height="${H}" viewBox="0 0 ${L} ${H}">${labels}</svg></div>` + s + "</svg>";
 }
 
 const jmaForecastURL = J => `https://www.jma.go.jp/bosai/forecast/#area_type=class10s&area_code=${J.area}`;
@@ -1564,7 +1643,7 @@ async function refresh() {
   loadJMA();
   loadNews();
   spotListAt = 0;
-  if (currentView === "spots") loadSpotList();
+  if (currentView === "list") loadSpotList();
   const spotId = SPOT.id;
   try {
     const data = await loadForecast();
@@ -1576,7 +1655,7 @@ async function refresh() {
   } catch (e) {
     if (spotId !== SPOT.id) return;
     upd.textContent = "取得失敗";
-    document.getElementById("now").innerHTML = `<div class="status err">予報データを取得できませんでした（${esc(e.message)}）。ネット接続を確認して「最新に更新」を押してください。</div>`;
+    document.getElementById("now").innerHTML = `<div class="status err">予報データを取得できませんでした（${esc(e.message)}）。ネット接続を確認して「更新」を押してください。</div>`;
   }
 }
 
@@ -2025,65 +2104,140 @@ function renderSpotGuide() {
 
 // --- all spots at a glance (one request for every spot) -------------------------------
 let spotListAt = 0;
+let SPOT_NOW = null; // [{ slots: { "YYYY-MM-DD": { 朝: h, 昼: h, 夕: h } }, now: h }]
+const SLOTS = [["朝", 5, 9], ["昼", 10, 14], ["夕", 15, 18]];
+// today + tomorrow for every spot in one request, rated per hour, best hour per time slot
 async function loadSpotList() {
-  if (Date.now() - spotListAt < 20 * 60e3) return renderSpotListCurrent();
-  const el = document.getElementById("spotList");
+  if (SPOT_NOW && Date.now() - spotListAt < 20 * 60e3) return renderSpotListCurrent();
+  const el = document.getElementById("overview");
   const lat = k => SPOTS.map(sp => sp[k][0]).join(","), lon = k => SPOTS.map(sp => sp[k][1]).join(",");
   try {
     const [mr, wr] = await Promise.all([
-      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat("marine")}&longitude=${lon("marine")}&hourly=wave_height,wave_period,swell_wave_height,swell_wave_period,swell_wave_direction,wave_direction,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=1`),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat("wx")}&longitude=${lon("wx")}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=1`),
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat("marine")}&longitude=${lon("marine")}&hourly=wave_height,wave_period,swell_wave_height,swell_wave_period,swell_wave_direction,wave_direction,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=2`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat("wx")}&longitude=${lon("wx")}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=2`),
     ]);
     if (!mr.ok || !wr.ok) throw new Error(`HTTP ${mr.status}/${wr.status}`);
     const [ms, ws] = await Promise.all([mr.json(), wr.json()]);
-    const now = new Date(), key = `${toKey(now)}T${pad(now.getHours())}:00`;
+    const nowKey = `${toKey(new Date())}T${pad(new Date().getHours())}:00`;
     SPOT_NOW = SPOTS.map((sp, i) => {
-      const M = ms[i].hourly, W = ws[i].hourly;
-      const mi = M.time.indexOf(key), wi = W.time.indexOf(key);
-      if (mi < 0 || wi < 0 || M.wave_height[mi] == null) return null;
-      const swellH = M.swell_wave_height[mi] ?? 0;
-      const h = {
-        wave: M.wave_height[mi] * sizeFactor(sp.id),
-        period: swellH >= 0.5 * M.wave_height[mi] && M.swell_wave_period[mi] != null ? M.swell_wave_period[mi] : M.wave_period[mi],
-        swellDir: M.swell_wave_direction[mi] ?? M.wave_direction[mi], tideFrac: 0.5,
-        windSpeed: W.wind_speed_10m[wi], windDir: W.wind_direction_10m[wi], sst: M.sea_surface_temperature[mi],
-      };
-      h.windI = windInfo(h.windDir, h.windSpeed, storedFacing(sp));
-      h.score = rate(h, sp.swell);
-      h.stars = h.wave >= 2.2 ? Math.min(starsOf(h.score), 3) : starsOf(h.score);
-      return h;
+      const M = ms[i].hourly, W = ws[i].hourly, wIdx = new Map(W.time.map((t, j) => [t, j]));
+      const fac = storedFacing(sp), f = sizeFactor(sp.id);
+      const out = { slots: {}, now: null };
+      M.time.forEach((t, mi) => {
+        const wi = wIdx.get(t);
+        if (wi === undefined || M.wave_height[mi] == null) return;
+        const swellH = M.swell_wave_height[mi] ?? 0;
+        const h = {
+          t: new Date(t), wave: M.wave_height[mi] * f,
+          period: swellH >= 0.5 * M.wave_height[mi] && M.swell_wave_period[mi] != null ? M.swell_wave_period[mi] : M.wave_period[mi],
+          swellDir: M.swell_wave_direction[mi] ?? M.wave_direction[mi], tideFrac: 0.5,
+          windSpeed: W.wind_speed_10m[wi], windDir: W.wind_direction_10m[wi], sst: M.sea_surface_temperature[mi],
+        };
+        h.windI = windInfo(h.windDir, h.windSpeed, fac);
+        h.score = rate(h, sp.swell);
+        h.stars = h.wave >= 2.2 ? Math.min(starsOf(h.score), 3) : starsOf(h.score);
+        if (t === nowKey) out.now = h;
+        const hr = h.t.getHours(), slot = SLOTS.find(([, a, b]) => hr >= a && hr <= b);
+        if (!slot) return;
+        const day = (out.slots[t.slice(0, 10)] ||= {});
+        if (!day[slot[0]] || h.score > day[slot[0]].score) day[slot[0]] = h;
+      });
+      return out;
     });
     spotListAt = Date.now();
     renderSpotListCurrent();
   } catch (e) {
-    el.innerHTML = `<div class="status err">全ポイントの予報を取得できませんでした（${esc(e.message)}）。</div>`;
+    el.innerHTML = `<div class="status err">全ポイントの予報を取得できませんでした（${esc(e.message)}）。「更新」を押してください。</div>`;
   }
 }
-let SPOT_NOW = null;
 function renderSpotListCurrent() {
   if (!SPOT_NOW) return;
+  const now = new Date(), d0 = new Date(now), d1 = new Date(now.getTime() + 86400e3);
+  const days = [[toKey(d0), "今日", d0], [toKey(d1), "明日", d1]];
+  const past = (k, slot) => k === toKey(now) && now.getHours() > slot[2];
   const groups = [...new Set(SPOTS.map(sp => sp.group))];
-  document.getElementById("spotList").innerHTML = groups.map(g => `
-    <div class="spot-group"><h3>${esc(g)}</h3><div class="spot-cards">
-      ${SPOTS.map((sp, i) => [sp, SPOT_NOW[i]]).filter(([sp]) => sp.group === g).map(([sp, h]) => `
-        <button type="button" class="spot-card${sp.id === SPOT.id ? " current" : ""}" data-spot="${sp.id}">
-          <span class="nm">${esc(sp.name)}</span>
-          <span class="sz">${h ? sizeWord(h.wave) : "—"}</span>
-          <span class="pl">${esc(sp.place)}</span>
-          ${h ? `<span class="ln">${starHTML(h.stars)}<span class="pill ${h.windI.cls}">${h.windI.type}</span>${h.wave.toFixed(1)}m・${Math.round(h.period)}秒${h.sst != null ? `・水温${h.sst.toFixed(0)}℃` : ""}</span>` : `<span class="ln">データなし</span>`}
-        </button>`).join("")}
-    </div></div>`).join("");
-  document.querySelectorAll(".spot-card").forEach(b => b.addEventListener("click", () => {
+  const cell = (sp, k, slot) => {
+    const h = SPOT_NOW[SPOTS.indexOf(sp)].slots[k]?.[slot[0]];
+    if (!h) return `<td><span class="cell none">—</span></td>`;
+    const label = `${sp.name} ${k === days[0][0] ? "今日" : "明日"}${slot[0]} ★${h.stars} ${sizeWord(h.wave)}・${h.windI.type}（${h.t.getHours()}時ごろ）`;
+    return `<td><button type="button" class="cell s${h.stars}${past(k, slot) ? " past" : ""}" data-spot="${sp.id}" title="${esc(label)}" aria-label="${esc(label)}">${h.stars}</button></td>`;
+  };
+  document.getElementById("overview").innerHTML = `<table class="ov">
+    <thead>
+      <tr><th rowspan="2" class="ov-name">ポイント</th>${days.map(([, n, d]) => `<th colspan="3" class="ov-day">${n} <small>${md(d)}（${WEEK[d.getDay()]}）</small></th>`).join("")}</tr>
+      <tr>${days.map(() => SLOTS.map(([n]) => `<th class="ov-slot">${n}</th>`).join("")).join("")}</tr>
+    </thead>
+    <tbody>${groups.map(g => `
+      <tr class="ov-group"><th colspan="7">${esc(g)}</th></tr>
+      ${SPOTS.filter(sp => sp.group === g).map(sp => {
+        const n = SPOT_NOW[SPOTS.indexOf(sp)].now;
+        return `<tr class="${sp.id === SPOT.id ? "current" : ""}">
+          <th class="ov-name"><button type="button" data-spot="${sp.id}">${esc(sp.name)}<small>${n ? `いま ${sizeWord(n.wave)}・${n.windI.type}` : ""}</small></button></th>
+          ${days.map(([k]) => SLOTS.map(slot => cell(sp, k, slot)).join("")).join("")}
+        </tr>`;
+      }).join("")}`).join("")}
+    </tbody></table>`;
+  // best upcoming slots across all spots (one per spot)
+  const cands = [];
+  SPOTS.forEach((sp, i) => days.forEach(([k, dn]) => SLOTS.forEach(slot => {
+    const h = SPOT_NOW[i].slots[k]?.[slot[0]];
+    if (h && !past(k, slot)) cands.push({ sp, h, when: `${dn}の${slot[0]}` });
+  })));
+  cands.sort((a, b) => b.h.stars - a.h.stars || b.h.score - a.h.score);
+  const picks = [], seen = new Set();
+  for (const c of cands) { if (!seen.has(c.sp.id)) { picks.push(c); seen.add(c.sp.id); } if (picks.length === 3) break; }
+  document.getElementById("picks").innerHTML = picks.length ? `<span class="label">おすすめ</span>` + picks.map(c => `
+    <button type="button" class="pick-chip" data-spot="${c.sp.id}">
+      <span class="stars">${"★".repeat(c.h.stars)}</span><b>${esc(c.sp.name)}</b><small>${c.when}・${sizeWord(c.h.wave)}・${c.h.windI.type}</small>
+    </button>`).join("") : "";
+  document.querySelectorAll("#overview [data-spot], #picks [data-spot]").forEach(b => b.addEventListener("click", () => {
     selectSpot(b.dataset.spot);
+    showSub("today");
     showView("forecast");
   }));
 }
 
+// --- sub tabs inside the forecast view -------------------------------------------------------
+const SUBS = ["today", "week", "gear", "guide"];
+let currentSub = "today";
+function showSub(name) {
+  if (!SUBS.includes(name)) name = "today";
+  currentSub = name;
+  SUBS.forEach(n => {
+    const on = n === name, t = document.getElementById(`st-${n}`);
+    t.setAttribute("aria-selected", on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(`sp-${n}`).hidden = !on;
+  });
+  try { localStorage.setItem("surf-sub", name); } catch (e) {}
+  scrollActiveChart();
+}
+// a chart inside a hidden pane has no width yet, so scroll it to "now" when it becomes visible
+function scrollActiveChart() {
+  const box = document.querySelector(`#sp-${currentSub} .chart-box`);
+  if (box && box.dataset.nowX) box.scrollLeft = Math.max(0, +box.dataset.nowX - 120);
+}
+(function setupSubs() {
+  SUBS.forEach((n, i) => {
+    const t = document.getElementById(`st-${n}`);
+    t.addEventListener("click", () => showSub(n));
+    t.addEventListener("keydown", e => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      const next = SUBS[(i + d + SUBS.length) % SUBS.length];
+      showSub(next); document.getElementById(`st-${next}`).focus();
+    });
+  });
+  let saved = null;
+  try { saved = localStorage.getItem("surf-sub"); } catch (e) {}
+  showSub(saved || "today");
+})();
+
 // --- tab views ---------------------------------------------------------------------
-const VIEWS = ["forecast", "live", "spots", "learn", "videos", "news"];
-let currentView = "forecast";
+const VIEWS = ["list", "forecast", "live", "learn", "videos", "news"];
+let currentView = "list";
 function showView(name, opts = {}) {
-  if (!VIEWS.includes(name)) name = "forecast";
+  if (!VIEWS.includes(name)) name = "list";
   currentView = name;
   VIEWS.forEach(v => {
     const on = v === name, tab = document.getElementById(`vt-${v}`);
@@ -2092,7 +2246,8 @@ function showView(name, opts = {}) {
     document.getElementById(`view-${v}`).hidden = !on;
   });
   try { localStorage.setItem("surf-view", name); } catch (e) {}
-  if (name === "spots") loadSpotList();
+  if (name === "list") loadSpotList();
+  if (name === "forecast") scrollActiveChart();
   if (opts.scroll !== false) {
     const top = document.getElementById("main").getBoundingClientRect().top + scrollY - 70;
     if (scrollY > top) scrollTo({ top: Math.max(0, top) });
@@ -2111,7 +2266,7 @@ function showView(name, opts = {}) {
   });
   let saved = null;
   try { saved = localStorage.getItem("surf-view"); } catch (e) {}
-  showView(saved || "forecast", { scroll: false });
+  showView(VIEWS.includes(saved) ? saved : "list", { scroll: false });
 })();
 
 // --- spot switching -----------------------------------------------------------
@@ -2146,8 +2301,6 @@ function renderCam() {
 function applySpot() {
   const J = SPOT.jma;
   document.title = `${SPOT.name} 波予報`;
-  document.getElementById("title").textContent = `${SPOT.name} 波予報`;
-  document.getElementById("place").textContent = SPOT.place;
   document.getElementById("spot").value = SPOT.id;
   document.getElementById("jmaSub").textContent = `${J.officeName}・${J.areaName}`;
   document.getElementById("jmaLink").href = jmaForecastURL(J);
@@ -2171,7 +2324,7 @@ function selectSpot(id) {
   try { localStorage.setItem("surf-spot", SPOT.id); } catch (e) {}
   if (location.hash.slice(1) !== SPOT.id) history.replaceState(null, "", `#${SPOT.id}`);
   document.getElementById("now").innerHTML = `<div class="status">${esc(SPOT.name)}の予報を取得しています…</div>`;
-  document.getElementById("forecast").innerHTML = "";
+  ["chartToday", "week", "gear"].forEach(id => document.getElementById(id).innerHTML = "");
   document.getElementById("tideTable").innerHTML = `<div class="status">潮汐データを取得しています…</div>`;
   applySpot();
   refresh();
@@ -2195,7 +2348,7 @@ document.getElementById("facing").addEventListener("change", e => {
   if (DATA) render();
   renderSpotGuide();
   spotListAt = 0;
-  if (currentView === "spots") loadSpotList();
+  if (currentView === "list") loadSpotList();
 });
 applySpot();
 refresh();
