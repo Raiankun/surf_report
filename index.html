@@ -435,6 +435,15 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 .wk[open] .wk-chev { transform: rotate(-135deg); }
 .wk-body { display: grid; gap: 10px; padding: 4px 16px 16px; }
 
+/* swipe transition */
+@media (prefers-reduced-motion: no-preference) {
+  .view.slide-l { animation: slideL .22s ease-out; }
+  .view.slide-r { animation: slideR .22s ease-out; }
+  @keyframes slideL { from { transform: translateX(28px); opacity: .4; } }
+  @keyframes slideR { from { transform: translateX(-28px); opacity: .4; } }
+}
+main { overflow-x: clip; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -2361,6 +2370,47 @@ function showView(name, opts = {}) {
   let saved = null;
   try { saved = localStorage.getItem("surf-view"); } catch (e) {}
   showView(VIEWS.includes(saved) ? saved : "list", { scroll: false });
+})();
+
+// --- swipe between tabs (phones) ------------------------------------------------------------
+// 一覧 → 波予報の小タブ（今日・週間・装備・記録・ガイド）→ ライブ・潮 → 学ぶ → 動画 → ニュース を1本の順番として左右に移動
+const SWIPE_ORDER = ["list", ...SUBS.map(n => `forecast:${n}`), "live", "learn", "videos", "news"];
+const swipePos = () => currentView === "forecast" ? `forecast:${currentSub}` : currentView;
+function goSwipe(step) {
+  const i = SWIPE_ORDER.indexOf(swipePos()), next = SWIPE_ORDER[i + step];
+  if (!next) return;
+  const [view, sub] = next.split(":");
+  if (sub) showSub(sub);
+  showView(view);
+  const el = document.getElementById(`view-${view}`);
+  el.classList.remove("slide-l", "slide-r");
+  void el.offsetWidth; // restart the animation
+  el.classList.add(step > 0 ? "slide-l" : "slide-r");
+}
+// a swipe that starts on something that scrolls sideways (charts, tables) or on a control stays with that element
+function blocksSwipe(target) {
+  for (let el = target; el && el !== document.body; el = el.parentElement) {
+    if (el.matches("input, select, textarea, iframe, button.cell, .tabbar")) return true;
+    const ox = getComputedStyle(el).overflowX;
+    if ((ox === "auto" || ox === "scroll") && el.scrollWidth > el.clientWidth + 4) return true;
+  }
+  return false;
+}
+(function setupSwipe() {
+  const main = document.getElementById("main");
+  let sx = 0, sy = 0, st = 0, track = false;
+  main.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1 || blocksSwipe(e.target)) { track = false; return; }
+    const t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now(); track = true;
+  }, { passive: true });
+  main.addEventListener("touchend", e => {
+    if (!track) return;
+    track = false;
+    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Date.now() - st > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+    goSwipe(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  main.addEventListener("touchcancel", () => { track = false; }, { passive: true });
 })();
 
 // --- spot switching -----------------------------------------------------------
