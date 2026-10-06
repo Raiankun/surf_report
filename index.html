@@ -460,6 +460,21 @@ main { overflow-x: clip; }
 .tc-note { font-size: 13px; background: color-mix(in srgb, var(--bad) 8%, transparent); border-radius: 10px; padding: 8px 12px; }
 #tcList { margin-bottom: 12px; }
 
+.spot-desc { margin: 0; font-size: 14.5px; line-height: 1.75; }
+.spot-src { margin: 0; font-size: 11.5px; color: var(--muted); }
+.spot-tags { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; font-size: 11.5px; }
+.spot-tags span { background: var(--bg); border-radius: 99px; padding: 1px 9px; color: var(--muted); font-weight: 700; }
+.spot-tags a { font-size: 12px; margin-left: 4px; }
+
+.tips { display: grid; gap: 14px; }
+.tip-block { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: grid; gap: 8px; }
+.tip-block h3 { margin: 0; font-size: 15.5px; display: flex; align-items: center; gap: 8px; }
+.tip-no { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-data); font-size: 13px; display: grid; place-items: center; flex: none; }
+.tip-block ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 13.5px; }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ref-vid { font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--bg); color: var(--fg); border-radius: 99px; padding: 4px 12px; }
+.ref-vid:hover { outline: 2px solid var(--accent); }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -671,14 +686,15 @@ main { overflow-x: clip; }
     </div>
     <div class="view" id="view-learn" role="tabpanel" aria-labelledby="vt-learn" hidden>
     <section id="guide">
-      <h2>はじめての人へ <small>用語・乗り方・パドリング・横に滑る・安全とマナー</small></h2>
+      <h2>はじめての人へ <small>用語・乗り方・パドリング・横に滑る・上達のコツ・安全とマナー</small></h2>
       <div class="panel guide">
         <div class="tabs" role="tablist" aria-label="初心者ガイド">
           <button type="button" role="tab" id="tab-words" aria-controls="pane-words" aria-selected="true">用語集</button>
           <button type="button" role="tab" id="tab-ride" aria-controls="pane-ride" aria-selected="false">乗り方の流れ</button>
           <button type="button" role="tab" id="tab-paddle" aria-controls="pane-paddle" aria-selected="false">パドリング</button>
           <button type="button" role="tab" id="tab-trim" aria-controls="pane-trim" aria-selected="false">横に滑る</button>
-          <button type="button" role="tab" id="tab-safe" aria-controls="pane-safe" aria-selected="false">安全とマナー</button>
+          <button type="button" role="tab" id="tab-tips" aria-controls="pane-tips" aria-selected="false">上達のコツ</button>
+        <button type="button" role="tab" id="tab-safe" aria-controls="pane-safe" aria-selected="false">安全とマナー</button>
         </div>
 
         <div class="pane" id="pane-words" role="tabpanel" aria-labelledby="tab-words">
@@ -866,7 +882,60 @@ main { overflow-x: clip; }
           <p class="tip">波が前で崩れて行き止まりになったら、板を体から離さずに<b>波の後ろ側へ降りる</b>か、板を上に向けて波の裏へ抜けます（プルアウト）。前に飛び込むと、板が後ろから飛んできて危険です。</p>
         </div>
 
-        <div class="pane" id="pane-safe" role="tabpanel" aria-labelledby="tab-safe" hidden>
+        <div class="pane" id="pane-tips" role="tabpanel" aria-labelledby="tab-tips" hidden>
+        <p class="lead">プロの解説動画や上達記事でくり返し言われている、<b>初心者がつまずきやすいポイント</b>を、段階ごとにまとめました。それぞれ、詳しく見られる動画も付けています。</p>
+        <div class="tips">
+          <section class="tip-block">
+            <h3><span class="tip-no">1</span>波をつかまえる</h3>
+            <ul>
+              <li><b>ボードが水平になる位置に寝る。</b>前に乗りすぎるとテールが浮いてノーズが刺さり、後ろすぎると波に押してもらえない。</li>
+              <li><b>波の速さに「合わせる」。</b>リレーでバトンを受け取るように、波が来る少し前から漕ぎ始めて、波が追いつく瞬間にいちばん速くなっているのが理想。</li>
+              <li><b>押された感覚のあと、さらに2〜3かき。</b>ここで止めると波だけが先に行ってしまう。</li>
+              <li>早すぎると刺さり（パーリング）、遅すぎると乗り遅れる。<b>タイミングのズレは、待つ位置を少しずらして調整</b>する。</li>
+            </ul>
+            <div class="refs"><a class="ref-vid" href="https://www.youtube.com/watch?v=u8q6oHtVl4s" target="_blank" rel="noopener">▶ 正しいパドリングの方法（Surfing TV）</a><a class="ref-vid" href="https://www.youtube.com/watch?v=tIb1mGkuvgM" target="_blank" rel="noopener">▶ 波キャッチの教科書（ヒガシーサー）</a></div>
+          </section>
+          <section class="tip-block">
+            <h3><span class="tip-no">2</span>立ち上がる（テイクオフ）</h3>
+            <ul>
+              <li><b>あごと胸を上げて、進む方向を見る。</b>足元やボードを見ると体が沈み、バランスを崩しやすい。</li>
+              <li><b>手は胸の横につき、一気に立つ。</b>ひざをついてから立つクセがつくと、うねりでは間に合わなくなる。</li>
+              <li><b>前足は両手のあいだに。</b>立った直後に転ぶときは、足の位置と目線をまず確認。</li>
+              <li><b>立ったら、ひざを曲げて低く。</b>棒立ちは波の動きについていけない。</li>
+            </ul>
+            <div class="refs"><a class="ref-vid" href="https://www.youtube.com/watch?v=FeluceqWWXc" target="_blank" rel="noopener">▶ テイクオフ 4つのコツ（河村カイサ）</a><a class="ref-vid" href="https://www.youtube.com/watch?v=RZiLBYy_wkc" target="_blank" rel="noopener">▶ テイクオフのポイント（90秒でわかる）</a></div>
+          </section>
+          <section class="tip-block">
+            <h3><span class="tip-no">3</span>海に入る前と、スープでの練習</h3>
+            <ul>
+              <li><b>入る前の5分の陸トレ。</b>①ボードに寝た姿勢を確かめる、②胸を上げる動きを5回、③ゆっくりテイクオフを3回。体に動きを思い出させてから海へ。</li>
+              <li><b>まずはスープ（崩れた白波）で。</b>「漕ぐ→波と速さを合わせる→立つ→岸まで滑る」を何本もくり返すと、乗る感覚が早く身につく。</li>
+              <li><b>家でもできる。</b>床でのテイクオフ動作の練習は、1日数分でも効果がある。</li>
+            </ul>
+            <div class="refs"><a class="ref-vid" href="https://www.youtube.com/watch?v=9G2pE9ovQTw" target="_blank" rel="noopener">▶ 1日4分のテイクオフトレーニング（森下波瑠）</a><a class="ref-vid" href="https://www.youtube.com/watch?v=TE95MqAKfZ8" target="_blank" rel="noopener">▶ スープで基礎練習（ドジ井坂）</a></div>
+          </section>
+          <section class="tip-block">
+            <h3><span class="tip-no">4</span>横に走るへのステップ</h3>
+            <ul>
+              <li><b>行きたい方向を先に見る。</b>目線→肩→腰の順に向けると、ボードも自然にそちらへ進む。</li>
+              <li><b>少し斜めに漕ぎ出す。</b>真岸に向けず、崩れていく方向へ板を向けておくと、立った瞬間から横に走れる。</li>
+              <li>くわしい体重のかけ方は「横に滑る」タブへ。</li>
+            </ul>
+            <div class="refs"><a class="ref-vid" href="https://www.youtube.com/watch?v=2QeSVsFeEto" target="_blank" rel="noopener">▶ テイクオフの次に見る動画 横に走る方法（Surfing TV）</a><a class="ref-vid" href="https://www.youtube.com/watch?v=u_ulw0QFdAA" target="_blank" rel="noopener">▶ 初めてでも横に走れる？（大人のサーフィン理論）</a></div>
+          </section>
+          <section class="tip-block">
+            <h3><span class="tip-no">5</span>上達を早める心がけ</h3>
+            <ul>
+              <li><b>最初はスクールか、慣れた人と一緒に。</b>1人で入らないことが一番の安全策。</li>
+              <li><b>自分に合った浮力のボードを。</b>浮力が足りないと、波をつかまえる段階でつまずく（「学ぶ」→ボードの選び方で計算できます）。</li>
+              <li><b>小さめでメローな波の日を選ぶ。</b>このサイトの一覧で、初心者向けの「◎」やメロー・ファンウェイブのポイントを探すのが近道。</li>
+            </ul>
+          </section>
+        </div>
+        <p class="spot-src">参考：プロサーファー・コーチの解説動画（各リンク先）、<a href="https://pocketsurf.jp/surfing-howto/takeoff-tips/" target="_blank" rel="noopener">pocketsurf「テイクオフのコツ」</a>、<a href="https://www.rere.jp/357194/" target="_blank" rel="noopener">rere「サーフィン初心者のテイクオフ」</a>。内容は要点を自分の言葉でまとめ直しています。</p>
+      </div>
+
+      <div class="pane" id="pane-safe" role="tabpanel" aria-labelledby="tab-safe" hidden>
           <div class="rules">
             <div class="rule"><h3>マナー</h3><ul>
               <li><b>前乗りしない。</b>ピークに近い人が優先。乗る前に左右を確認。</li>
@@ -1507,6 +1576,7 @@ function render() {
   <section class="panel now" aria-label="現在の状況">
     <div class="verdict">
       <div class="label">${esc(SPOT.name)}・${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
+      ${spotTags(SPOT).length ? `<div class="spot-tags">${spotTags(SPOT).map(t => `<span>${esc(t)}</span>`).join("")}<a href="#" data-sub="guide">ポイントの特徴 ›</a></div>` : ""}
       <div class="size-word">${sizeWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="quick">
@@ -2116,6 +2186,8 @@ function calcVolume() {
   });
   // in-page link to the guide must not replace the spot hash
   document.addEventListener("click", e => {
+    const sub = e.target.closest("[data-sub]");
+    if (sub) { e.preventDefault(); showSub(sub.dataset.sub); return; }
     if (!e.target.closest("[data-guide]")) return;
     e.preventDefault();
     showView("learn", { scroll: false });
@@ -2360,6 +2432,40 @@ function closeLogForm() {
   });
 })();
 
+// ポイントの特徴（surf-life.blue の掲載データ〈タイプ・波質・レベル・シーズン・設備・うねり・オフショア〉をもとに作成）
+const SPOT_INFO = {
+  senri: {"desc":"砂浜のビーチブレイク。紀伊水道に面した長い浜で、本州有数のアカウミガメの産卵地としても知られる。","type":"砂浜のビーチブレイク","wave":"","season":"","level":"","facilities":"","extra":[]},
+  irago: {"desc":"渥美半島の太平洋側に続く砂浜のエリア。南からのうねりを受けやすい、愛知を代表するサーフエリアのひとつ。","type":"砂浜のビーチブレイク","wave":"","season":"","level":"","facilities":"","extra":[]},
+  ayukawa: {"desc":"越前海岸の日本海側のポイント。冬の季節風が運ぶ北〜北西のうねりで波が上がる。","type":"","wave":"","season":"","level":"","facilities":"","extra":[]},
+  kou: {"desc": "砂浜のビーチブレイクで、厚めでゆるい「マッシー」な波が多い。東・南東のうねりに反応し、西・北西の風がオフショア。ベストシーズンは8〜10月。レベルは中級者〜上級者向け。", "type": "砂浜のビーチブレイク", "wave": "マッシー（厚めでゆるい）", "season": "8〜10月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "三重県/伊勢/321"},
+  ichigo: {"desc": "砂浜のビーチブレイクで、力強い「パワフル」な波が立ちやすい。北東・東・南東のうねりに反応し、西・北西の風がオフショア。ベストシーズンは8〜10月。レベルは中級者〜上級者向け。", "type": "砂浜のビーチブレイク", "wave": "パワフル", "season": "8〜10月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "三重県/伊勢/327"},
+  jan: {"desc": "リーフと砂が混じるポイントで、掘れた「ホロー」な波が立ちやすい。南東・南・南西のうねりに反応し、北・北西の風がオフショア。ベストシーズンは8〜10月。レベルは中級者〜上級者向け。", "type": "リーフと砂が混じるポイント", "wave": "ホロー（掘れた波）", "season": "8〜10月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ", "extra": [], "src": "三重県/伊勢/328"},
+  nanbari: {"desc": "リーフと砂が混じるポイントで、大きなうねりでもまとまりやすく、サイズのある日に本領を発揮する。南・南西のうねりに反応し、北・北西の風がオフショア。ベストシーズンは8〜10月。レベルは中級者〜上級者向け。", "type": "リーフと砂が混じるポイント", "wave": "ビッグ（大きな波に強い）", "season": "8〜10月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "三重県/伊勢/329"},
+  isonoura: {"desc": "砂浜のビーチブレイクで、厚めでゆるい「マッシー」な波が多い。南・南西のうねりに反応し、北・北東の風がオフショア。ベストシーズンは3〜11月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "マッシー（厚めでゆるい）", "season": "3〜11月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "和歌山県/磯ノ浦/331"},
+  hacchohama: {"desc": "砂浜のビーチブレイクで、力強い「パワフル」な波が立ちやすい。北・北東のうねりに反応し、南・南西の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "パワフル", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "京都府/371"},
+  kotohiki: {"desc": "砂浜のビーチブレイクで、条件がそろうとチューブになる掘れた波が立つ。北・北東のうねりに反応し、南・南西の風がオフショア。ベストシーズンは9月〜翌4月。レベルは中級者〜上級者向け。", "type": "砂浜のビーチブレイク", "wave": "チュービー（チューブになりやすい）", "season": "9月〜翌4月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "京都府/370"},
+  hamazume: {"desc": "砂浜のビーチブレイクで、掘れた「ホロー」な波が立ちやすい。北・北東・東・北西のうねりに反応し、南・南西・西の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "ホロー（掘れた波）", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "京都府/372"},
+  hakoishi: {"desc": "リーフと砂が混じるポイント。北・北東のうねりに反応し、南の風がオフショア。ベストシーズンは9〜11月。レベルは中級者〜上級者向け。", "type": "リーフと砂が混じるポイント", "wave": "", "season": "9〜11月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ", "extra": [], "src": "京都府/374"},
+  kazuranohama: {"desc": "砂浜のビーチブレイクで、ゆるやかで乗りやすい「メロー」な波が多い。北・北東・北西のうねりに反応し、南東・南の風がオフショア。ベストシーズンは9〜11月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "メロー（ゆるやかで乗りやすい）", "season": "9〜11月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "京都府/375"},
+  shotenkyo: {"desc": "砂浜のビーチブレイク。北・北西のうねりに反応し、南の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "京都府/376"},
+  nabae: {"desc": "砂浜のビーチブレイクで、ゆるやかで乗りやすい「メロー」な波が多い。北・北東・東のうねりに反応し、南西・西の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "メロー（ゆるやかで乗りやすい）", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ", "extra": [], "src": "福井県/369"},
+  takahama: {"desc": "砂浜のビーチブレイク。北・北東・北西のうねりに反応し、南・南西の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ", "extra": ["テトラポッドに注意"], "src": "福井県/368"},
+  toriigahama: {"desc": "砂浜のビーチブレイク。北・北東・北西のうねりに反応し、南の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ", "extra": [], "src": "福井県/367"},
+  wada: {"desc": "砂浜のビーチブレイクで、ゆるやかで乗りやすい「メロー」な波が多い。北・北東・北西のうねりに反応し、南東・南の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "メロー（ゆるやかで乗りやすい）", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ", "extra": [], "src": "福井県/366"},
+  suisho: {"desc": "リーフと砂が混じるポイントで、条件がそろうとチューブになる掘れた波が立つ。西・北西のうねりに反応し、東・南東の風がオフショア。ベストシーズンは9月〜翌4月。レベルは中級者〜上級者向け。", "type": "リーフと砂が混じるポイント", "wave": "チュービー（チューブになりやすい）", "season": "9月〜翌4月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ", "extra": [], "src": "福井県/365"},
+  era: {"desc": "砂浜のビーチブレイクで、横に広く割れる「ワイド」な波が多い。北のうねりに反応し、南の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "ワイド（横に広く割れる）", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "福井県/364"},
+  yokohama: {"desc": "砂浜のビーチブレイク。西・北西のうねりに反応し、南東・南の風がオフショア。ベストシーズンは9月〜翌4月。レベルは中級者〜上級者向け。", "type": "砂浜のビーチブレイク", "wave": "", "season": "9月〜翌4月", "level": "中級者〜上級者向け", "facilities": "", "extra": [], "src": "福井県/363"},
+  takasu: {"desc": "砂浜のビーチブレイクで、掘れた「ホロー」な波が立ちやすい。北・北西のうねりに反応し、南東の風がオフショア。ベストシーズンは9月〜翌4月。レベルは中級者〜上級者向け。", "type": "砂浜のビーチブレイク", "wave": "ホロー（掘れた波）", "season": "9月〜翌4月", "level": "中級者〜上級者向け", "facilities": "駐車場", "extra": [], "src": "福井県/362"},
+  oshima: {"desc": "岩場（リーフ）のポイント。北・北東のうねりに反応し、南の風がオフショア。ベストシーズンは12月〜翌3月。レベルは上級者向け。", "type": "岩場（リーフ）のポイント", "wave": "", "season": "12月〜翌3月", "level": "上級者向け", "facilities": "トイレ", "extra": ["地元のサーファーが多いポイント。あいさつとマナーを大切に"], "src": "福井県/360"},
+  hamaji: {"desc": "砂浜のビーチブレイクで、掘れた「ホロー」な波が立ちやすい。西・北西のうねりに反応し、東の風がオフショア。ベストシーズンは9月〜翌4月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "ホロー（掘れた波）", "season": "9月〜翌4月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ", "extra": [], "src": "福井県/361"},
+  omaezaki: {"desc": "岩と砂が混じるポイントで、力強い「パワフル」な波が立ちやすい。東・南東・南・南西・西のうねりに反応し、北・北東の風がオフショア。ベストシーズンは6月〜翌1月。レベルは中級者〜上級者向け。", "type": "岩と砂が混じるポイント", "wave": "パワフル", "season": "6月〜翌1月", "level": "中級者〜上級者向け", "facilities": "駐車場・トイレ", "extra": [], "src": "静岡県/中部/224"},
+  shizunami: {"desc": "砂浜のビーチブレイク。東・南東・南のうねりに反応し、北・北西の風がオフショア。ベストシーズンは12月〜翌3月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "", "season": "12月〜翌3月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "静岡県/中部/218"},
+  akabane: {"desc": "リーフと砂が混じるポイントで、掘れた「ホロー」な波が立ちやすい。南東・南のうねりに反応し、北・北西の風がオフショア。一年を通して波を狙える。レベルは初心者から上級者まで。", "type": "リーフと砂が混じるポイント", "wave": "ホロー（掘れた波）", "season": "通年", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "愛知県/伊良湖/240"},
+  shishikui: {"desc": "砂浜のビーチブレイク。東・南東のうねりに反応し、西・北西の風がオフショア。ベストシーズンは4〜11月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "", "season": "4〜11月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ", "extra": [], "src": "徳島県/426"},
+  ikumi: {"desc": "砂浜のビーチブレイクで、楽しく乗りやすい「ファンウェイブ」が多い。北東・東・南東のうねりに反応し、南西・西の風がオフショア。ベストシーズンは3〜12月。レベルは初心者から上級者まで。", "type": "砂浜のビーチブレイク", "wave": "ファンウェイブ（乗りやすい）", "season": "3〜12月", "level": "初心者から上級者まで", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "高知県/428"},
+  niyodo: {"desc": "玉石と砂の河口のポイント。南東・南・南西のうねりに反応し、北・北西の風がオフショア。ベストシーズンは4〜10月。レベルは中級者〜上級者向け。", "type": "玉石と砂の河口のポイント", "wave": "", "season": "4〜10月", "level": "中級者〜上級者向け", "facilities": "駐車場", "extra": ["地元のサーファーが多いポイント。あいさつとマナーを大切に"], "src": "高知県/438"},
+  irino: {"desc": "砂浜のビーチブレイクで、楽しく乗りやすい「ファンウェイブ」が多い。東・南東・南のうねりに反応し、北・西・北西の風がオフショア。ベストシーズンは4〜11月。レベルは初心者〜中級者向け。", "type": "砂浜のビーチブレイク", "wave": "ファンウェイブ（乗りやすい）", "season": "4〜11月", "level": "初心者〜中級者向け", "facilities": "駐車場・トイレ・シャワー", "extra": [], "src": "高知県/444"},
+};
 // --- spot guide ----------------------------------------------------------------------
 // 確かな情報だけを載せる。未登録の項目は表示しない（あとから追記できる）
 const SPOT_GUIDE = {
@@ -2398,19 +2504,36 @@ const SPOT_GUIDE = {
 const mapURL = (sp, q) => q
   ? `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${sp.wx[0]},${sp.wx[1]},13z`
   : `https://www.google.com/maps/search/?api=1&query=${sp.wx[0]},${sp.wx[1]}`;
+function spotGuideOf(sp) {
+  const base = SPOT_GUIDE[sp.id] || {}, info = SPOT_INFO[sp.id];
+  if (!info) return { ...base, notes: base.notes || [] };
+  const notes = [...info.extra, ...(base.notes || []).filter(n => !n.includes("オフショア"))];
+  return { ...base, ...Object.fromEntries(Object.entries(info).filter(([, v]) => v && (!Array.isArray(v) || v.length))), notes };
+}
+// short chips for the "today" panel: 地形・波質・レベル
+function spotTags(sp) {
+  const g = spotGuideOf(sp), out = [];
+  const TYPE_SHORT = { "砂浜のビーチブレイク": "砂浜", "岩場（リーフ）のポイント": "リーフ", "リーフと砂が混じるポイント": "リーフ＋砂", "岩と砂が混じるポイント": "岩＋砂", "玉石と砂の河口のポイント": "河口", "リバーマウス（河口）": "河口" };
+  if (g.type) out.push(TYPE_SHORT[g.type] || g.type.replace(/（.*?）/g, ""));
+  if (g.wave) out.push(g.wave.split("（")[0]);
+  if (g.level) out.push(g.level.replace("向け", "").replace("初心者から上級者まで", "初心者〜上級者"));
+  return out;
+}
 function renderSpotGuide() {
-  const g = SPOT_GUIDE[SPOT.id] || {}, off = (facing + 180) % 360;
+  const g = spotGuideOf(SPOT), off = (facing + 180) % 360;
   document.getElementById("guideSub").textContent = `${SPOT.name}（${SPOT.place}）`;
   document.getElementById("spotGuide").innerHTML = `
+    ${g.desc ? `<p class="spot-desc">${esc(g.desc)}</p>` : ""}
     <dl class="kv">
       ${g.type ? `<dt>地形</dt><dd>${esc(g.type)}</dd>` : ""}
+      ${g.wave ? `<dt>波の特徴</dt><dd>${esc(g.wave)}</dd>` : ""}
+      ${g.level ? `<dt>レベル</dt><dd>${esc(g.level)}</dd>` : ""}
+      ${g.season ? `<dt>シーズン</dt><dd>${esc(g.season)}</dd>` : ""}
+      ${g.facilities ? `<dt>設備</dt><dd>${esc(g.facilities)}</dd>` : ""}
       <dt>海の向き</dt><dd>${dirName(facing)}向き（${facing}°）</dd>
       <dt>いい風</dt><dd><span class="pill good">オフショア</span> ${dirName(off)}寄りの風</dd>
       <dt>いいうねり</dt><dd>${dirName(SPOT.swell)}方向から入るうねり</dd>
       <dt>予報区域</dt><dd>${esc(SPOT.jma.officeName)}・${esc(SPOT.jma.areaName)}</dd>
-      ${g.level ? `<dt>レベル</dt><dd>${esc(g.level)}</dd>` : ""}
-      ${g.parking ? `<dt>駐車場</dt><dd>${esc(g.parking)}</dd>` : ""}
-      ${g.facilities ? `<dt>設備</dt><dd>${esc(g.facilities)}</dd>` : ""}
     </dl>
     ${g.notes?.length ? `<ul>${g.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
     <div class="spot-links">
@@ -2418,7 +2541,8 @@ function renderSpotGuide() {
       <a href="${mapURL(SPOT, "駐車場")}" target="_blank" rel="noopener">近くの駐車場 ↗</a>
       <a href="${mapURL(SPOT, "サーフショップ")}" target="_blank" rel="noopener">近くのサーフショップ ↗</a>
       <a href="${jmaWarningURL(SPOT.jma)}" target="_blank" rel="noopener">${esc(SPOT.jma.cityName)}の警報・注意報 ↗</a>
-    </div>`;
+    </div>
+    ${g.src ? `<p class="spot-src">ポイントの特徴は <a href="https://www.surf-life.blue/surf/spots/${g.src.split("/").map(encodeURIComponent).join("/")}/" target="_blank" rel="noopener">surf-life.blue のポイント情報</a> をもとにまとめています。</p>` : ""}`;
 }
 
 // --- all spots at a glance (one request for every spot) -------------------------------
