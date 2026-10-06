@@ -524,6 +524,50 @@ main { overflow-x: clip; }
 .size-table td:first-child { font-weight: 700; color: var(--sea); white-space: nowrap; }
 .size-table td:nth-child(2) { font-family: var(--font-data); white-space: nowrap; }
 
+.tool-tabs { overflow-x: auto; scrollbar-width: none; }
+.tool-tabs::-webkit-scrollbar { display: none; }
+.tool-tabs button { flex: none; padding-inline: 12px; }
+.drive-out { padding: 6px 4px; overflow-x: auto; }
+.drive-table, .sun-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.drive-table th, .drive-table td, .sun-table th, .sun-table td { text-align: left; padding: 7px 10px; border-top: 1px dashed var(--line); white-space: nowrap; }
+.drive-table thead th, .sun-table thead th { border-top: 0; font-size: 11px; color: var(--muted); }
+.drive-table td small { display: block; font-size: 11px; color: var(--muted); }
+.drive-table tr.current td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.drive-table a { font-size: 12.5px; font-weight: 700; }
+.stats { padding: 18px 20px; display: grid; gap: 18px; }
+.stat-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.stat-tiles > div { background: var(--bg); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; }
+.stat-tiles b { font-family: var(--font-data); font-size: 26px; color: var(--sea); }
+.stat-tiles small { font-size: 12px; color: var(--muted); margin-left: 2px; }
+.stat-block h3, .tool-h3 { margin: 0 0 8px; font-size: 14px; }
+.stat-block ul { margin: 0; padding-left: 1.1em; font-size: 13.5px; display: grid; gap: 4px; }
+.month-bars { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; align-items: end; height: 110px; }
+.mb { display: grid; grid-template-rows: 1fr auto auto; height: 100%; align-items: end; justify-items: center; }
+.mb .bar { width: 70%; background: var(--sea); border-radius: 4px 4px 0 0; min-height: 2px; align-self: end; }
+.mb .n { font-family: var(--font-data); font-size: 10px; color: var(--fg); }
+.mb .m { font-size: 10px; color: var(--muted); }
+.spot-bar { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; margin-bottom: 6px; }
+.spot-bar .track { height: 10px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+.spot-bar .track span { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.spot-bar .v { font-family: var(--font-data); font-size: 12px; color: var(--muted); }
+.compass-wrap { display: grid; justify-items: center; gap: 8px; }
+.compass-wrap svg { max-width: 100%; height: auto; }
+.compass-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); justify-content: center; }
+.compass-legend p { width: 100%; margin: 0; text-align: center; color: var(--fg); font-size: 13.5px; }
+.compass-legend p.calc-note { color: var(--muted); font-size: 11.5px; }
+.compass-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; opacity: .6; }
+.wind-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 420px; overflow-y: auto; }
+.wind-list button { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 0; background: var(--surface); color: var(--fg); border-radius: 10px; padding: 7px 10px; font: inherit; font-size: 13.5px; text-align: left; }
+.wind-list button:hover { outline: 2px solid var(--accent); }
+.wind-list small { display: block; font-size: 11px; color: var(--muted); }
+.sun-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 6px; }
+.sun-tile { background: var(--bg); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; font-size: 12px; }
+.sun-tile b { font-family: var(--font-data); font-size: 30px; line-height: 1.1; }
+.sun-tips { grid-column: 1 / -1; margin: 0; padding-left: 1.1em; font-size: 13px; display: grid; gap: 4px; }
+.sun-table td { position: relative; }
+.uv-bar { display: inline-block; height: 8px; border-radius: 99px; margin-right: 6px; vertical-align: middle; max-width: 70px; }
+.sun-table small { color: var(--muted); }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -570,6 +614,8 @@ main { overflow-x: clip; }
   .wind-demo { grid-template-columns: minmax(0, 1fr); }
   .d-only { display: none; }
   .tool { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+  .stat-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .spot-bar { grid-template-columns: 84px minmax(0, 1fr) auto; }
   .tabbar button { font-size: 9.5px; }
   .wk-head, .wk > summary { grid-template-columns: 70px 32px minmax(0, 1fr) auto 14px; gap: 8px; padding-inline: 12px; }
   .wk > summary { font-size: 13.5px; padding-block: 11px; }
@@ -1016,15 +1062,19 @@ main { overflow-x: clip; }
 
     </div>
     <div class="view" id="view-tools" role="tabpanel" aria-labelledby="vt-tools" hidden>
-      <nav class="tool-jump" aria-label="便利機能の一覧">
-        <a href="#" data-jump="toolDepart">出発時刻</a>
-        <a href="#" data-jump="toolSuit">ウェット早見表</a>
-        <a href="#" data-jump="boards">ボード・リッター</a>
-        <a href="#" data-jump="toolTideCal">潮回りカレンダー</a>
-        <a href="#" data-jump="toolCheck">持ち物チェック</a>
-        <a href="#" data-jump="toolSize">サイズ早見表</a>
-      </nav>
-
+      <div class="subtabs tool-tabs" role="tablist" aria-label="便利機能">
+        <button type="button" role="tab" id="tt-depart" aria-controls="tp-depart" aria-selected="false">出発時刻</button>
+        <button type="button" role="tab" id="tt-drive" aria-controls="tp-drive" aria-selected="false">所要時間</button>
+        <button type="button" role="tab" id="tt-suit" aria-controls="tp-suit" aria-selected="false">ウェット</button>
+        <button type="button" role="tab" id="tt-board" aria-controls="tp-board" aria-selected="false">ボード</button>
+        <button type="button" role="tab" id="tt-wind" aria-controls="tp-wind" aria-selected="false">風コンパス</button>
+        <button type="button" role="tab" id="tt-sun" aria-controls="tp-sun" aria-selected="false">日焼け・暑さ</button>
+        <button type="button" role="tab" id="tt-stats" aria-controls="tp-stats" aria-selected="false">記録の統計</button>
+        <button type="button" role="tab" id="tt-tidecal" aria-controls="tp-tidecal" aria-selected="false">潮回り</button>
+        <button type="button" role="tab" id="tt-check" aria-controls="tp-check" aria-selected="false">持ち物</button>
+        <button type="button" role="tab" id="tt-size" aria-controls="tp-size" aria-selected="false">サイズ表</button>
+      </div>
+      <div class="subpane" id="tp-depart" role="tabpanel" aria-labelledby="tt-depart" hidden>
       <section id="toolDepart">
         <h2>出発時刻の計算 <small id="departSub">選んでいるポイントの予報から逆算</small></h2>
         <div class="panel tool">
@@ -1042,7 +1092,34 @@ main { overflow-x: clip; }
           <div class="tool-out" id="dpOut" aria-live="polite"><p class="status">予報データを読み込むと計算します。</p></div>
         </div>
       </section>
-
+      </div>
+      <div class="subpane" id="tp-drive" role="tabpanel" aria-labelledby="tt-drive" hidden>
+      <section id="toolDrive">
+        <h2>ポイントまでの所要時間 <small>出発地からの距離と、車の時間の目安</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="drHome">出発地<select id="drHome">
+              <option value="34.7025,135.4959,大阪駅">大阪（梅田）</option>
+              <option value="34.9858,135.7588,京都駅">京都駅</option>
+              <option value="34.6946,135.1955,三ノ宮駅">神戸（三宮）</option>
+              <option value="34.6851,135.8048,近鉄奈良駅">奈良</option>
+              <option value="35.0045,135.8686,大津駅">大津</option>
+              <option value="34.2306,135.1708,和歌山駅">和歌山</option>
+              <option value="34.8268,134.6907,姫路駅">姫路</option>
+              <option value="35.1709,136.8815,名古屋駅">名古屋</option>
+              <option value="34.7303,136.5086,津駅">津</option>
+              <option value="34.4876,136.7091,伊勢市駅">伊勢</option>
+              <option value="36.0623,136.2229,福井駅">福井</option>
+              <option value="here">現在地（このスマホの位置）</option>
+            </select></label>
+            <p class="calc-note" id="drNote">直線距離に道路の遠回りぶん（約1.35倍）を足し、平均時速55kmで計算した目安です。実際の時間は「ルート」から地図アプリで確認できます。</p>
+            <button type="button" class="btn ghost" id="drToDepart">選んでいるポイントの時間を「出発時刻」に入れる</button>
+          </div>
+          <div class="tool-out drive-out" id="drOut"></div>
+        </div>
+      </section>
+      </div>
+      <div class="subpane" id="tp-suit" role="tabpanel" aria-labelledby="tt-suit" hidden>
       <section id="toolSuit">
         <h2>ウェットスーツ早見表 <small>水温を動かすと、合う格好が変わります</small></h2>
         <div class="panel tool">
@@ -1054,7 +1131,8 @@ main { overflow-x: clip; }
           <div class="tool-out" id="wsOut"></div>
         </div>
       </section>
-
+      </div>
+      <div class="subpane" id="tp-board" role="tabpanel" aria-labelledby="tt-board" hidden>
       <section id="boards">
         <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
         <div class="panel boards">
@@ -1103,12 +1181,42 @@ main { overflow-x: clip; }
           </div>
         </div>
       </section>
-
+      </div>
+      <div class="subpane" id="tp-wind" role="tabpanel" aria-labelledby="tt-wind" hidden>
+      <section id="toolWind">
+        <h2>風向きコンパス <small id="windSub">いまの風が、ポイントにとってどの向きか</small></h2>
+        <div class="panel tool">
+          <div class="compass-wrap" id="compass"></div>
+          <div class="tool-out" id="windAll"><p class="status">全ポイントの風を取得しています…</p></div>
+        </div>
+      </section>
+      </div>
+      <div class="subpane" id="tp-sun" role="tabpanel" aria-labelledby="tt-sun" hidden>
+      <section id="toolSun">
+        <h2>日焼け・暑さの目安 <small id="sunSub">紫外線（UV指数）と体感温度から</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="sunDay">日にち<select id="sunDay"><option value="0">今日</option><option value="1">明日</option><option value="2">あさって</option></select></label>
+            <div id="sunSummary" class="sun-summary"></div>
+          </div>
+          <div class="tool-out" id="sunOut"></div>
+        </div>
+        <p class="spot-src">体感温度をもとにした目安で、熱中症の公式な指標（暑さ指数）ではありません。暑い日は <a href="https://www.wbgt.env.go.jp/" target="_blank" rel="noopener">環境省 熱中症予防情報サイト</a> もあわせて確認してください。</p>
+      </section>
+      </div>
+      <div class="subpane" id="tp-stats" role="tabpanel" aria-labelledby="tt-stats" hidden>
+      <section id="toolStats">
+        <h2>記録の統計 <small>「答え合わせ」の記録から集計</small></h2>
+        <div class="panel stats" id="statsOut"></div>
+      </section>
+      </div>
+      <div class="subpane" id="tp-tidecal" role="tabpanel" aria-labelledby="tt-tidecal" hidden>
       <section id="toolTideCal">
         <h2>潮回りカレンダー <small>月齢から計算した潮回り（大潮・中潮・小潮・長潮・若潮）</small></h2>
         <div class="panel tool-cal" id="tideCal"></div>
       </section>
-
+      </div>
+      <div class="subpane" id="tp-check" role="tabpanel" aria-labelledby="tt-check" hidden>
       <section id="toolCheck">
         <h2>持ち物チェックリスト <small>チェックはこのスマホに保存されます</small></h2>
         <div class="panel tool">
@@ -1121,7 +1229,8 @@ main { overflow-x: clip; }
           <div class="check-tools"><button type="button" class="btn ghost" id="checkReset">チェックを全部外す</button></div>
         </div>
       </section>
-
+      </div>
+      <div class="subpane" id="tp-size" role="tabpanel" aria-labelledby="tt-size" hidden>
       <section id="toolSize">
         <h2>波のサイズ早見表 <small>このサイトでの目安（沖の波高から換算）</small></h2>
         <div class="panel tool-size">
@@ -1144,6 +1253,7 @@ main { overflow-x: clip; }
           <p class="spot-src">サイズは人の体のどこまで波があるかの言い方です。浜の地形によって、沖の波高より大きくも小さくも見えます（「答え合わせ」で補正できます）。</p>
         </div>
       </section>
+      </div>
     </div>
     <div class="view" id="view-videos" role="tabpanel" aria-labelledby="vt-videos" hidden>
       <section id="videos">
@@ -1470,7 +1580,7 @@ function moonSVG(age, size) {
 async function loadForecast() {
   const m = { lat: SPOT.marine[0], lon: SPOT.marine[1] }, w = { lat: SPOT.wx[0], lon: SPOT.wx[1] };
   const mu = `https://marine-api.open-meteo.com/v1/marine?latitude=${m.lat}&longitude=${m.lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,secondary_swell_wave_height,secondary_swell_wave_period,secondary_swell_wave_direction,wind_wave_height,sea_level_height_msl,sea_surface_temperature&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
-  const wu = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,weather_code,precipitation_probability,precipitation&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
+  const wu = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,weather_code,precipitation_probability,precipitation,uv_index,apparent_temperature&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=${DAYS}`;
   const [mr, wr] = await Promise.all([fetch(mu), fetch(wu)]);
   if (!mr.ok || !wr.ok) throw new Error(`HTTP ${mr.status}/${wr.status}`);
   const [mdat, wd] = await Promise.all([mr.json(), wr.json()]);
@@ -1493,7 +1603,7 @@ async function loadForecast() {
       sst: M.sea_surface_temperature[i],
       windSpeed: W.wind_speed_10m[j], windDir: W.wind_direction_10m[j], gust: W.wind_gusts_10m[j],
       temp: W.temperature_2m[j], code: W.weather_code[j],
-      pop: W.precipitation_probability[j], rain: W.precipitation[j],
+      pop: W.precipitation_probability[j], rain: W.precipitation[j], uv: W.uv_index?.[j], feels: W.apparent_temperature?.[j],
     });
   });
   const daily = {};
@@ -1774,6 +1884,7 @@ function render() {
   renderTideTable(byDay, daily, extremes);
   renderLog();
   if (typeof renderDepart === "function") renderDepart();
+  if (typeof TOOL_RENDER !== "undefined" && currentView === "tools") TOOL_RENDER[currentTool]?.();
   scrollActiveChart();
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
 }
@@ -2826,6 +2937,7 @@ function showView(name, opts = {}) {
   try { localStorage.setItem("surf-view", name); } catch (e) {}
   if (name === "list") loadSpotList();
   if (name === "forecast") scrollActiveChart();
+  if (name === "tools" && typeof TOOL_RENDER !== "undefined") TOOL_RENDER[currentTool]?.();
   if (opts.scroll !== false) {
     const top = document.getElementById("main").getBoundingClientRect().top + scrollY - 70;
     if (scrollY > top) scrollTo({ top: Math.max(0, top) });
@@ -2968,15 +3080,197 @@ function renderCheck() {
   renderSuit(); renderTideCal(); renderCheck(); renderDepart();
 })();
 
+// --- tool: drive time from a starting point ------------------------------------------------------
+const fmtMin = m => m >= 60 ? `${Math.floor(m / 60)}時間${Math.round(m % 60) ? `${Math.round(m % 60)}分` : ""}` : `${Math.round(m)}分`;
+const driveMin = km => km * 1.35 / 55 * 60;
+let drHere = store.get("drive-here", null); // [lat, lon] stays on this phone only
+function drOrigin() {
+  const v = document.getElementById("drHome").value;
+  if (v === "here") return drHere ? { pos: drHere, name: null } : null;
+  const [la, lo, name] = v.split(",");
+  return { pos: [+la, +lo], name };
+}
+function renderDrive() {
+  const out = document.getElementById("drOut"), o = drOrigin();
+  if (!o) { out.innerHTML = `<p class="status">「現在地」を選ぶと、このスマホの位置情報を一度だけ使って計算します（位置はこのスマホの中にだけ保存されます）。</p><button type="button" class="btn" id="drLocate">現在地を使う</button>`;
+    document.getElementById("drLocate").addEventListener("click", locateHome); return; }
+  const rows = SPOTS.map(sp => { const km = distKm(o.pos, sp.wx); return { sp, km, min: driveMin(km) }; }).sort((a, b) => a.min - b.min);
+  out.innerHTML = `<table class="drive-table"><thead><tr><th>ポイント</th><th>距離</th><th>車の目安</th><th></th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="${r.sp.id === SPOT.id ? "current" : ""}"><td><b>${esc(r.sp.name)}</b><small>${esc(r.sp.group)}</small></td>
+      <td>${Math.round(r.km * 1.35)}km</td><td><b>${fmtMin(r.min)}</b></td>
+      <td><a href="https://www.google.com/maps/dir/?api=1${o.name ? `&origin=${encodeURIComponent(o.name)}` : ""}&destination=${r.sp.wx[0]},${r.sp.wx[1]}&travelmode=driving" target="_blank" rel="noopener">ルート ↗</a></td></tr>`).join("")}
+    </tbody></table>`;
+}
+function locateHome() {
+  if (!navigator.geolocation) { document.getElementById("drNote").textContent = "このブラウザでは位置情報が使えません。出発地をリストから選んでください。"; return; }
+  navigator.geolocation.getCurrentPosition(p => {
+    drHere = [+p.coords.latitude.toFixed(3), +p.coords.longitude.toFixed(3)];
+    store.set("drive-here", drHere); renderDrive();
+  }, () => { document.getElementById("drNote").textContent = "位置情報を取得できませんでした。出発地をリストから選んでください。"; });
+}
+
+// --- tool: stats from the surf log ------------------------------------------------------------------
+function renderStats() {
+  const el = document.getElementById("statsOut"), logs = readLogs();
+  if (!logs.length) { el.innerHTML = `<p class="status">まだ記録がありません。「波予報」→「装備・記録」の「答え合わせ」で、入った日の波を記録すると、ここに集計されます。</p>`; return; }
+  const now = new Date(), y = now.getFullYear();
+  const dates = logs.map(l => new Date(l.t)), days = new Set(logs.map(l => l.t.slice(0, 10)));
+  const thisYear = new Set(logs.filter(l => +l.t.slice(0, 4) === y).map(l => l.t.slice(0, 10))).size;
+  const last30 = new Set(logs.filter(l => (now - new Date(l.t)) / 86400e3 <= 30).map(l => l.t.slice(0, 10))).size;
+  const avgStars = logs.reduce((s, l) => s + l.actual.stars, 0) / logs.length;
+  const latest = new Date(Math.max(...dates));
+  const bySpot = {}; logs.forEach(l => { (bySpot[l.spot] ||= []).push(l); });
+  const spotRows = Object.entries(bySpot).sort((a, b) => b[1].length - a[1].length);
+  const maxN = spotRows[0][1].length;
+  const months = Array.from({ length: 12 }, (_, i) => { const d = new Date(y, now.getMonth() - 11 + i, 1); return { k: `${d.getFullYear()}-${pad(d.getMonth() + 1)}`, label: `${d.getMonth() + 1}` }; });
+  const mCount = months.map(m => new Set(logs.filter(l => l.t.startsWith(m.k)).map(l => l.t.slice(0, 10))).size);
+  const mMax = Math.max(1, ...mCount);
+  const sizeIdx = n => SIZE_CLASSES.findIndex(c => c[0] === n);
+  const sizeCount = SIZE_CLASSES.map(([n]) => logs.filter(l => l.actual.size === n).length);
+  const fav = sizeCount.indexOf(Math.max(...sizeCount));
+  const diff = logs.reduce((s, l) => s + sizeIdx(l.actual.size) - sizeIdx(l.pred.size), 0) / logs.length;
+  el.innerHTML = `
+    <div class="stat-tiles">
+      <div><span class="label">入った日数</span><b>${days.size}<small>日</small></b></div>
+      <div><span class="label">今年</span><b>${thisYear}<small>日</small></b></div>
+      <div><span class="label">直近30日</span><b>${last30}<small>日</small></b></div>
+      <div><span class="label">平均の★</span><b>${avgStars.toFixed(1)}</b></div>
+    </div>
+    <div class="stat-block"><h3>月ごとの日数（直近12か月）</h3>
+      <div class="month-bars">${months.map((m, i) => `<div class="mb"><span class="bar" style="height:${Math.round(mCount[i] / mMax * 100)}%"></span><span class="n">${mCount[i] || ""}</span><span class="m">${m.label}</span></div>`).join("")}</div></div>
+    <div class="stat-block"><h3>よく行くポイント</h3>
+      ${spotRows.map(([id, ls]) => { const sp = spotById(id); const avg = ls.reduce((s, l) => s + l.actual.stars, 0) / ls.length;
+        return `<div class="spot-bar"><span class="nm">${esc(sp ? sp.name : id)}</span><span class="track"><span style="width:${Math.round(ls.length / maxN * 100)}%"></span></span><span class="v">${ls.length}回・★${avg.toFixed(1)}</span></div>`; }).join("")}</div>
+    <div class="stat-block"><h3>メモ</h3><ul>
+      <li>いちばん多く乗ったサイズは <b>${SIZE_CLASSES[fav][0]}</b>。</li>
+      <li>予報と比べて、実際は平均 <b>${diff >= 0 ? "+" : ""}${diff.toFixed(1)}段階</b>（${Math.abs(diff) < 0.5 ? "ほぼ予報どおり" : diff > 0 ? "予報より大きめ" : "予報より小さめ"}）。</li>
+      <li>最後に入った日は <b>${latest.getFullYear()}/${md(latest)}</b>（${agoText(latest)}）。</li>
+    </ul></div>`;
+}
+
+// --- tool: wind compass ------------------------------------------------------------------------------
+function compassSVG(fac, windFrom, speed) {
+  const R = 110, C = 130, off = (fac + 180) % 360;
+  const pt = (deg, r) => [C + r * Math.sin(deg * Math.PI / 180), C - r * Math.cos(deg * Math.PI / 180)];
+  const sector = (center, half, color) => {
+    const [x1, y1] = pt(center - half, R), [x2, y2] = pt(center + half, R);
+    return `<path d="M${C},${C} L${x1},${y1} A${R},${R} 0 0 1 ${x2},${y2} Z" fill="${color}" opacity=".28"/>`;
+  };
+  // beach line runs across, sea on the "facing" side
+  const [bx1, by1] = pt(fac - 90, R * 0.95), [bx2, by2] = pt(fac + 90, R * 0.95), [sx, sy] = pt(fac, R * 0.55), [lx, ly] = pt(off, R * 0.55);
+  let arrow = "";
+  if (windFrom != null) {
+    const [ax, ay] = pt(windFrom, R * 0.92), [tx, ty] = pt(windFrom, R * 0.25);
+    arrow = `<line x1="${ax}" y1="${ay}" x2="${tx}" y2="${ty}" stroke="var(--fg)" stroke-width="4" stroke-linecap="round" marker-end="url(#cArrow)"/>`;
+  }
+  return `<svg viewBox="0 0 260 260" width="260" height="260" role="img" aria-label="風向きコンパス">
+    <defs><marker id="cArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--fg)"/></marker></defs>
+    <circle cx="${C}" cy="${C}" r="${R}" fill="var(--surface)" stroke="var(--line)" stroke-width="2"/>
+    ${sector(off, 45, "var(--good)")}${sector(off + 62.5, 17.5, "var(--good)")}${sector(off - 62.5, 17.5, "var(--good)")}
+    ${sector(off + 95, 15, "var(--ok)")}${sector(off - 95, 15, "var(--ok)")}
+    ${sector(fac, 35, "var(--bad)")}${sector(fac + 52.5, 17.5, "var(--bad)")}${sector(fac - 52.5, 17.5, "var(--bad)")}
+    <line x1="${bx1}" y1="${by1}" x2="${bx2}" y2="${by2}" stroke="var(--sand)" stroke-width="5" stroke-linecap="round"/>
+    <text x="${sx}" y="${sy}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--sea)">海</text>
+    <text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">陸</text>
+    ${["北", "東", "南", "西"].map((n, i) => { const [x, y] = pt(i * 90, R + 12); return `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">${n}</text>`; }).join("")}
+    ${arrow}
+    ${windFrom != null ? `<text x="${C}" y="${C + 4}" text-anchor="middle" font-size="11" fill="var(--fg)" font-weight="700">${speed.toFixed(0)}m/s</text>` : ""}
+  </svg>`;
+}
+function renderWind() {
+  const cur = DATA?.hours.find(h => h.t.getTime() + 3600e3 > Date.now());
+  document.getElementById("windSub").textContent = `${SPOT.name}のいまの風`;
+  document.getElementById("compass").innerHTML = `${compassSVG(facing, cur?.windDir ?? null, cur?.windSpeed ?? 0)}
+    <div class="compass-legend">
+      ${cur ? `<p><b>${dirName(cur.windDir)}の風 ${cur.windSpeed.toFixed(1)}m/s</b> → <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></p>` : ""}
+      <span><i style="background:var(--good)"></i>オフショア側</span><span><i style="background:var(--ok)"></i>サイド</span><span><i style="background:var(--bad)"></i>オンショア側</span>
+      <p class="calc-note">矢印は風が吹いてくる方向から、吹いていく方向へ。砂色の線が海岸線です。</p>
+    </div>`;
+  const el = document.getElementById("windAll");
+  if (!SPOT_NOW) { el.innerHTML = `<p class="status">全ポイントの風を取得しています…</p>`; loadSpotList().then(() => { if (currentTool === "wind") renderWind(); }); return; }
+  const rank = { good: 0, calm: 1, ok: 2, bad: 3 };
+  const rows = SPOTS.map((sp, i) => ({ sp, h: SPOT_NOW[i]?.now })).filter(r => r.h).sort((a, b) => rank[a.h.windI.cls] - rank[b.h.windI.cls] || a.h.windSpeed - b.h.windSpeed);
+  el.innerHTML = `<h3 class="tool-h3">全ポイントのいまの風（いい順）</h3><ul class="wind-list">${rows.map(r => `
+    <li><button type="button" data-spot="${r.sp.id}"><span>${esc(r.sp.name)}<small>${esc(r.sp.group)}</small></span><span><span class="pill ${r.h.windI.cls}">${r.h.windI.type}</span> ${r.h.windSpeed.toFixed(0)}m/s</span></button></li>`).join("")}</ul>`;
+  el.querySelectorAll("[data-spot]").forEach(b => b.addEventListener("click", () => { selectSpot(b.dataset.spot); }));
+}
+
+// --- tool: UV and heat ------------------------------------------------------------------------------------
+const UV_LEVEL = u => u >= 11 ? ["極端に強い", "var(--bad)"] : u >= 8 ? ["非常に強い", "var(--bad)"] : u >= 6 ? ["強い", "var(--accent)"] : u >= 3 ? ["中程度", "var(--ok)"] : ["弱い", "var(--good)"];
+const HEAT_LEVEL = t => t >= 31 ? ["厳重警戒", "var(--bad)"] : t >= 28 ? ["警戒", "var(--accent)"] : t >= 25 ? ["注意", "var(--ok)"] : t <= 8 ? ["寒さ対策を", "var(--tide)"] : ["ふつう", "var(--good)"];
+function renderSun() {
+  const out = document.getElementById("sunOut"), sum = document.getElementById("sunSummary");
+  document.getElementById("sunSub").textContent = `${SPOT.name}・紫外線（UV指数）と体感温度から`;
+  if (!DATA) { out.innerHTML = `<p class="status">予報データを読み込むと表示します。</p>`; sum.innerHTML = ""; return; }
+  const day = new Date(); day.setDate(day.getDate() + +document.getElementById("sunDay").value);
+  const k = toKey(day), dd = DATA.daily[k];
+  const list = DATA.hours.filter(h => h.key === k && dd && h.t >= new Date(dd.rise.getTime() - 3600e3) && h.t <= dd.set && h.uv != null);
+  if (!list.length) { out.innerHTML = `<p class="status">この日のデータがありません。</p>`; sum.innerHTML = ""; return; }
+  const strong = list.filter(h => h.uv >= 6), maxUV = Math.max(...list.map(h => h.uv)), maxFeel = Math.max(...list.map(h => h.feels ?? h.temp));
+  const [uvW, uvC] = UV_LEVEL(maxUV), [hW, hC] = HEAT_LEVEL(maxFeel);
+  sum.innerHTML = `
+    <div class="sun-tile"><span class="label">最大UV指数</span><b style="color:${uvC}">${maxUV.toFixed(0)}</b><span>${uvW}</span></div>
+    <div class="sun-tile"><span class="label">最高の体感温度</span><b style="color:${hC}">${Math.round(maxFeel)}<small>℃</small></b><span>${hW}</span></div>
+    <ul class="sun-tips">
+      ${strong.length ? `<li>紫外線が強いのは <b>${strong[0].t.getHours()}時〜${strong[strong.length - 1].t.getHours() + 1}時</b>。この時間は水の中でも焼けやすい。</li>` : `<li>紫外線が強い時間帯はありません。</li>`}
+      <li>日焼け止めはウォータープルーフのものを、<b>海に入る30分前</b>に。<b>2時間おき</b>と、上がったあとにも塗り直す。</li>
+      ${maxFeel >= 25 ? `<li>体感温度が高い日。海から上がったら<b>日陰で休んで水分補給</b>を。</li>` : ""}
+      ${maxFeel <= 8 ? `<li>体が冷えやすい日。上がったあとはすぐに着替えて、温かい飲み物を。</li>` : ""}
+    </ul>`;
+  out.innerHTML = `<table class="sun-table"><thead><tr><th>時刻</th><th>UV指数</th><th>体感温度</th></tr></thead><tbody>
+    ${list.map(h => { const [w, c] = UV_LEVEL(h.uv), f = h.feels ?? h.temp, [fw, fc] = HEAT_LEVEL(f);
+      return `<tr><td>${h.t.getHours()}時</td><td><span class="uv-bar" style="width:${Math.min(100, h.uv / 11 * 100)}%;background:${c}"></span>${h.uv.toFixed(1)} <small>${w}</small></td><td><b style="color:${fc}">${Math.round(f)}℃</b> <small>${fw}</small></td></tr>`; }).join("")}
+    </tbody></table>`;
+}
+
+// --- tool sub tabs -------------------------------------------------------------------------------------------
+const TOOLS = ["depart", "drive", "suit", "board", "wind", "sun", "stats", "tidecal", "check", "size"];
+var currentTool = "depart"; // var: other tabs may look this up before this part of the script runs
+var TOOL_RENDER = { drive: renderDrive, stats: renderStats, wind: renderWind, sun: renderSun, depart: () => renderDepart() };
+function showTool(name) {
+  if (!TOOLS.includes(name)) name = "depart";
+  currentTool = name;
+  TOOLS.forEach(n => {
+    const on = n === name, t = document.getElementById(`tt-${n}`);
+    t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1;
+    document.getElementById(`tp-${n}`).hidden = !on;
+    if (on) t.scrollIntoView({ block: "nearest", inline: "nearest" });
+  });
+  store.set("surf-tool", name);
+  TOOL_RENDER[name]?.();
+}
+(function setupToolTabs() {
+  TOOLS.forEach((n, i) => {
+    const t = document.getElementById(`tt-${n}`);
+    t.addEventListener("click", () => showTool(n));
+    t.addEventListener("keydown", e => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      const next = TOOLS[(i + d + TOOLS.length) % TOOLS.length];
+      showTool(next); document.getElementById(`tt-${next}`).focus();
+    });
+  });
+  document.getElementById("drHome").value = store.get("drive-home", "34.7025,135.4959,大阪駅");
+  document.getElementById("drHome").addEventListener("change", e => { store.set("drive-home", e.target.value); renderDrive(); });
+  document.getElementById("drToDepart").addEventListener("click", () => {
+    const o = drOrigin(); if (!o) return;
+    document.getElementById("dpTravel").value = Math.round(driveMin(distKm(o.pos, SPOT.wx)) / 5) * 5;
+    showTool("depart");
+  });
+  document.getElementById("sunDay").addEventListener("change", renderSun);
+  showTool(store.get("surf-tool", "depart"));
+})();
+
 // --- swipe between tabs (phones) ------------------------------------------------------------
 // 一覧 → 波予報の小タブ（今日・週間・装備・記録・ガイド）→ ライブ・潮 → 学ぶ → 動画 → ニュース を1本の順番として左右に移動
-const SWIPE_ORDER = ["list", ...SUBS.map(n => `forecast:${n}`), "live", "learn", "tools", "videos", "news"];
-const swipePos = () => currentView === "forecast" ? `forecast:${currentSub}` : currentView;
+const SWIPE_ORDER = ["list", ...SUBS.map(n => `forecast:${n}`), "live", "learn", ...TOOLS.map(n => `tools:${n}`), "videos", "news"];
+const swipePos = () => currentView === "forecast" ? `forecast:${currentSub}` : currentView === "tools" ? `tools:${currentTool}` : currentView;
 function goSwipe(step) {
   const i = SWIPE_ORDER.indexOf(swipePos()), next = SWIPE_ORDER[i + step];
   if (!next) return;
   const [view, sub] = next.split(":");
-  if (sub) showSub(sub);
+  if (sub && view === "forecast") showSub(sub);
+  if (sub && view === "tools") showTool(sub);
   showView(view);
   const el = document.getElementById(`view-${view}`);
   el.classList.remove("slide-l", "slide-r");
