@@ -568,6 +568,18 @@ main { overflow-x: clip; }
 .uv-bar { display: inline-block; height: 8px; border-radius: 99px; margin-right: 6px; vertical-align: middle; max-width: 70px; }
 .sun-table small { color: var(--muted); }
 
+.drive-map-wrap { overflow: hidden; margin-bottom: 14px; }
+.drive-map { height: 380px; width: 100%; background: var(--bg); z-index: 0; }
+.map-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); padding: 8px 12px; }
+.map-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+.map-legend .s5 { background: #2c8c5a; } .map-legend .s3 { background: #c98a14; } .map-legend .s2 { background: #e8b85a; } .map-legend .s1 { background: #9aa5ab; } .map-legend .home { background: #3d5fb2; }
+.leaflet-container { font-family: var(--font-body); }
+.map-tip { font-weight: 700; font-size: 12px; }
+.map-pop { display: grid; gap: 3px; font-size: 13px; min-width: 170px; }
+.map-pop small { color: #66727a; }
+.map-pop .btn { justify-self: start; margin-top: 4px; }
+@media (max-width: 760px) { .drive-map { height: 300px; } }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -1095,7 +1107,11 @@ main { overflow-x: clip; }
       </div>
       <div class="subpane" id="tp-drive" role="tabpanel" aria-labelledby="tt-drive" hidden>
       <section id="toolDrive">
-        <h2>ポイントまでの所要時間 <small>出発地からの距離と、車の時間の目安</small></h2>
+        <h2>ポイントまでの所要時間 <small>地図の印をタップしてポイントを選べます</small></h2>
+        <div class="panel drive-map-wrap">
+          <div id="driveMap" class="drive-map" role="application" aria-label="ポイントの地図"></div>
+          <div class="map-legend"><span><i class="s5"></i>★4〜5</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span><span><i class="home"></i>出発地</span><span>色はいまの★</span></div>
+        </div>
         <div class="panel tool">
           <div class="tool-in">
             <label for="drHome">出発地<select id="drHome">
@@ -3091,6 +3107,7 @@ function drOrigin() {
   return { pos: [+la, +lo], name };
 }
 function renderDrive() {
+  renderDriveMap();
   const out = document.getElementById("drOut"), o = drOrigin();
   if (!o) { out.innerHTML = `<p class="status">「現在地」を選ぶと、このスマホの位置情報を一度だけ使って計算します（位置はこのスマホの中にだけ保存されます）。</p><button type="button" class="btn" id="drLocate">現在地を使う</button>`;
     document.getElementById("drLocate").addEventListener("click", locateHome); return; }
@@ -3108,6 +3125,70 @@ function locateHome() {
     store.set("drive-here", drHere); renderDrive();
   }, () => { document.getElementById("drNote").textContent = "位置情報を取得できませんでした。出発地をリストから選んでください。"; });
 }
+
+// --- map for the drive tool (Leaflet + 国土地理院 tiles, loaded on first use) ------------------------------
+let leafletReady = null, driveMap = null, driveLayer = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (leafletReady) return leafletReady;
+  leafletReady = new Promise((res, rej) => {
+    const css = document.createElement("link");
+    css.rel = "stylesheet"; css.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+    document.head.appendChild(css);
+    const js = document.createElement("script");
+    js.src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+    js.onload = res; js.onerror = () => { leafletReady = null; rej(new Error("地図を読み込めませんでした")); };
+    document.head.appendChild(js);
+  });
+  return leafletReady;
+}
+const STAR_FILL = n => n >= 4 ? "#2c8c5a" : n === 3 ? "#c98a14" : n === 2 ? "#e8b85a" : n === 1 ? "#9aa5ab" : "#d75f2a";
+async function renderDriveMap() {
+  const el = document.getElementById("driveMap");
+  try { await loadLeaflet(); } catch (e) { el.innerHTML = `<p class="status err">${esc(e.message)}。下の一覧から選んでください。</p>`; return; }
+  if (currentTool !== "drive" || currentView !== "tools") return;
+  if (!driveMap) {
+    driveMap = L.map(el, { zoomControl: true, attributionControl: true, tap: true });
+    L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
+      maxZoom: 18, minZoom: 5,
+      attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">国土地理院</a>',
+    }).addTo(driveMap);
+    driveLayer = L.layerGroup().addTo(driveMap);
+  }
+  driveMap.invalidateSize();
+  if (!SPOT_NOW) loadSpotList().then(() => { if (currentTool === "drive") renderDriveMap(); });
+  driveLayer.clearLayers();
+  const o = drOrigin(), pts = [];
+  SPOTS.forEach((sp, i) => {
+    const now = SPOT_NOW?.[i]?.now, cur = sp.id === SPOT.id;
+    const m = L.circleMarker(sp.wx, { radius: cur ? 11 : 8, color: cur ? "#1f2a2f" : "#ffffff", weight: cur ? 3 : 2, fillColor: STAR_FILL(now?.stars ?? 0), fillOpacity: 0.95 });
+    const km = o ? distKm(o.pos, sp.wx) : null;
+    m.bindTooltip(`${sp.name}${now ? ` ★${now.stars}` : ""}`, { direction: "top", offset: [0, -8], permanent: cur, className: "map-tip" });
+    m.bindPopup(`<div class="map-pop"><b>${esc(sp.name)}</b><small>${esc(sp.place)}</small>
+      ${now ? `<span>いま ${sizeWord(now.wave)}・${now.windI.type}・★${now.stars}</span>` : ""}
+      ${km != null ? `<span>車で約${fmtMin(driveMin(km))}（${Math.round(km * 1.35)}km）</span>` : ""}
+      <button type="button" class="btn" data-open-spot="${sp.id}">この予報を見る</button></div>`);
+    m.on("click", () => { if (sp.id !== SPOT.id) selectSpot(sp.id); });
+    m.addTo(driveLayer); pts.push(sp.wx);
+  });
+  if (o) {
+    L.circleMarker(o.pos, { radius: 9, color: "#ffffff", weight: 3, fillColor: "#3d5fb2", fillOpacity: 1 })
+      .bindTooltip(o.name ? `出発地：${o.name}` : "出発地：現在地", { direction: "top", offset: [0, -8] }).addTo(driveLayer);
+    pts.push(o.pos);
+  }
+  // fit only once the map has a real size (it has none while its tab is hidden)
+  if (!driveMap._fitted && el.clientWidth > 0) {
+    // start around the starting point: it and its 12 nearest spots (zoom out to see the rest)
+    const near = o ? [o.pos, ...SPOTS.map(sp => sp.wx).sort((a, b) => distKm(o.pos, a) - distKm(o.pos, b)).slice(0, 12)] : pts;
+    setTimeout(() => { driveMap.invalidateSize(); driveMap.fitBounds(near, { padding: [28, 28], maxZoom: 9 }); }, 60);
+    driveMap._fitted = true;
+  }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-open-spot]");
+  if (!b) return;
+  selectSpot(b.dataset.openSpot); showSub("today"); showView("forecast");
+});
 
 // --- tool: stats from the surf log ------------------------------------------------------------------
 function renderStats() {
@@ -3251,7 +3332,7 @@ function showTool(name) {
     });
   });
   document.getElementById("drHome").value = store.get("drive-home", "34.7025,135.4959,大阪駅");
-  document.getElementById("drHome").addEventListener("change", e => { store.set("drive-home", e.target.value); renderDrive(); });
+  document.getElementById("drHome").addEventListener("change", e => { store.set("drive-home", e.target.value); if (driveMap) driveMap._fitted = false; renderDrive(); });
   document.getElementById("drToDepart").addEventListener("click", () => {
     const o = drOrigin(); if (!o) return;
     document.getElementById("dpTravel").value = Math.round(driveMin(distKm(o.pos, SPOT.wx)) / 5) * 5;
@@ -3280,7 +3361,7 @@ function goSwipe(step) {
 // a swipe that starts on something that scrolls sideways (charts, tables) or on a control stays with that element
 function blocksSwipe(target) {
   for (let el = target; el && el !== document.body; el = el.parentElement) {
-    if (el.matches("input, select, textarea, iframe, button.cell, .tabbar")) return true;
+    if (el.matches("input, select, textarea, iframe, button.cell, .tabbar, .leaflet-container")) return true;
     const ox = getComputedStyle(el).overflowX;
     if ((ox === "auto" || ox === "scroll") && el.scrollWidth > el.clientWidth + 4) return true;
   }
