@@ -914,6 +914,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
   <section class="notes">
     <p>データ出典：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（波・風・潮位・水温、CC BY 4.0）、<a id="jmaLink" href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">気象庁</a>（地域の予報）、ニュースは各サイトのRSS。ライブ映像は各配信元のものです。</p>
     <p>満潮・干潮の時刻と潮位は、<a href="https://www.data.jma.go.jp/kaiyou/db/tide/suisan/index.php" target="_blank" rel="noopener">気象庁の潮位表</a>（ポイントに一番近い観測地点の推算値・潮位表基準面からの高さ）です。地点とポイントの距離ぶん、数分〜十数分ずれることがあります。取得できないときは海洋モデルの計算値を使います。月齢と潮名（大潮・小潮など）は計算による目安です。</p>
+    <p>伊勢志摩の各ポイントの地形・レベル・設備は <a href="https://www.surf-life.blue/surf/spots/%E4%B8%89%E9%87%8D%E7%9C%8C/" target="_blank" rel="noopener">surf-life.blue</a>・<a href="https://www.surfers-ocean.com/" target="_blank" rel="noopener">Surfers&#39; Ocean</a> の掲載情報を参考にしています。</p>
     <p>サイズ表現は沖の有義波高からの目安です。国府の浜以外のポイントの「ビーチの向き」は地図から読んだ推定値なので、実際の波と見比べながら調整してください（ポイントごとに保存されます）。危険な高波・離岸流に注意し、<a id="warnLink" href="https://www.jma.go.jp/bosai/warning/" target="_blank" rel="noopener">警報・注意報</a>も確認してください。</p>
   </section>
 </div>
@@ -922,12 +923,22 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 // wx = 浜の座標（風・天気）, marine = 沖の海洋グリッド, facing = 沖の方角, swell = うねりが入りやすい中心方位
 // jma = 気象庁の府県予報区(office)・一次細分区域(area)・市町村(city)
 const SPOTS = [
-  { id: "kou", name: "国府の浜", group: "三重", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120,
+  { id: "kou", name: "国府の浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120,
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
     tide: { code: "TB", name: "鳥羽", km: 19 },
     cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
       links: [["ラスタ前", "https://web.spo.live/event/PVhPiqHlIo", "SpoLive（志摩市）・ライブ映像"], ["メイン〜テトラ前", "https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3", "MCTV・静止画"],
               ["テトラ前", "https://www.bcm-surfpatrol.com/wave-detail/10/114/", "BCM サーフパトロール"], ["ラスタ前（YouTube）", "https://www.youtube.com/@machispodev/streams", "マチスポ"]] } },
+  { id: "ichigo", name: "市後浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町志島", wx: [34.3054, 136.886], marine: [34.3054, 136.886], facing: 100, swell: 105,
+    jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
+    tide: { code: "TB", name: "鳥羽", km: 21 },
+    cam: { title: "市後浜・大王崎のカメラ", links: [["市後浜", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=60", "BCM・静止画"], ["大王埼灯台", "https://camera.mics.kaiho.mlit.go.jp/camstream/daiosaki_lt/", "海上保安庁・ライブ映像（市後浜の南約3km）"]] } },
+  { id: "nanbari", name: "南張", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市浜島町南張", wx: [34.297, 136.722], marine: [34.297, 136.722], facing: 165, swell: 180,
+    jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
+    tide: { code: "TB", name: "鳥羽", km: 22 } },
+  { id: "jan", name: "ジャン", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市浜島町（南張の東）", wx: [34.3023, 136.735], marine: [34.3023, 136.735], facing: 165, swell: 180,
+    jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
+    tide: { code: "TB", name: "鳥羽", km: 21 } },
   { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190,
     jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" },
     tide: { code: "OM", name: "御前崎", km: 2 },
@@ -2062,6 +2073,9 @@ function closeLogForm() {
 // 確かな情報だけを載せる。未登録の項目は表示しない（あとから追記できる）
 const SPOT_GUIDE = {
   kou: { type: "ビーチブレイク（遠浅の砂浜）", notes: ["年間を通じて多くのサーファーが訪れる、伊勢志摩を代表するポイント", "浜の後ろに阿児の松原が広がる"] },
+  ichigo: { type: "ビーチブレイク（砂浜）", level: "中級者〜上級者", facilities: "駐車場・トイレ・シャワー", notes: ["国府の浜の南。パワフルな波が立ちやすい", "東〜南東のうねりに反応し、西〜北西の風がオフショア"] },
+  nanbari: { type: "リーフ＋砂", level: "中級者〜上級者", facilities: "駐車場・トイレ・シャワー", notes: ["南向きのポイント。南東〜南西のうねりに反応し、北〜北西の風がオフショア", "大きめのうねりでは流れが出やすい。頭以上のサイズで本領発揮"] },
+  jan: { type: "リーフ＋砂", level: "中級者〜上級者", facilities: "駐車場・トイレ", notes: ["南張の東、約1.2km。掘れた（ホローな）波が立ちやすい", "北〜北西の風がオフショア"] },
   omaezaki: { type: "ビーチブレイク（砂浜）" },
   shizunami: { type: "ビーチブレイク（砂浜）", notes: ["近くに人工波プール「静波サーフスタジアム」がある"] },
   irago: { type: "ビーチブレイク（砂浜）", notes: ["渥美半島の太平洋側。大会が開かれることもある愛知の代表的なエリア"] },
