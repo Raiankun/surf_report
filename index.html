@@ -590,12 +590,13 @@ main { overflow-x: clip; }
         <div class="panel logbox">
           <div class="log-head">
             <div class="calib" id="calibInfo"></div>
-            <button type="button" class="btn" id="logOpen">いまの波を記録する</button>
+            <button type="button" class="btn" id="logOpen">波を記録する</button>
           </div>
           <p class="log-toast" id="logToast" aria-live="polite"></p>
           <form id="logForm" class="log-form" hidden>
             <div class="log-pred" id="logPred"></div>
             <div class="log-fields">
+              <label for="logDate">日付<input id="logDate" type="date" min="2022-01-01"></label>
               <label for="logHour">時間<select id="logHour"></select></label>
               <label for="logSize">実際のサイズ<select id="logSize"></select></label>
               <label for="logFace">波の面<select id="logFace"></select></label>
@@ -2007,7 +2008,7 @@ function renderLog() {
   const c = calibOf(SPOT.id), all = readLogs(), mine = all.filter(l => l.spot === SPOT.id);
   const info = document.getElementById("calibInfo");
   if (c.n < CALIB_MIN) {
-    info.innerHTML = `<b>${esc(SPOT.name)}の記録 ${c.n}件</b><span>あと${CALIB_MIN - c.n}件記録すると、このポイントのサイズ予報を補正できます。</span>`;
+    info.innerHTML = `<b>${esc(SPOT.name)}の記録 ${c.n}件</b><span>あと${CALIB_MIN - c.n}件記録すると、このポイントのサイズ予報を補正できます。過去に入った日も記録できます。</span>`;
   } else {
     const pct = Math.round((c.factor - 1) * 100);
     const trend = Math.abs(pct) < 8 ? "予報とほぼ同じサイズ" : pct > 0 ? `予報より約${pct}%大きい` : `予報より約${-pct}%小さい`;
@@ -2027,7 +2028,7 @@ function renderLog() {
     <tbody>${[...mine].sort((a, b) => b.t.localeCompare(a.t)).map(l => {
       const d = new Date(l.t), diff = sizeIdx(l.actual.size) - sizeIdx(l.pred.size);
       return `<tr>
-        <td>${md(d)} ${d.getHours()}時</td>
+        <td>${d.getFullYear() !== new Date().getFullYear() ? `${d.getFullYear()}/` : ""}${md(d)} ${d.getHours()}時</td>
         <td>${esc(l.pred.size)}<br><small>★${l.pred.stars}・${l.pred.wave.toFixed(1)}m・${esc(l.pred.wind)}</small></td>
         <td>${esc(l.actual.size)}<br><small>★${l.actual.stars}・${esc(l.actual.face)}${l.actual.memo ? `・${esc(l.actual.memo)}` : ""}</small></td>
         <td class="${diff > 0 ? "up" : diff < 0 ? "down" : ""}">${diff === 0 ? "±0" : (diff > 0 ? "+" : "") + diff}段階</td>
@@ -2042,27 +2043,76 @@ function renderLog() {
   updateLogPred();
 }
 
-// forecast snapshot for the hour chosen in the form (today only, raw = uncorrected)
-function predAt(hour) {
-  if (!DATA) return null;
-  const key = `${toKey(new Date())}T${pad(hour)}`;
-  const h = DATA.hours.find(x => `${x.key}T${pad(x.t.getHours())}` === key);
-  if (!h || !h.windI) return null;
-  return { wave: h.waveRaw, size: sizeWord(h.waveRaw), stars: h.stars, wind: h.windI.type, windSpeed: +h.windSpeed.toFixed(1),
-           period: +h.period.toFixed(1), swellDir: Math.round(h.swellDir), tide: h.tide != null ? Math.round(h.tide * 100) : null };
+// forecast snapshot for the chosen date and hour (raw = uncorrected, so calibration never feeds on itself)
+function snapshot(h) {
+  const raw = { ...h, wave: h.waveRaw ?? h.wave, tideFrac: h.tideFrac ?? 0.5 };
+  raw.windI = windInfo(raw.windDir, raw.windSpeed);
+  raw.score = rate(raw);
+  raw.stars = raw.wave >= 2.2 ? Math.min(starsOf(raw.score), 3) : starsOf(raw.score);
+  return { wave: raw.wave, size: sizeWord(raw.wave), stars: raw.stars, wind: raw.windI.type, windSpeed: +raw.windSpeed.toFixed(1),
+           period: +raw.period.toFixed(1), swellDir: Math.round(raw.swellDir), tide: raw.tide != null ? Math.round(raw.tide * 100) : null };
 }
-function updateLogPred() {
-  const sel = document.getElementById("logHour");
-  if (!sel || document.getElementById("logForm").hidden) return;
-  const p = predAt(+sel.value);
-  document.getElementById("logPred").innerHTML = p
-    ? `この時間の予報：<b>${esc(p.size)}</b>（${p.wave.toFixed(1)}m）・★${p.stars}・${esc(p.wind)} ${p.windSpeed}m/s`
-    : "この時間の予報データがありません";
+const histCache = {};
+// past days: Open-Meteo history (waves from the marine API, wind from the forecast API for recent days or the archive)
+async function predAt(dateKey, hour) {
+  if (DATA && dateKey === toKey(new Date())) {
+    const h = DATA.hours.find(x => x.key === dateKey && x.t.getHours() === hour);
+    return h ? snapshot(h) : null;
+  }
+  const ck = `${SPOT.id}|${dateKey}`;
+  if (!histCache[ck]) {
+    const ageDays = (Date.now() - new Date(dateKey + "T00:00").getTime()) / 86400e3;
+    const wxBase = ageDays < 80 ? "https://api.open-meteo.com/v1/forecast" : "https://archive-api.open-meteo.com/v1/archive";
+    const q = `start_date=${dateKey}&end_date=${dateKey}&timezone=Asia%2FTokyo`;
+    histCache[ck] = Promise.all([
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${SPOT.marine[0]}&longitude=${SPOT.marine[1]}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction&${q}`).then(r => r.json()),
+      fetch(`${wxBase}?latitude=${SPOT.wx[0]}&longitude=${SPOT.wx[1]}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&${q}`).then(r => r.json()),
+      SPOT.tide ? loadOfficialTides(SPOT, [{ t: new Date(dateKey + "T12:00"), key: dateKey }]).catch(() => null) : null,
+    ]).catch(e => { delete histCache[ck]; throw e; });
+  }
+  const [m, w] = await histCache[ck];
+  const M = m.hourly, W = w.hourly;
+  if (!M || !W || M.wave_height?.[hour] == null || W.wind_speed_10m?.[hour] == null) return null;
+  const swellH = M.swell_wave_height[hour] ?? 0;
+  const tideTxt = SPOT.tide && tideCache[`${SPOT.tide.code}-${dateKey.slice(0, 4)}`]?.[dateKey];
+  return snapshot({
+    wave: M.wave_height[hour],
+    period: swellH >= 0.5 * M.wave_height[hour] && M.swell_wave_period[hour] != null ? M.swell_wave_period[hour] : M.wave_period[hour],
+    swellDir: M.swell_wave_direction[hour] ?? M.wave_direction[hour],
+    windSpeed: W.wind_speed_10m[hour], windDir: W.wind_direction_10m[hour],
+    tide: tideTxt ? tideTxt.hourly[hour] / 100 : null,
+  });
+}
+let predToken = 0, currentPred = null;
+async function updateLogPred() {
+  if (document.getElementById("logForm").hidden) return;
+  const dateKey = document.getElementById("logDate").value, hour = +document.getElementById("logHour").value;
+  const out = document.getElementById("logPred"), save = document.querySelector("#logForm [type=submit]");
+  const token = ++predToken;
+  currentPred = null; save.disabled = true;
+  if (!dateKey) { out.textContent = "日付を選んでください"; return; }
+  out.textContent = "その時間の予報データを取得しています…";
+  let p = null;
+  try { p = await predAt(dateKey, hour); } catch (e) { p = null; }
+  if (token !== predToken) return; // the user changed the date or hour meanwhile
+  currentPred = p; save.disabled = !p;
+  out.innerHTML = p
+    ? `${dateKey === toKey(new Date()) ? "この時間の予報" : "この日時の予報（過去データ）"}：<b>${esc(p.size)}</b>（${p.wave.toFixed(1)}m・${p.period}秒）・★${p.stars}・${esc(p.wind)} ${p.windSpeed}m/s`
+    : "この日時の予報データがありません。別の時間を選んでください。";
+}
+function fillHours() {
+  const sel = document.getElementById("logHour"), dateKey = document.getElementById("logDate").value;
+  const now = new Date(), isToday = dateKey === toKey(now), prev = sel.value;
+  const last = isToday ? now.getHours() : 23;
+  sel.innerHTML = Array.from({ length: last + 1 }, (_, h) => `<option value="${h}">${h}時ごろ</option>`).reverse().join("");
+  sel.value = prev !== "" && +prev <= last ? prev : String(isToday ? now.getHours() : 7);
 }
 function openLogForm() {
-  const now = new Date(), sel = document.getElementById("logHour");
-  sel.innerHTML = Array.from({ length: now.getHours() + 1 }, (_, h) => `<option value="${h}">${h}時ごろ</option>`).reverse().join("");
-  sel.value = String(now.getHours());
+  const now = new Date(), dateIn = document.getElementById("logDate");
+  dateIn.max = toKey(now);
+  dateIn.value = toKey(now);
+  document.getElementById("logHour").value = "";
+  fillHours();
   const cur = DATA?.hours.find(h => h.t.getTime() + 3600e3 > now.getTime());
   if (cur) document.getElementById("logSize").value = sizeWord(cur.wave);
   document.getElementById("logForm").hidden = false;
@@ -2084,12 +2134,14 @@ function closeLogForm() {
   document.getElementById("logOpen").addEventListener("click", openLogForm);
   document.getElementById("logCancel").addEventListener("click", closeLogForm);
   document.getElementById("logHour").addEventListener("change", updateLogPred);
+  document.getElementById("logDate").addEventListener("change", () => { fillHours(); updateLogPred(); });
   document.getElementById("logForm").addEventListener("submit", e => {
     e.preventDefault();
-    const hour = +document.getElementById("logHour").value;
-    const pred = predAt(hour);
-    if (!pred) { document.getElementById("logMsg").textContent = "予報データの読み込みを待ってから保存してください。"; return; }
-    const t = new Date(); t.setHours(hour, 0, 0, 0);
+    const hour = +document.getElementById("logHour").value, dateKey = document.getElementById("logDate").value;
+    const pred = currentPred;
+    if (!pred || !dateKey) { document.getElementById("logMsg").textContent = "予報データの読み込みを待ってから保存してください。"; return; }
+    const t = new Date(`${dateKey}T${pad(hour)}:00`);
+    if (t > new Date()) { document.getElementById("logMsg").textContent = "未来の日時は記録できません。"; return; }
     const rec = {
       id: `${SPOT.id}-${t.getTime()}-${Math.random().toString(36).slice(2, 7)}`,
       spot: SPOT.id, t: `${toKey(t)}T${pad(hour)}:00`,
@@ -2101,8 +2153,8 @@ function closeLogForm() {
     document.getElementById("logMemo").value = "";
     closeLogForm();
     spotListAt = 0;
-    render();
-    document.getElementById("logToast").textContent = `${SPOT.name}・${hour}時の波を記録しました`;
+    if (DATA) render(); else renderLog();
+    document.getElementById("logToast").textContent = `${SPOT.name}・${md(t)} ${hour}時の波を記録しました`;
   });
   document.getElementById("logExport").addEventListener("click", async () => {
     const text = JSON.stringify(readLogs());
