@@ -444,6 +444,22 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 }
 main { overflow-x: clip; }
 
+/* typhoons */
+.tc-slot:empty { display: none; }
+.tc-panel { padding: 12px 16px; display: grid; gap: 10px; border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
+.tc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; }
+.tc-head a { font-size: 12.5px; }
+.tc-row { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; }
+.tc-arrow { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); position: relative; }
+.tc-arrow::after { content: ""; position: absolute; left: 50%; top: 4px; translate: -50% 0; border: 6px solid transparent; border-bottom: 11px solid var(--bad); border-top: 0; }
+.tc-main { display: grid; gap: 1px; font-size: 13px; }
+.tc-main small { color: var(--muted); }
+.tc-main span { color: var(--muted); font-size: 12.5px; }
+.tc-chip { display: inline-block; font-size: 11px; font-weight: 700; color: #fff; background: var(--bad); border-radius: 99px; padding: 0 8px; white-space: nowrap; }
+.wk-date .tc-chip { display: block; width: fit-content; margin-top: 2px; font-size: 10px; padding: 0 6px; }
+.tc-note { font-size: 13px; background: color-mix(in srgb, var(--bad) 8%, transparent); border-radius: 10px; padding: 8px 12px; }
+#tcList { margin-bottom: 12px; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -561,6 +577,7 @@ main { overflow-x: clip; }
     <div class="view" id="view-list" role="tabpanel" aria-labelledby="vt-list" hidden>
       <section>
         <h2>どこに行く？ <small>今日・明日の朝・昼・夕の★（マスをタップで詳しい予報）</small></h2>
+        <div class="tc-slot" id="tcList"></div>
         <div class="picks" id="picks"></div>
         <div class="panel ov-wrap" id="overview"><div class="status">全ポイントの予報を取得しています…</div></div>
         <div class="legend ov-legend">
@@ -578,6 +595,7 @@ main { overflow-x: clip; }
       </div>
       <div class="subpane" id="sp-today" role="tabpanel" aria-labelledby="st-today">
         <div id="now"><div class="status">予報データを取得しています…</div></div>
+        <div class="tc-slot" id="tcToday"></div>
         <div id="chartToday"></div>
       </div>
       <div class="subpane" id="sp-week" role="tabpanel" aria-labelledby="st-week" hidden>
@@ -1329,6 +1347,77 @@ async function loadOfficialTides(spot, hours) {
   return { extremes, station: spot.tide };
 }
 
+// --- typhoons (JMA) -----------------------------------------------------------------------------
+let TC_DATA = null, tcAt = 0;
+const toRad = d => d * Math.PI / 180;
+function distKm(a, b) {
+  const dLat = toRad(b[0] - a[0]), dLon = toRad(b[1] - a[1]);
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.sin(dLon / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(x));
+}
+function bearingDeg(a, b) {
+  const y = Math.sin(toRad(b[1] - a[1])) * Math.cos(toRad(b[0]));
+  const x = Math.cos(toRad(a[0])) * Math.sin(toRad(b[0])) - Math.sin(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.cos(toRad(b[1] - a[1]));
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+async function loadTyphoons() {
+  if (TC_DATA && Date.now() - tcAt < 30 * 60e3) return TC_DATA;
+  const list = await (await fetch("https://www.jma.go.jp/bosai/typhoon/data/targetTc.json")).json();
+  const specs = await Promise.all(list.map(tc =>
+    fetch(`https://www.jma.go.jp/bosai/typhoon/data/${tc.tropicalCyclone}/specifications.json`).then(r => r.json()).catch(() => null)));
+  TC_DATA = specs.map((sp, i) => {
+    if (!Array.isArray(sp)) return null;
+    const title = sp.find(x => x.part === "title") || {};
+    const parts = sp.filter(x => x.part && x.part !== "title" && x.position?.deg);
+    const now = parts.find(x => x.advancedHours === 0) || parts[0];
+    if (!now) return null;
+    const num = String(title.typhoonNumber || list[i].typhoonNumber || "");
+    return {
+      num: num ? `${+num.slice(2)}号` : "",
+      name: title.name?.jp || "",
+      cat: now.category?.jp || title.category?.jp || "台風",
+      intensity: now.intensity && now.intensity !== "-" ? now.intensity : "",
+      scale: now.scale && now.scale !== "-" ? now.scale : "",
+      pos: now.position.deg, pressure: now.pressure, wind: now.maximumWind?.sustained?.["m/s"],
+      course: now.course, speed: now.speed?.["km/h"], location: now.location,
+      track: parts.map(x => ({ t: new Date(x.validtime?.JST), pos: x.position.deg, cat: x.category?.jp })),
+    };
+  }).filter(Boolean);
+  tcAt = Date.now();
+  return TC_DATA;
+}
+// typhoon position closest in time to t (analysis or forecast)
+const tcPosAt = (tc, t) => tc.track.reduce((best, p) => Math.abs(p.t - t) < Math.abs(best.t - t) ? p : best, tc.track[0]);
+// is a long-period swell at hour h plausibly coming from one of the typhoons?
+function typhoonSwell(h) {
+  if (!TC_DATA?.length || !(h.period >= 10) || h.swellH < 0.5) return null;
+  for (const tc of TC_DATA) {
+    const p = tcPosAt(tc, h.t), d = distKm(SPOT.wx, p.pos);
+    if (d < 4500 && angDiff(bearingDeg(SPOT.wx, p.pos), h.swellDir) <= 50) return tc;
+  }
+  return null;
+}
+function renderTyphoons() {
+  const html = !TC_DATA?.length ? "" : `
+    <div class="panel tc-panel">
+      <div class="tc-head"><b>台風情報</b><a href="https://www.jma.go.jp/bosai/map.html#contents=typhoon" target="_blank" rel="noopener">気象庁の進路予想図 ↗</a></div>
+      ${TC_DATA.map(tc => {
+        const d = distKm(SPOT.wx, tc.pos), b = bearingDeg(SPOT.wx, tc.pos);
+        const facing = angDiff(b, SPOT.swell) <= 75;
+        return `<div class="tc-row">
+          <span class="tc-arrow" style="transform:rotate(${Math.round(b)}deg)" aria-hidden="true"></span>
+          <div class="tc-main">
+            <b>${esc(tc.cat === "台風" ? `台風${tc.num}` : tc.cat)} ${esc(tc.name)}</b>${tc.intensity || tc.scale ? `<small>（${esc([tc.scale, tc.intensity].filter(Boolean).join("・"))}）</small>` : ""}
+            <span>${esc(tc.location || "")}・${esc(tc.pressure || "—")}hPa${tc.wind ? `・最大風速${esc(tc.wind)}m/s` : ""}・${esc(tc.course || "")}へ${tc.speed ? `${esc(tc.speed)}km/h` : ""}</span>
+            <span>${esc(SPOT.name)}から${dirName(b)}へ約${Math.round(d / 10) * 10 > 999 ? (Math.round(d / 100) * 100).toLocaleString() : Math.round(d / 10) * 10}km${facing ? `　<span class="tc-chip">うねりが届きやすい方角</span>` : ""}</span>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`;
+  document.getElementById("tcList").innerHTML = html;
+  document.getElementById("tcToday").innerHTML = html;
+}
+
 // --- render forecast ---------------------------------------------------------
 let DATA = null;
 let detailsOpen = false;
@@ -1366,6 +1455,7 @@ function render() {
       <div class="size-word">${sizeWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="quick">
+        ${typhoonSwell(cur) ? `<span class="tc-chip">台風うねり</span>` : ""}
         <span><span class="pill ${cur.windI.cls}">${cur.windI.type}</span> ${cur.windSpeed.toFixed(0)}m/s</span>
         <span>${cur.wave.toFixed(1)}m・${Math.round(cur.period)}秒</span>
         ${nextTide ? `<span>${nextTide.hi ? "満潮" : "干潮"} ${hm(nextTide.t)}</span>` : ""}
@@ -1502,10 +1592,12 @@ function weekRow(k, list, dd, extremes) {
   const age = moonAge(new Date(k + "T12:00"));
   const stars = win ? win.peak.stars : 1;
   const isToday = k === toKey(new Date());
+  const tcHour = list.filter(h => typhoonSwell(h)).sort((a, b) => b.swellH - a.swellH)[0];
+  const tcSw = tcHour ? typhoonSwell(tcHour) : null;
   return `
   <details class="wk${isToday ? " today" : ""}">
     <summary>
-      <span class="wk-date">${isToday ? "今日" : md(d)}<small>（${WEEK[d.getDay()]}）</small></span>
+      <span class="wk-date">${isToday ? "今日" : md(d)}<small>（${WEEK[d.getDay()]}）</small>${tcSw ? `<span class="tc-chip">台風うねり</span>` : ""}</span>
       <span class="cell s${stars}" aria-label="最高★${stars}">${stars}</span>
       <span class="wk-size">${win ? sizeWord(win.peak.wave) : size}</span>
       <span class="wk-wind">${wAm ? `<span class="pill ${wAm.cls}">${wAm.type}</span>` : "—"}</span>
@@ -1516,6 +1608,7 @@ function weekRow(k, list, dd, extremes) {
     </summary>
     <div class="wk-body">
       <div class="best">${win ? `狙い目 <b>${hm(win.from)}〜${hm(win.to)}</b>（${sizeWord(win.peak.wave)}・${win.peak.windI.type}）` : "日中のデータなし"}</div>
+      ${tcSw ? `<div class="tc-note"><span class="tc-chip">台風うねり</span> ${esc(tcSw.cat === "台風" ? `台風${tcSw.num}` : tcSw.cat)}（${esc(tcSw.name)}）の方角から、周期${Math.round(tcHour.period)}秒・${tcHour.swellH.toFixed(1)}mのうねり。予報がぶれやすいので、直前の予報とライブカメラも確認を。</div>` : ""}
       <dl class="kv">
         <dt>サイズ</dt><dd>${size}（${minW.toFixed(1)}–${maxW.toFixed(1)}m）</dd>
         <dt>風 午前</dt><dd>${windTxt(wAm)}</dd>
@@ -1743,6 +1836,8 @@ async function refresh() {
   upd.textContent = "更新中…";
   loadJMA();
   loadNews();
+  tcAt = 0;
+  loadTyphoons().then(() => { renderTyphoons(); if (DATA) render(); }).catch(() => { TC_DATA = null; renderTyphoons(); });
   spotListAt = 0;
   if (currentView === "list") loadSpotList();
   const spotId = SPOT.id;
@@ -2507,6 +2602,7 @@ function applySpot() {
   renderCam();
   renderSpotGuide();
   renderSpotListCurrent();
+  if (TC_DATA) renderTyphoons();
   closeLogForm();
   document.getElementById("logToast").textContent = "";
   renderLog();
