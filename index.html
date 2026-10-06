@@ -415,6 +415,26 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
 .more[open] summary { margin-bottom: 12px; }
 .now:has(.more) { grid-template-columns: minmax(0, 1fr); }
 
+/* week table */
+.wk-table { overflow: hidden; }
+.wk-head, .wk > summary { display: grid; grid-template-columns: 92px 40px minmax(0, 1.2fr) 112px 120px minmax(0, 1fr) 70px 18px; gap: 10px; align-items: center; padding: 10px 16px; }
+.wk-head { font-size: 11px; font-weight: 700; color: var(--muted); background: var(--bg); padding-block: 8px; }
+.wk { border-top: 1px dashed var(--line); }
+.wk > summary { cursor: pointer; list-style: none; font-size: 14px; }
+.wk > summary::-webkit-details-marker { display: none; }
+.wk > summary:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.wk > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.wk.today > summary { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.wk-date { font-weight: 700; white-space: nowrap; }
+.wk-date small { font-weight: 400; color: var(--muted); }
+.wk .cell { height: 28px; min-width: 0; font-size: 13px; }
+.wk-size { font-weight: 700; color: var(--sea); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk-win { font-family: var(--font-data); font-size: 13px; }
+.wk-wx { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk-chev { width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); justify-self: center; transition: transform .15s; }
+.wk[open] .wk-chev { transform: rotate(-135deg); }
+.wk-body { display: grid; gap: 10px; padding: 4px 16px 16px; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -459,6 +479,10 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 
   .meta { justify-items: start; }
   .news a { grid-template-columns: minmax(0, 1fr); }
   .wind-demo { grid-template-columns: minmax(0, 1fr); }
+  .d-only { display: none; }
+  .wk-head, .wk > summary { grid-template-columns: 70px 32px minmax(0, 1fr) auto 14px; gap: 8px; padding-inline: 12px; }
+  .wk > summary { font-size: 13.5px; padding-block: 11px; }
+  .wk-body { padding-inline: 12px; }
   .board-row { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
   .board-art { height: 190px; }
   .board-art svg { max-height: 190px; width: auto; }
@@ -1372,12 +1396,15 @@ function render() {
         <div class="panel chart-box" data-now-x="${nowIdx * HOUR_W}">${chartSVG(twoDays, daily, extremes.filter(e => e.t < new Date(twoDays[twoDays.length - 1].t.getTime() + 3600e3)), now)}</div>
         ${legend}
       </section>`;
-  const dayCards = Object.keys(byDay).map(k => dayCard(k, byDay[k], daily[k], extremes)).join("");
+  const weekRows = Object.keys(byDay).map(k => weekRow(k, byDay[k], daily[k], extremes)).join("");
   document.getElementById("week").innerHTML = `
     <div class="stack">
       <section>
-        <h2>週間予報 <small>7日間・日ごとのまとめ</small></h2>
-        <div class="days">${dayCards}</div>
+        <h2>週間予報 <small>行をタップすると、その日の詳しい予報が開きます</small></h2>
+        <div class="panel wk-table">
+          <div class="wk-head" aria-hidden="true"><span>日付</span><span>最高</span><span>サイズ（狙い目）</span><span>朝の風</span><span class="d-only">狙い目</span><span class="d-only">天気</span><span class="d-only">潮</span><span></span></div>
+          ${weekRows}
+        </div>
       </section>
       <section>
         <h2>7日間の時間ごとの予報</h2>
@@ -1439,6 +1466,59 @@ function summaryText(h, win) {
   let s = parts.join("、") + "。";
   if (win) s += ` 今日の狙い目は ${hm(win.from)}〜${hm(win.to)}（${sizeWord(win.peak.wave)}・${win.peak.windI.type}）。`;
   return s;
+}
+
+function weekRow(k, list, dd, extremes) {
+  const d = new Date(k + "T00:00");
+  const win = bestWindow(list, dd);
+  const dayH = dd ? list.filter(h => h.t >= dd.rise && h.t <= dd.set) : list;
+  const src = dayH.length ? dayH : list;
+  const minW = Math.min(...src.map(h => h.wave)), maxW = Math.max(...src.map(h => h.wave));
+  const size = sizeWord(minW) === sizeWord(maxW) ? sizeWord(minW) : `${sizeWord(minW)}〜${sizeWord(maxW)}`;
+  const am = src.filter(h => h.t.getHours() < 11), pm = src.filter(h => h.t.getHours() >= 12);
+  const windTop = arr => {
+    if (!arr.length) return null;
+    const types = {}; arr.forEach(h => types[h.windI.type] = (types[h.windI.type] || 0) + 1);
+    const top = Object.entries(types).sort((a, b) => b[1] - a[1])[0][0];
+    return { type: top, cls: arr.find(h => h.windI.type === top).windI.cls, speed: arr.reduce((s, h) => s + h.windSpeed, 0) / arr.length };
+  };
+  const windTxt = w => w ? `<span class="pill ${w.cls}">${w.type}</span> ${w.speed.toFixed(0)}m/s` : "—";
+  const wAm = windTop(am), wPm = windTop(pm);
+  const tides = extremes.filter(e => toKey(e.t) === k).map(e => `<span>${e.hi ? "満潮" : "干潮"} ${hm(e.t)}</span>`).join("");
+  const codes = {}; src.forEach(h => codes[WX(h.code)] = (codes[WX(h.code)] || 0) + 1);
+  const wx = Object.entries(codes).sort((a, b) => b[1] - a[1])[0][0];
+  const ssts = list.map(h => h.sst).filter(v => v != null);
+  const sstAvg = ssts.length ? ssts.reduce((a, b) => a + b, 0) / ssts.length : null;
+  const age = moonAge(new Date(k + "T12:00"));
+  const stars = win ? win.peak.stars : 1;
+  const isToday = k === toKey(new Date());
+  return `
+  <details class="wk${isToday ? " today" : ""}">
+    <summary>
+      <span class="wk-date">${isToday ? "今日" : md(d)}<small>（${WEEK[d.getDay()]}）</small></span>
+      <span class="cell s${stars}" aria-label="最高★${stars}">${stars}</span>
+      <span class="wk-size">${win ? sizeWord(win.peak.wave) : size}</span>
+      <span class="wk-wind">${wAm ? `<span class="pill ${wAm.cls}">${wAm.type}</span>` : "—"}</span>
+      <span class="wk-win d-only">${win ? `${hm(win.from)}〜${hm(win.to)}` : "—"}</span>
+      <span class="wk-wx d-only">${wx}・${dd ? `${Math.round(dd.tmax)}℃` : ""}</span>
+      <span class="wk-tide d-only"><span class="tide-name">${tideName(age)}</span></span>
+      <span class="wk-chev" aria-hidden="true"></span>
+    </summary>
+    <div class="wk-body">
+      <div class="best">${win ? `狙い目 <b>${hm(win.from)}〜${hm(win.to)}</b>（${sizeWord(win.peak.wave)}・${win.peak.windI.type}）` : "日中のデータなし"}</div>
+      <dl class="kv">
+        <dt>サイズ</dt><dd>${size}（${minW.toFixed(1)}–${maxW.toFixed(1)}m）</dd>
+        <dt>風 午前</dt><dd>${windTxt(wAm)}</dd>
+        <dt>風 午後</dt><dd>${windTxt(wPm)}</dd>
+        <dt>天気</dt><dd>${wx}・${dd ? `${Math.round(dd.tmax)}℃／${Math.round(dd.tmin)}℃・降水 ${dd.popMax ?? "—"}%` : ""}</dd>
+        <dt>水温</dt><dd>${sstAvg != null ? `${sstAvg.toFixed(1)}℃` : "—"}</dd>
+        <dt>日の出</dt><dd>${dd ? `${hm(dd.rise)}／日の入 ${hm(dd.set)}` : "—"}</dd>
+      </dl>
+      ${sstAvg != null ? `<div class="day-gear"><span class="icons">${gearFor(sstAvg).map(g => suitSVG(g, 22)).join("")}</span><span>${gearNames(sstAvg)}</span></div>` : ""}
+      <div class="moonline">${moonSVG(age, 18)}<span>月齢 ${age.toFixed(1)}</span><span class="tide-name">${tideName(age)}</span></div>
+      <div class="tides">${tides || "<span>潮汐データなし</span>"}</div>
+    </div>
+  </details>`;
 }
 
 function dayCard(k, list, dd, extremes) {
