@@ -475,6 +475,55 @@ main { overflow-x: clip; }
 .ref-vid { font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--bg); color: var(--fg); border-radius: 99px; padding: 4px 12px; }
 .ref-vid:hover { outline: 2px solid var(--accent); }
 
+/* tools */
+.tool-jump { display: flex; flex-wrap: wrap; gap: 6px; }
+.tool-jump a { font-size: 12.5px; font-weight: 700; text-decoration: none; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; }
+.tool-jump a:hover { border-color: var(--accent); }
+#view-tools section { scroll-margin-top: 90px; }
+.tool { padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 18px; align-items: start; }
+.tool-in { display: grid; gap: 8px; }
+.tool-in label { display: grid; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.tool-in label output { font-family: var(--font-data); color: var(--fg); }
+.tool-in select, .tool-in input[type=number], .check-add input { font: inherit; font-size: 15px; font-weight: 400; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; min-width: 0; }
+.tool-in input[type=range] { width: 100%; accent-color: var(--accent); }
+.tool-in select:focus-visible, .tool-in input:focus-visible, .check-add input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tool-out { background: var(--bg); border-radius: 14px; padding: 14px 16px; display: grid; gap: 10px; }
+.dp-main { display: grid; gap: 2px; }
+.dp-time { font-family: var(--font-data); font-weight: 600; font-size: 40px; line-height: 1.1; color: var(--accent); }
+.dp-time small { font-family: var(--font-body); font-size: 15px; color: var(--fg); }
+.dp-line { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 13.5px; }
+.dp-line b { font-family: var(--font-data); }
+.tool-cal { padding: 16px 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+.tool-cal .spot-src { grid-column: 1 / -1; }
+.cal h3 { margin: 0 0 8px; font-size: 15px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.cal-w { font-size: 11px; text-align: center; color: var(--muted); font-weight: 700; }
+.cal-cell { border-radius: 8px; padding: 3px 2px; display: grid; justify-items: center; gap: 1px; background: var(--bg); min-height: 54px; }
+.cal-cell.empty { background: none; }
+.cal-cell.today { outline: 2px solid var(--accent); }
+.cal-d { font-family: var(--font-data); font-size: 11px; }
+.cal-t { font-size: 10px; font-weight: 700; }
+.cal-cell.t-o { background: color-mix(in srgb, var(--tide) 22%, var(--surface)); } .cal-cell.t-o .cal-t { color: var(--tide); }
+.cal-cell.t-n { background: color-mix(in srgb, var(--tide) 9%, var(--surface)); }
+.cal-cell.t-s .cal-t, .cal-cell.t-l .cal-t, .cal-cell.t-w .cal-t { color: var(--muted); }
+.check { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; grid-column: 1 / -1; }
+.check li { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-radius: 10px; padding: 6px 10px; }
+.check label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--good); }
+.check input:checked + span { text-decoration: line-through; color: var(--muted); }
+.check-del { border: 0; background: none; color: var(--muted); font-size: 16px; padding: 0 4px; }
+.check-add { display: flex; gap: 8px; grid-column: 1 / -1; }
+.check-add input { flex: 1; }
+.check-tools { grid-column: 1 / -1; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tool-size { padding: 8px 4px 14px; overflow-x: auto; }
+.tool-size .spot-src { padding: 8px 14px 0; }
+.size-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.size-table th, .size-table td { text-align: left; padding: 8px 14px; border-top: 1px dashed var(--line); }
+.size-table thead th { border-top: 0; font-size: 11px; color: var(--muted); }
+.size-table td:first-child { font-weight: 700; color: var(--sea); white-space: nowrap; }
+.size-table td:nth-child(2) { font-family: var(--font-data); white-space: nowrap; }
+
 /* news */
 .news { list-style: none; margin: 0; padding: 0; }
 .news li { border-top: 1px dashed var(--line); }
@@ -520,6 +569,8 @@ main { overflow-x: clip; }
   .news a { grid-template-columns: minmax(0, 1fr); }
   .wind-demo { grid-template-columns: minmax(0, 1fr); }
   .d-only { display: none; }
+  .tool { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+  .tabbar button { font-size: 9.5px; }
   .wk-head, .wk > summary { grid-template-columns: 70px 32px minmax(0, 1fr) auto 14px; gap: 8px; padding-inline: 12px; }
   .wk > summary { font-size: 13.5px; padding-block: 11px; }
   .wk-body { padding-inline: 12px; }
@@ -579,6 +630,7 @@ main { overflow-x: clip; }
     <button type="button" role="tab" id="vt-forecast" aria-controls="view-forecast" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 15c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/><path d="M2 9c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/></svg><span>波予報</span></button>
     <button type="button" role="tab" id="vt-live" aria-controls="view-live" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg><span>ライブ・潮</span></button>
     <button type="button" role="tab" id="vt-learn" aria-controls="view-learn" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><span>学ぶ</span></button>
+    <button type="button" role="tab" id="vt-tools" aria-controls="view-tools" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5.3 5.3L3 18l3 3 6.2-6.2a4 4 0 0 0 5.3-5.3l-2.4 2.4-2.6-.6-.6-2.6z"/></svg><span>便利</span></button>
     <button type="button" role="tab" id="vt-videos" aria-controls="view-videos" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z"/></svg><span>動画</span></button>
     <button type="button" role="tab" id="vt-news" aria-controls="view-news" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg><span>ニュース</span></button>
   </nav>
@@ -962,54 +1014,136 @@ main { overflow-x: clip; }
       </div>
     </section>
 
-    <section id="boards">
-      <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
-      <div class="panel boards">
-        <div class="board-row" id="boardRow"></div>
-        <div class="calc">
-          <div class="calc-in">
-            <h3>リッター数を計算する</h3>
-            <label for="vWeight">体重 <output id="vWeightOut">65 kg</output></label>
-            <input id="vWeight" type="range" min="30" max="120" step="1" value="65">
-            <label for="vLevel">レベル</label>
-            <select id="vLevel">
-              <option value="0">はじめて〜スープで立てる</option>
-              <option value="1">うねりで立てる・まっすぐ乗れる</option>
-              <option value="2">横に走れる</option>
-              <option value="3">アップス・カットバックができる</option>
-              <option value="4">いろいろな波で自在に乗れる</option>
-              <option value="5">コンテストに出るレベル</option>
-            </select>
-            <label for="vAge">年齢</label>
-            <select id="vAge">
-              <option value="1">20代まで</option>
-              <option value="1.03">30代</option>
-              <option value="1.07">40代</option>
-              <option value="1.12">50代以上</option>
-            </select>
-            <label for="vFreq">海に入る頻度</label>
-            <select id="vFreq">
-              <option value="1">週2回以上</option>
-              <option value="1.03" selected>週1回くらい</option>
-              <option value="1.07">月に数回</option>
-              <option value="1.12">月1回以下</option>
-            </select>
-            <label for="vWave">よく入る波</label>
-            <select id="vWave">
-              <option value="1.06">ひざ〜腰の小波が中心</option>
-              <option value="1" selected>腰〜胸くらい</option>
-              <option value="0.96">胸〜頭以上が多い</option>
-            </select>
+    </div>
+    <div class="view" id="view-tools" role="tabpanel" aria-labelledby="vt-tools" hidden>
+      <nav class="tool-jump" aria-label="便利機能の一覧">
+        <a href="#" data-jump="toolDepart">出発時刻</a>
+        <a href="#" data-jump="toolSuit">ウェット早見表</a>
+        <a href="#" data-jump="boards">ボード・リッター</a>
+        <a href="#" data-jump="toolTideCal">潮回りカレンダー</a>
+        <a href="#" data-jump="toolCheck">持ち物チェック</a>
+        <a href="#" data-jump="toolSize">サイズ早見表</a>
+      </nav>
+
+      <section id="toolDepart">
+        <h2>出発時刻の計算 <small id="departSub">選んでいるポイントの予報から逆算</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="dpDay">日にち<select id="dpDay"><option value="0">今日</option><option value="1" selected>明日</option><option value="2">あさって</option></select></label>
+            <label for="dpTarget">何に合わせる？<select id="dpTarget">
+              <option value="rise">日の出</option>
+              <option value="best">狙い目の時間の始まり</option>
+              <option value="high">満潮</option>
+              <option value="low">干潮</option>
+            </select></label>
+            <label for="dpTravel">移動時間（分）<input id="dpTravel" type="number" min="0" max="600" step="5" value="90"></label>
+            <label for="dpPrep">現地での準備（分）<input id="dpPrep" type="number" min="0" max="120" step="5" value="20"></label>
           </div>
-          <div class="calc-out" aria-live="polite">
-            <span class="label">あなたにおすすめの浮力</span>
-            <div class="liters" id="vResult">—</div>
-            <div class="rec" id="vRec"></div>
-            <p class="calc-note">「体重 × レベルごとの係数」に、年齢・頻度・波の大きさで補正をかけた目安です。同じリッター数でも、長さや幅で乗り味は変わります。ショップで実物を見て相談しましょう。</p>
+          <div class="tool-out" id="dpOut" aria-live="polite"><p class="status">予報データを読み込むと計算します。</p></div>
+        </div>
+      </section>
+
+      <section id="toolSuit">
+        <h2>ウェットスーツ早見表 <small>水温を動かすと、合う格好が変わります</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="wsTemp">水温 <output id="wsTempOut">22.0℃</output></label>
+            <input id="wsTemp" type="range" min="8" max="30" step="0.5" value="22">
+            <button type="button" class="btn ghost" id="wsNow">いまの水温を入れる</button>
+          </div>
+          <div class="tool-out" id="wsOut"></div>
+        </div>
+      </section>
+
+      <section id="boards">
+        <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
+        <div class="panel boards">
+          <div class="board-row" id="boardRow"></div>
+          <div class="calc">
+            <div class="calc-in">
+              <h3>リッター数を計算する</h3>
+              <label for="vWeight">体重 <output id="vWeightOut">65 kg</output></label>
+              <input id="vWeight" type="range" min="30" max="120" step="1" value="65">
+              <label for="vLevel">レベル</label>
+              <select id="vLevel">
+                <option value="0">はじめて〜スープで立てる</option>
+                <option value="1">うねりで立てる・まっすぐ乗れる</option>
+                <option value="2">横に走れる</option>
+                <option value="3">アップス・カットバックができる</option>
+                <option value="4">いろいろな波で自在に乗れる</option>
+                <option value="5">コンテストに出るレベル</option>
+              </select>
+              <label for="vAge">年齢</label>
+              <select id="vAge">
+                <option value="1">20代まで</option>
+                <option value="1.03">30代</option>
+                <option value="1.07">40代</option>
+                <option value="1.12">50代以上</option>
+              </select>
+              <label for="vFreq">海に入る頻度</label>
+              <select id="vFreq">
+                <option value="1">週2回以上</option>
+                <option value="1.03" selected>週1回くらい</option>
+                <option value="1.07">月に数回</option>
+                <option value="1.12">月1回以下</option>
+              </select>
+              <label for="vWave">よく入る波</label>
+              <select id="vWave">
+                <option value="1.06">ひざ〜腰の小波が中心</option>
+                <option value="1" selected>腰〜胸くらい</option>
+                <option value="0.96">胸〜頭以上が多い</option>
+              </select>
+            </div>
+            <div class="calc-out" aria-live="polite">
+              <span class="label">あなたにおすすめの浮力</span>
+              <div class="liters" id="vResult">—</div>
+              <div class="rec" id="vRec"></div>
+              <p class="calc-note">「体重 × レベルごとの係数」に、年齢・頻度・波の大きさで補正をかけた目安です。同じリッター数でも、長さや幅で乗り味は変わります。ショップで実物を見て相談しましょう。</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section id="toolTideCal">
+        <h2>潮回りカレンダー <small>月齢から計算した潮回り（大潮・中潮・小潮・長潮・若潮）</small></h2>
+        <div class="panel tool-cal" id="tideCal"></div>
+      </section>
+
+      <section id="toolCheck">
+        <h2>持ち物チェックリスト <small>チェックはこのスマホに保存されます</small></h2>
+        <div class="panel tool">
+          <ul class="check" id="checkList"></ul>
+          <form class="check-add" id="checkAdd">
+            <label for="checkNew" class="sr">持ち物を追加</label>
+            <input id="checkNew" type="text" maxlength="30" placeholder="持ち物を追加（例：ブーツ）">
+            <button type="submit" class="btn ghost">追加</button>
+          </form>
+          <div class="check-tools"><button type="button" class="btn ghost" id="checkReset">チェックを全部外す</button></div>
+        </div>
+      </section>
+
+      <section id="toolSize">
+        <h2>波のサイズ早見表 <small>このサイトでの目安（沖の波高から換算）</small></h2>
+        <div class="panel tool-size">
+          <table class="size-table">
+            <thead><tr><th>表現</th><th>波高の目安</th><th>どんな波？</th></tr></thead>
+            <tbody>
+              <tr><td>フラット</td><td>〜0.25m</td><td>ほぼ波なし</td></tr>
+              <tr><td>すね</td><td>0.25〜0.4m</td><td>練習用の小さな波</td></tr>
+              <tr><td>ひざ</td><td>0.4〜0.55m</td><td>ロングボードやスープ練習に</td></tr>
+              <tr><td>もも</td><td>0.55〜0.7m</td><td>初心者が楽しめるサイズ</td></tr>
+              <tr><td>腰</td><td>0.7〜0.9m</td><td>初心者〜中級者にちょうどいい</td></tr>
+              <tr><td>腹〜胸</td><td>0.9〜1.15m</td><td>中級者が楽しいサイズ</td></tr>
+              <tr><td>胸〜肩</td><td>1.15〜1.4m</td><td>パワーが出てくる。初心者は注意</td></tr>
+              <tr><td>頭</td><td>1.4〜1.7m</td><td>中級者以上向け</td></tr>
+              <tr><td>頭オーバー</td><td>1.7〜2.2m</td><td>上級者向け</td></tr>
+              <tr><td>ダブル</td><td>2.2〜3.0m</td><td>上級者でも場所を選ぶ</td></tr>
+              <tr><td>トリプル以上</td><td>3.0m〜</td><td>入らない判断も大切</td></tr>
+            </tbody>
+          </table>
+          <p class="spot-src">サイズは人の体のどこまで波があるかの言い方です。浜の地形によって、沖の波高より大きくも小さくも見えます（「答え合わせ」で補正できます）。</p>
+        </div>
+      </section>
     </div>
     <div class="view" id="view-videos" role="tabpanel" aria-labelledby="vt-videos" hidden>
       <section id="videos">
@@ -1639,6 +1773,7 @@ function render() {
     </div>`;
   renderTideTable(byDay, daily, extremes);
   renderLog();
+  if (typeof renderDepart === "function") renderDepart();
   scrollActiveChart();
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
 }
@@ -2677,7 +2812,7 @@ function scrollActiveChart() {
 })();
 
 // --- tab views ---------------------------------------------------------------------
-const VIEWS = ["list", "forecast", "live", "learn", "videos", "news"];
+const VIEWS = ["list", "forecast", "live", "learn", "tools", "videos", "news"];
 let currentView = "list";
 function showView(name, opts = {}) {
   if (!VIEWS.includes(name)) name = "list";
@@ -2712,9 +2847,130 @@ function showView(name, opts = {}) {
   showView(VIEWS.includes(saved) ? saved : "list", { scroll: false });
 })();
 
+// --- handy tools -------------------------------------------------------------------------------------
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+
+// departure planner: work back from sunrise / best window / tide on the chosen day
+function renderDepart() {
+  const out = document.getElementById("dpOut");
+  document.getElementById("departSub").textContent = `${SPOT.name}の予報から逆算`;
+  if (!DATA || !DATA.hours[0]?.windI) { out.innerHTML = `<p class="status">予報データを読み込むと計算します。</p>`; return; }
+  const off = +document.getElementById("dpDay").value, target = document.getElementById("dpTarget").value;
+  const travel = Math.max(0, +document.getElementById("dpTravel").value || 0), prep = Math.max(0, +document.getElementById("dpPrep").value || 0);
+  store.set("depart", { travel, prep, target });
+  const day = new Date(); day.setDate(day.getDate() + off);
+  const k = toKey(day), dd = DATA.daily[k], list = DATA.hours.filter(h => h.key === k);
+  const extremes = DATA.tideJ ? DATA.tideJ.extremes : tideExtremes(DATA.hours);
+  let at = null, what = "";
+  if (target === "rise" && dd) { at = dd.rise; what = "日の出"; }
+  if (target === "best") {
+    const w = bestWindow(list, dd);
+    // not earlier than 15 min before sunrise: before that it is too dark to surf
+    if (w) { at = dd ? new Date(Math.max(w.from, dd.rise.getTime() - 15 * 60e3)) : w.from; what = `狙い目の始まり（${sizeWord(w.peak.wave)}・${w.peak.windI.type}）`; }
+  }
+  if (target === "high" || target === "low") {
+    const e = extremes.find(x => toKey(x.t) === k && x.hi === (target === "high") && x.t.getHours() >= 4);
+    if (e) { at = e.t; what = target === "high" ? "満潮" : "干潮"; }
+  }
+  const dayLabel = `${["今日", "明日", "あさって"][off]} ${md(day)}（${WEEK[day.getDay()]}）`;
+  if (!at) { out.innerHTML = `<p class="status">${dayLabel}は、この条件の時刻が見つかりませんでした。</p>`; return; }
+  const arrive = new Date(at.getTime() - prep * 60e3), leave = new Date(arrive.getTime() - travel * 60e3);
+  out.innerHTML = `
+    <div class="dp-main"><span class="label">${esc(dayLabel)}・${esc(SPOT.name)}</span><span class="dp-time">${hm(leave)}<small> に出発</small></span></div>
+    <ol class="dp-line">
+      <li><b>${hm(leave)}</b> 出発</li>
+      <li><b>${hm(arrive)}</b> 到着・準備（${prep}分）</li>
+      <li><b>${hm(at)}</b> ${esc(what)}</li>
+    </ol>
+    ${leave.getDate() !== at.getDate() ? `<p class="status">前の日の夜に出発する計算です。</p>` : ""}`;
+}
+
+// wetsuit chart with a water-temperature slider
+function renderSuit() {
+  const t = +document.getElementById("wsTemp").value;
+  document.getElementById("wsTempOut").textContent = `${t.toFixed(1)}℃`;
+  const keys = gearFor(t);
+  document.getElementById("wsOut").innerHTML = `<div class="outfits">${keys.map((k, i) => `
+    <div class="outfit">${suitSVG(k, 60, i === 0)}
+      <div>${i ? '<div class="or">または</div>' : ""}<div class="nm">${GEAR[k].name}</div><div class="ds">${GEAR[k].desc}</div></div>
+    </div>`).join("")}</div>
+    <p class="calc-note">目安：25℃以上 ボードショーツ・タッパー／22℃〜 スプリング／19℃〜 シーガル・ロンスプ／16℃〜 3/2mm／13℃〜 5/3mm／それ以下 セミドライ。風が強い日や朝夕は一段階あたたかめに。</p>`;
+}
+
+// lunar-tide calendar for this month and next
+function renderTideCal() {
+  const now = new Date(), months = [0, 1].map(o => new Date(now.getFullYear(), now.getMonth() + o, 1));
+  const cls = { "大潮": "t-o", "中潮": "t-n", "小潮": "t-s", "長潮": "t-l", "若潮": "t-w" };
+  document.getElementById("tideCal").innerHTML = months.map(m => {
+    const first = m.getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < first; i++) cells.push(`<div class="cal-cell empty"></div>`);
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(m.getFullYear(), m.getMonth(), d, 12), age = moonAge(date), tn = tideName(age);
+      const today = toKey(date) === toKey(now);
+      cells.push(`<div class="cal-cell ${cls[tn]}${today ? " today" : ""}" title="${md(date)} ${tn}・月齢${age.toFixed(1)}"><span class="cal-d">${d}</span>${moonSVG(age, 14)}<span class="cal-t">${tn}</span></div>`);
+    }
+    return `<div class="cal"><h3>${m.getFullYear()}年${m.getMonth() + 1}月</h3>
+      <div class="cal-grid">${WEEK.map(w => `<div class="cal-w">${w}</div>`).join("")}${cells.join("")}</div></div>`;
+  }).join("") + `<p class="spot-src">大潮は満潮と干潮の差が大きく、潮の流れも強め。小潮・長潮は潮の動きが小さめです。実際の満潮・干潮の時刻は「ライブ・潮」タブの潮見表で。</p>`;
+}
+
+// packing checklist
+const CHECK_DEFAULT = ["サーフボード", "リーシュコード", "ワックス", "ウェットスーツ", "タオル・ポンチョ", "着替え", "日焼け止め", "飲み物", "ビーチサンダル", "車のキーの保管（キーボックスなど）"];
+function renderCheck() {
+  const items = store.get("check-items", CHECK_DEFAULT), done = store.get("check-done", []);
+  document.getElementById("checkList").innerHTML = items.map((it, i) => `
+    <li><label><input type="checkbox" data-i="${i}" ${done.includes(it) ? "checked" : ""}> <span>${esc(it)}</span></label>
+      <button type="button" class="check-del" data-del="${i}" aria-label="${esc(it)}を削除">×</button></li>`).join("");
+  const left = items.filter(it => !done.includes(it)).length;
+  document.getElementById("checkReset").textContent = left ? `チェックを全部外す（あと${left}個）` : "準備OK！チェックを全部外す";
+}
+(function setupTools() {
+  const dp = store.get("depart", null);
+  if (dp) {
+    document.getElementById("dpTravel").value = dp.travel;
+    document.getElementById("dpPrep").value = dp.prep;
+    document.getElementById("dpTarget").value = dp.target;
+  }
+  ["dpDay", "dpTarget", "dpTravel", "dpPrep"].forEach(id => document.getElementById(id).addEventListener("input", renderDepart));
+  document.getElementById("wsTemp").addEventListener("input", renderSuit);
+  document.getElementById("wsNow").addEventListener("click", () => {
+    const cur = DATA?.hours.find(h => h.t.getTime() + 3600e3 > Date.now());
+    if (cur?.sst != null) { document.getElementById("wsTemp").value = Math.round(cur.sst * 2) / 2; renderSuit(); }
+  });
+  document.getElementById("checkList").addEventListener("change", e => {
+    const i = e.target.dataset.i; if (i === undefined) return;
+    const items = store.get("check-items", CHECK_DEFAULT), done = new Set(store.get("check-done", []));
+    e.target.checked ? done.add(items[i]) : done.delete(items[i]);
+    store.set("check-done", [...done]); renderCheck();
+  });
+  document.getElementById("checkList").addEventListener("click", e => {
+    const i = e.target.dataset.del; if (i === undefined) return;
+    const items = store.get("check-items", CHECK_DEFAULT); items.splice(+i, 1);
+    store.set("check-items", items); renderCheck();
+  });
+  document.getElementById("checkAdd").addEventListener("submit", e => {
+    e.preventDefault();
+    const inp = document.getElementById("checkNew"), v = inp.value.trim();
+    if (!v) return;
+    const items = store.get("check-items", CHECK_DEFAULT);
+    if (!items.includes(v)) { items.push(v); store.set("check-items", items); }
+    inp.value = ""; renderCheck();
+  });
+  document.getElementById("checkReset").addEventListener("click", () => { store.set("check-done", []); renderCheck(); });
+  document.querySelectorAll("[data-jump]").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault();
+    document.getElementById(a.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
+  }));
+  renderSuit(); renderTideCal(); renderCheck(); renderDepart();
+})();
+
 // --- swipe between tabs (phones) ------------------------------------------------------------
 // 一覧 → 波予報の小タブ（今日・週間・装備・記録・ガイド）→ ライブ・潮 → 学ぶ → 動画 → ニュース を1本の順番として左右に移動
-const SWIPE_ORDER = ["list", ...SUBS.map(n => `forecast:${n}`), "live", "learn", "videos", "news"];
+const SWIPE_ORDER = ["list", ...SUBS.map(n => `forecast:${n}`), "live", "learn", "tools", "videos", "news"];
 const swipePos = () => currentView === "forecast" ? `forecast:${currentSub}` : currentView;
 function goSwipe(step) {
   const i = SWIPE_ORDER.indexOf(swipePos()), next = SWIPE_ORDER[i + step];
