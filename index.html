@@ -1498,6 +1498,7 @@ const pad = n => String(n).padStart(2, "0");
 const hm = d => `${d.getHours()}:${pad(d.getMinutes())}`;
 const WEEK = ["日","月","火","水","木","金","土"];
 const md = d => `${d.getMonth() + 1}/${d.getDate()}`;
+const dateW = d => `${md(d)}（${WEEK[d.getDay()]}）`;
 const toKey = t => `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -2923,7 +2924,7 @@ function renderSpotListCurrent() {
   const cell = (sp, k, slot) => {
     const h = SPOT_NOW[SPOTS.indexOf(sp)].slots[k]?.[slot[0]];
     if (!h) return `<td><span class="cell none">—</span></td>`;
-    const label = `${sp.name} ${k === days[0][0] ? "今日" : "明日"}${slot[0]} ★${h.stars} ${sizeWord(h.wave)}・${h.windI.type}（${h.t.getHours()}時ごろ）`;
+    const label = `${sp.name} ${k === days[0][0] ? "今日" : "明日"} ${dateW(k === days[0][0] ? d0 : d1)}${slot[0]} ★${h.stars} ${sizeWord(h.wave)}・${h.windI.type}（${h.t.getHours()}時ごろ）`;
     return `<td><button type="button" class="cell s${h.stars}${past(k, slot) ? " past" : ""}" data-spot="${sp.id}" title="${esc(label)}" aria-label="${esc(label)}">${h.stars}</button></td>`;
   };
   document.getElementById("overview").innerHTML = `<table class="ov">
@@ -2945,7 +2946,7 @@ function renderSpotListCurrent() {
   const cands = [];
   SPOTS.forEach((sp, i) => days.forEach(([k, dn]) => SLOTS.forEach(slot => {
     const h = SPOT_NOW[i].slots[k]?.[slot[0]];
-    if (h && !past(k, slot)) cands.push({ sp, h, when: `${dn}の${slot[0]}` });
+    if (h && !past(k, slot)) cands.push({ sp, h, when: `${dn} ${dateW(k === days[0][0] ? d0 : d1)}の${slot[0]}` });
   })));
   cands.sort((a, b) => b.h.stars - a.h.stars || b.h.score - a.h.score);
   const picks = [], seen = new Set();
@@ -3057,7 +3058,15 @@ const store = {
 };
 
 // departure planner: work back from sunrise / best window / tide on the chosen day
+// 今日・明日・あさって の選択肢に日付と曜日を入れる（日付が変わったら書き直す）
+function labelDaySelects() {
+  ["dpDay", "sunDay"].forEach(id => [...document.getElementById(id).options].forEach(o => {
+    const d = new Date(); d.setDate(d.getDate() + +o.value);
+    o.textContent = `${["今日", "明日", "あさって"][+o.value]} ${dateW(d)}`;
+  }));
+}
 function renderDepart() {
+  labelDaySelects();
   const out = document.getElementById("dpOut");
   document.getElementById("departSub").textContent = `${SPOT.name}の予報から逆算`;
   if (!DATA || !DATA.hours[0]?.windI) { out.innerHTML = `<p class="status">予報データを読み込むと計算します。</p>`; return; }
@@ -3388,6 +3397,7 @@ function renderWind() {
 const UV_LEVEL = u => u >= 11 ? ["極端に強い", "var(--bad)"] : u >= 8 ? ["非常に強い", "var(--bad)"] : u >= 6 ? ["強い", "var(--accent)"] : u >= 3 ? ["中程度", "var(--ok)"] : ["弱い", "var(--good)"];
 const HEAT_LEVEL = t => t >= 31 ? ["厳重警戒", "var(--bad)"] : t >= 28 ? ["警戒", "var(--accent)"] : t >= 25 ? ["注意", "var(--ok)"] : t <= 8 ? ["寒さ対策を", "var(--tide)"] : ["ふつう", "var(--good)"];
 function renderSun() {
+  labelDaySelects();
   const out = document.getElementById("sunOut"), sum = document.getElementById("sunSummary");
   document.getElementById("sunSub").textContent = `${SPOT.name}・紫外線（UV指数）と体感温度から`;
   if (!DATA) { out.innerHTML = `<p class="status">予報データを読み込むと表示します。</p>`; sum.innerHTML = ""; return; }
