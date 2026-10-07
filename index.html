@@ -1306,7 +1306,7 @@ main { overflow-x: clip; }
               <tr><td>トリプル以上</td><td>3.0m〜</td><td>入らない判断も大切</td></tr>
             </tbody>
           </table>
-          <p class="spot-src">この表の波高は、セット（大きめの波）の高さです。予報では、ふだんの波をその約7割として「胸〜肩・セット頭」のように出しています。サイズは人の体のどこまで波があるかの言い方です。浜の地形によって、沖の波高より大きくも小さくも見えます（「答え合わせ」で補正できます）。</p>
+          <p class="spot-src">この表の波高は、セット（大きめの波）の高さです。予報では、ふだんの波をその約7割、たまに来る最大の波をその約1.4倍として「胸〜肩・セット頭・最大頭オーバー」のように出しています。サイズは人の体のどこまで波があるかの言い方です。浜の地形によって、沖の波高より大きくも小さくも見えます（「答え合わせ」で補正できます）。</p>
         </div>
       </section>
       </div>
@@ -1523,12 +1523,15 @@ function sizeWord(h) {
 // 予報の波高（有義波高）はセットの大きい波に近い。ふだんの波はその約7割として表示する
 const TYPICAL = 0.7;
 const typWord = h => sizeWord(h * TYPICAL);
+// たまに来る一番大きい波（50本に1本くらい）はセットの約1.4倍
+const MAXK = 1.4;
+const maxWord = h => sizeWord(h * MAXK);
 // 「胸〜肩・セット頭オーバー」のような表示（ふだんとセットが同じなら1つだけ）
 function sizeLabel(h) { const t = typWord(h), st = sizeWord(h); return t === st ? t : `${t}・セット${st}`; }
-function sizeRange(lo, hi) {
+function sizeRange(lo, hi, withMax = true) {
   const a = typWord(lo), b = typWord(hi), st = sizeWord(hi);
-  const t = a === b ? a : `${a}〜${b}`;
-  return b === st ? t : `${t}・セット${st}`;
+  const t = a === b ? a : `${a.split("〜")[0]}〜${b.split("〜").pop()}`; // 腹〜胸 と 胸〜肩 → 腹〜肩
+  return `${b === st ? t : `${t}・セット${st}`}${withMax ? `・最大${maxWord(hi)}` : ""}`;
 }
 function windInfo(from, speed, fac = facing) {
   if (speed < 1.5) return { type: "無風", cls: "calm", score: 1 };
@@ -1890,7 +1893,7 @@ function render() {
       <div class="label">${esc(SPOT.name)}・${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
       ${spotTags(SPOT).length ? `<div class="spot-tags">${spotTags(SPOT).map(t => `<span>${esc(t)}</span>`).join("")}<a href="#" data-goto="info">浜の情報 ›</a></div>` : ""}
       <div class="size-word">${typWord(cur.wave)}</div>
-      ${typWord(cur.wave) !== sizeWord(cur.wave) ? `<div class="size-set">セット ${sizeWord(cur.wave)}</div>` : ""}
+      <div class="size-set">${typWord(cur.wave) !== sizeWord(cur.wave) ? `セット ${sizeWord(cur.wave)}・` : ""}最大 ${maxWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="quick">
         ${typhoonSwell(cur) ? `<span class="tc-chip">台風うねり</span>` : ""}
@@ -2039,7 +2042,7 @@ function weekRow(k, list, dd, extremes) {
     <summary>
       <span class="wk-date">${isToday ? "今日" : md(d)}<small>（${WEEK[d.getDay()]}）</small>${tcSw ? `<span class="tc-chip">台風うねり</span>` : ""}</span>
       <span class="cell s${stars}" aria-label="最高★${stars}">${stars}</span>
-      <span class="wk-size">${win ? sizeLabel(win.peak.wave) : size}</span>
+      <span class="wk-size">${win ? sizeLabel(win.peak.wave) : sizeRange(minW, maxW, false)}</span>
       <span class="wk-wind">${wAm ? `<span class="pill ${wAm.cls}">${wAm.type}</span>` : "—"}</span>
       <span class="wk-win d-only">${win ? `${hm(win.from)}〜${hm(win.to)}` : "—"}</span>
       <span class="wk-wx d-only">${wx}・${dd ? `${Math.round(dd.tmax)}℃` : ""}</span>
