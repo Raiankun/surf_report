@@ -448,7 +448,14 @@ main { overflow-x: clip; }
 .tc-slot:empty { display: none; }
 .tc-panel { padding: 12px 16px; display: grid; gap: 10px; border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
 .tc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; }
-.tc-head a { font-size: 12.5px; }
+.tc-head { cursor: pointer; list-style: none; }
+.tc-head::-webkit-details-marker { display: none; }
+.tc-head b { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tc-open { font-size: 12.5px; color: var(--sea); white-space: nowrap; }
+.tc-open::after { content: " ▾"; }
+.tc-panel[open] .tc-open::after { content: " ▴"; }
+.tc-link { font-size: 12.5px; justify-self: end; }
+.tc-main .tc-chip { color: #fff; }
 .tc-row { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; }
 .tc-arrow { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); position: relative; }
 .tc-arrow::after { content: ""; position: absolute; left: 50%; top: 4px; translate: -50% 0; border: 6px solid transparent; border-bottom: 11px solid var(--bad); border-top: 0; }
@@ -479,7 +486,7 @@ main { overflow-x: clip; }
 .tool-jump { display: flex; flex-wrap: wrap; gap: 6px; }
 .tool-jump a { font-size: 12.5px; font-weight: 700; text-decoration: none; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; }
 .tool-jump a:hover { border-color: var(--accent); }
-#view-tools section { scroll-margin-top: 90px; }
+.subpane section { scroll-margin-top: 90px; }
 .tool { padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 18px; align-items: start; }
 .tool-in { display: grid; gap: 8px; }
 .tool-in label { display: grid; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
@@ -569,6 +576,13 @@ main { overflow-x: clip; }
 .sun-table small { color: var(--muted); }
 
 .drive-map-wrap { overflow: hidden; margin-bottom: 14px; }
+.gear-line { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 16px; margin: 14px 0; }
+.gear-line b { display: block; font-size: 14.5px; }
+.gear-line small { font-size: 12.5px; color: var(--muted); }
+.gear-more { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.calc-note:empty { display: none; }
+.drive-all { padding: 12px 16px; margin-bottom: 12px; }
+.drive-all summary { cursor: pointer; font-weight: 700; font-size: 14px; }
 .map-mode { display: flex; gap: 6px; margin-bottom: 8px; }
 .map-mode button { flex: 1; font: inherit; font-size: 13px; font-weight: 700; padding: 8px 10px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer; }
 .map-mode button[aria-selected="true"] { background: var(--sea); border-color: var(--sea); color: #fff; }
@@ -707,13 +721,11 @@ main { overflow-x: clip; }
   </header>
 
   <nav class="tabbar" role="tablist" aria-label="表示の切り替え">
-    <button type="button" role="tab" id="vt-list" aria-controls="view-list" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>一覧</span></button>
-    <button type="button" role="tab" id="vt-forecast" aria-controls="view-forecast" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 15c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/><path d="M2 9c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/></svg><span>波予報</span></button>
-    <button type="button" role="tab" id="vt-live" aria-controls="view-live" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg><span>ライブ・潮</span></button>
+    <button type="button" role="tab" id="vt-list" aria-controls="view-list" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>どこ行く</span></button>
+    <button type="button" role="tab" id="vt-forecast" aria-controls="view-forecast" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 15c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/><path d="M2 9c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/></svg><span>ポイント</span></button>
+    <button type="button" role="tab" id="vt-prep" aria-controls="view-prep" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>準備・記録</span></button>
     <button type="button" role="tab" id="vt-learn" aria-controls="view-learn" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><span>学ぶ</span></button>
-    <button type="button" role="tab" id="vt-tools" aria-controls="view-tools" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5.3 5.3L3 18l3 3 6.2-6.2a4 4 0 0 0 5.3-5.3l-2.4 2.4-2.6-.6-.6-2.6z"/></svg><span>便利</span></button>
     <button type="button" role="tab" id="vt-videos" aria-controls="view-videos" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z"/></svg><span>動画</span></button>
-    <button type="button" role="tab" id="vt-news" aria-controls="view-news" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg><span>ニュース</span></button>
   </nav>
   <div class="install" id="installHint" hidden>
     <img src="icons/icon-192.png" alt="" width="44" height="44">
@@ -724,35 +736,180 @@ main { overflow-x: clip; }
   <main id="main">
     <div class="view" id="view-list" role="tabpanel" aria-labelledby="vt-list" hidden>
       <section>
-        <h2>どこに行く？ <small>今日・明日の朝・昼・夕の★（マスをタップで詳しい予報）</small></h2>
+        <h2>どこに行く？ <small id="listSub">今日・明日の朝・昼・夕の★（マスをタップで詳しい予報）</small></h2>
         <div class="tc-slot" id="tcList"></div>
         <div class="picks" id="picks"></div>
+        <div class="map-mode" role="tablist" aria-label="表示のしかた">
+          <button type="button" role="tab" data-list-mode="table">表で見る</button>
+          <button type="button" role="tab" data-list-mode="map">地図で見る</button>
+        </div>
+        <div id="listTable">
         <div class="panel ov-wrap" id="overview"><div class="status">全ポイントの予報を取得しています…</div></div>
         <div class="legend ov-legend">
           <span><i class="s5"></i>★5</span><span><i class="s4"></i>★4</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span>
           <span>朝 5〜9時・昼 10〜14時・夕 15〜18時</span>
         </div>
+        </div>
+        <div class="panel drive-map-wrap" id="listMap" hidden>
+          <div id="driveMap" class="drive-map" role="application" aria-label="ポイントの地図"></div>
+          <div class="map-legend"><span><i class="fac"></i>駐車場・ショップ</span><span><i class="s5"></i>★4〜5</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span><span><i class="home"></i>出発地</span><span>色はいまの★</span></div>
+        </div>
       </section>
     </div>
     <div class="view" id="view-forecast" role="tabpanel" aria-labelledby="vt-forecast" hidden>
-      <div class="subtabs" role="tablist" aria-label="詳しい予報">
-        <button type="button" role="tab" id="st-today" aria-controls="sp-today" aria-selected="true">今日</button>
-        <button type="button" role="tab" id="st-week" aria-controls="sp-week" aria-selected="false">週間</button>
-        <button type="button" role="tab" id="st-gear" aria-controls="sp-gear" aria-selected="false">装備・記録</button>
-        <button type="button" role="tab" id="st-guide" aria-controls="sp-guide" aria-selected="false">ガイド</button>
+      <div class="subtabs" role="tablist" aria-label="このポイント">
+        <button type="button" role="tab" id="t-today" aria-controls="p-today" aria-selected="false">今日</button>
+        <button type="button" role="tab" id="t-week" aria-controls="p-week" aria-selected="false">週間</button>
+        <button type="button" role="tab" id="t-tide" aria-controls="p-tide" aria-selected="false">潮</button>
+        <button type="button" role="tab" id="t-access" aria-controls="p-access" aria-selected="false">行き方</button>
+        <button type="button" role="tab" id="t-info" aria-controls="p-info" aria-selected="false">浜の情報</button>
       </div>
-      <div class="subpane" id="sp-today" role="tabpanel" aria-labelledby="st-today">
+      <div class="subpane" id="p-today" role="tabpanel" aria-labelledby="t-today" hidden>
         <div id="now"><div class="status">予報データを取得しています…</div></div>
         <div class="tc-slot" id="tcToday"></div>
         <div id="chartToday"></div>
-      </div>
-      <div class="subpane" id="sp-week" role="tabpanel" aria-labelledby="st-week" hidden>
-        <div id="week"></div>
-      </div>
-      <div class="subpane" id="sp-gear" role="tabpanel" aria-labelledby="st-gear" hidden>
         <div id="gear"></div>
+      <section>
+        <h2>ライブカメラ <small id="camSub"></small></h2>
+        <div class="panel cam" id="cam"></div>
+      </section>
+      <section id="toolWind">
+        <h2>風向き <small id="windSub">いまの風が、ポイントにとってどの向きか</small></h2>
+        <div class="panel tool"><div class="compass-wrap" id="compass"></div></div>
+      </section>
+      </div>
+      <div class="subpane" id="p-week" role="tabpanel" aria-labelledby="t-week" hidden>
+        <div id="week"></div>
+      <section>
+        <h2>気象台の予報 <small id="jmaSub"></small></h2>
+        <div class="panel jma" id="jma"><div class="status">気象台の予報を取得しています…</div></div>
+      </section>
+      </div>
+      <div class="subpane" id="p-tide" role="tabpanel" aria-labelledby="t-tide" hidden>
+      <section>
+      <h2>潮見表 <small id="tideSub">満潮・干潮・潮回り（7日間）</small></h2>
+      <div class="panel tide-wrap" id="tideTable"><div class="status">潮汐データを取得しています…</div></div>
+    </section>
+      <section id="toolTideCal">
+        <h2>潮回りカレンダー <small>月齢から計算した潮回り（大潮・中潮・小潮・長潮・若潮）</small></h2>
+        <div class="panel tool-cal" id="tideCal"></div>
+      </section>
+      </div>
+      <div class="subpane" id="p-access" role="tabpanel" aria-labelledby="t-access" hidden>
+      <section id="toolDrive">
+        <h2>行き方 <small id="driveSub">出発地からの道順・駐車場・時間</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="drHome">出発地<select id="drHome">
+              <option value="34.7025,135.4959,大阪駅">大阪（梅田）</option>
+              <option value="34.9858,135.7588,京都駅">京都駅</option>
+              <option value="34.6946,135.1955,三ノ宮駅">神戸（三宮）</option>
+              <option value="34.6851,135.8048,近鉄奈良駅">奈良</option>
+              <option value="35.0045,135.8686,大津駅">大津</option>
+              <option value="34.2306,135.1708,和歌山駅">和歌山</option>
+              <option value="34.8268,134.6907,姫路駅">姫路</option>
+              <option value="35.1709,136.8815,名古屋駅">名古屋</option>
+              <option value="34.7303,136.5086,津駅">津</option>
+              <option value="34.4876,136.7091,伊勢市駅">伊勢</option>
+              <option value="36.0623,136.2229,福井駅">福井</option>
+              <option value="here">現在地（このスマホの位置）</option>
+            </select></label>
+            <p class="calc-note" id="drNote"></p>
+          </div>
+        </div>
+        <div class="panel gmap-wrap" id="gmapWrap">
+          <label class="gmap-dest" for="gmapDest">行き先<select id="gmapDest"></select></label>
+          <iframe id="gmapFrame" class="drive-map" title="Googleマップ" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <p class="map-legend" id="gmapNote"></p>
+        </div>
+        <div class="panel fac-panel"><h3 class="fac-h" id="drFacH"></h3><div id="drFac"></div></div>
+        <details class="panel drive-all"><summary>全ポイントまでの時間（目安）</summary>
+          <p class="calc-note">直線距離に道路の遠回りぶん（約1.35倍）を足し、平均時速55kmで計算した目安です。駐車場の位置は <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> ほかのデータです。</p>
+          <div class="tool-out drive-out" id="drOut"></div></details>
+        <button type="button" class="btn ghost" id="drToDepart">この時間で下の「出発時刻」を計算する</button>
+      </section>
+      <section id="toolDepart">
+        <h2>出発時刻の計算 <small id="departSub">選んでいるポイントの予報から逆算</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="dpDay">日にち<select id="dpDay"><option value="0">今日</option><option value="1" selected>明日</option><option value="2">あさって</option></select></label>
+            <label for="dpTarget">何に合わせる？<select id="dpTarget">
+              <option value="rise">日の出</option>
+              <option value="best">狙い目の時間の始まり</option>
+              <option value="high">満潮</option>
+              <option value="low">干潮</option>
+            </select></label>
+            <label for="dpTravel">移動時間（分）<input id="dpTravel" type="number" min="0" max="600" step="5" value="90"></label>
+            <label for="dpPrep">現地での準備（分）<input id="dpPrep" type="number" min="0" max="120" step="5" value="20"></label>
+          </div>
+          <div class="tool-out" id="dpOut" aria-live="polite"><p class="status">予報データを読み込むと計算します。</p></div>
+        </div>
+      </section>
+      </div>
+      <div class="subpane" id="p-info" role="tabpanel" aria-labelledby="t-info" hidden>
+      <section>
+        <h2>ポイントガイド <small id="guideSub"></small></h2>
+        <div class="panel spot-guide" id="spotGuide"></div>
+      </section>
+      <section>
+        <div class="settings">
+          <label for="facing">ビーチの向き（沖の方角）</label>
+          <input id="facing" type="number" min="0" max="359" step="5" value="110"> °
+          <span id="facingNote"></span>
+        </div>
+      </section>
+      </div>
+    </div>
+    <div class="view" id="view-prep" role="tabpanel" aria-labelledby="vt-prep" hidden>
+      <div class="subtabs" role="tablist" aria-label="準備・記録">
+        <button type="button" role="tab" id="t-check" aria-controls="p-check" aria-selected="false">持ち物</button>
+        <button type="button" role="tab" id="t-suit" aria-controls="p-suit" aria-selected="false">ウェット</button>
+        <button type="button" role="tab" id="t-sun" aria-controls="p-sun" aria-selected="false">日焼け・暑さ</button>
+        <button type="button" role="tab" id="t-log" aria-controls="p-log" aria-selected="false">記録</button>
+      </div>
+      <div class="subpane" id="p-check" role="tabpanel" aria-labelledby="t-check" hidden>
+      <section id="toolCheck">
+        <h2>持ち物チェックリスト <small>チェックはこのスマホに保存されます</small></h2>
+        <div class="panel tool">
+          <ul class="check" id="checkList"></ul>
+          <form class="check-add" id="checkAdd">
+            <label for="checkNew" class="sr">持ち物を追加</label>
+            <input id="checkNew" type="text" maxlength="30" placeholder="持ち物を追加（例：ブーツ）">
+            <button type="submit" class="btn ghost">追加</button>
+          </form>
+          <div class="check-tools"><button type="button" class="btn ghost" id="checkReset">チェックを全部外す</button></div>
+        </div>
+      </section>
+      </div>
+      <div class="subpane" id="p-suit" role="tabpanel" aria-labelledby="t-suit" hidden>
+      <section id="toolSuit">
+        <h2>ウェットスーツ早見表 <small>水温を動かすと、合う格好が変わります</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="wsTemp">水温 <output id="wsTempOut">22.0℃</output></label>
+            <input id="wsTemp" type="range" min="8" max="30" step="0.5" value="22">
+            <button type="button" class="btn ghost" id="wsNow">いまの水温を入れる</button>
+          </div>
+          <div class="tool-out" id="wsOut"></div>
+        </div>
+      </section>
+      </div>
+      <div class="subpane" id="p-sun" role="tabpanel" aria-labelledby="t-sun" hidden>
+      <section id="toolSun">
+        <h2>日焼け・暑さの目安 <small id="sunSub">紫外線（UV指数）と体感温度から</small></h2>
+        <div class="panel tool">
+          <div class="tool-in">
+            <label for="sunDay">日にち<select id="sunDay"><option value="0">今日</option><option value="1">明日</option><option value="2">あさって</option></select></label>
+            <div id="sunSummary" class="sun-summary"></div>
+          </div>
+          <div class="tool-out" id="sunOut"></div>
+        </div>
+        <p class="spot-src">体感温度をもとにした目安で、熱中症の公式な指標（暑さ指数）ではありません。暑い日は <a href="https://www.wbgt.env.go.jp/" target="_blank" rel="noopener">環境省 熱中症予防情報サイト</a> もあわせて確認してください。</p>
+      </section>
+      </div>
+      <div class="subpane" id="p-log" role="tabpanel" aria-labelledby="t-log" hidden>
       <section id="logSec">
-        <h2>答え合わせ <small>実際の波を記録して、予報のクセを補正</small></h2>
+        <h2>答え合わせ <small id="logSub">実際の波を記録して、予報のクセを補正</small></h2>
         <div class="panel logbox">
           <div class="log-head">
             <div class="calib" id="calibInfo"></div>
@@ -785,39 +942,20 @@ main { overflow-x: clip; }
           </details>
         </div>
       </section>
-      </div>
-      <div class="subpane" id="sp-guide" role="tabpanel" aria-labelledby="st-guide" hidden>
-      <section>
-        <h2>ポイントガイド <small id="guideSub"></small></h2>
-        <div class="panel spot-guide" id="spotGuide"></div>
-      </section>
-      <section>
-        <div class="settings">
-          <label for="facing">ビーチの向き（沖の方角）</label>
-          <input id="facing" type="number" min="0" max="359" step="5" value="110"> °
-          <span id="facingNote"></span>
-        </div>
+      <section id="toolStats">
+        <h2>記録の統計 <small>「答え合わせ」の記録から集計</small></h2>
+        <div class="panel stats" id="statsOut"></div>
       </section>
       </div>
-    </div>
-    <div class="view" id="view-live" role="tabpanel" aria-labelledby="vt-live" hidden>
-    <div class="duo">
-      <section>
-        <h2>ライブカメラ <small id="camSub"></small></h2>
-        <div class="panel cam" id="cam"></div>
-      </section>
-
-      <section>
-        <h2>気象台の予報 <small id="jmaSub"></small></h2>
-        <div class="panel jma" id="jma"><div class="status">気象台の予報を取得しています…</div></div>
-      </section>
-    </div>
-    <section>
-      <h2>潮見表 <small id="tideSub">満潮・干潮・潮回り（7日間）</small></h2>
-      <div class="panel tide-wrap" id="tideTable"><div class="status">潮汐データを取得しています…</div></div>
-    </section>
     </div>
     <div class="view" id="view-learn" role="tabpanel" aria-labelledby="vt-learn" hidden>
+      <div class="subtabs" role="tablist" aria-label="学ぶ">
+        <button type="button" role="tab" id="t-basics" aria-controls="p-basics" aria-selected="false">はじめて</button>
+        <button type="button" role="tab" id="t-board" aria-controls="p-board" aria-selected="false">ボード</button>
+        <button type="button" role="tab" id="t-size" aria-controls="p-size" aria-selected="false">サイズ表</button>
+        <button type="button" role="tab" id="t-news" aria-controls="p-news" aria-selected="false">ニュース</button>
+      </div>
+      <div class="subpane" id="p-basics" role="tabpanel" aria-labelledby="t-basics" hidden>
     <section id="guide">
       <h2>はじめての人へ <small>用語・乗り方・パドリング・横に滑る・上達のコツ・安全とマナー</small></h2>
       <div class="panel guide">
@@ -1060,7 +1198,7 @@ main { overflow-x: clip; }
             <h3><span class="tip-no">5</span>上達を早める心がけ</h3>
             <ul>
               <li><b>最初はスクールか、慣れた人と一緒に。</b>1人で入らないことが一番の安全策。</li>
-              <li><b>自分に合った浮力のボードを。</b>浮力が足りないと、波をつかまえる段階でつまずく（「学ぶ」→ボードの選び方で計算できます）。</li>
+              <li><b>自分に合った浮力のボードを。</b>浮力が足りないと、波をつかまえる段階でつまずく（「学ぶ」→「ボード」で計算できます）。</li>
               <li><b>小さめでメローな波の日を選ぶ。</b>このサイトの一覧で、初心者向けの「◎」やメロー・ファンウェイブのポイントを探すのが近道。</li>
             </ul>
           </section>
@@ -1095,93 +1233,8 @@ main { overflow-x: clip; }
       </div>
     </section>
 
-    </div>
-    <div class="view" id="view-tools" role="tabpanel" aria-labelledby="vt-tools" hidden>
-      <div class="subtabs tool-tabs" role="tablist" aria-label="便利機能">
-        <button type="button" role="tab" id="tt-depart" aria-controls="tp-depart" aria-selected="false">出発時刻</button>
-        <button type="button" role="tab" id="tt-drive" aria-controls="tp-drive" aria-selected="false">所要時間</button>
-        <button type="button" role="tab" id="tt-suit" aria-controls="tp-suit" aria-selected="false">ウェット</button>
-        <button type="button" role="tab" id="tt-board" aria-controls="tp-board" aria-selected="false">ボード</button>
-        <button type="button" role="tab" id="tt-wind" aria-controls="tp-wind" aria-selected="false">風コンパス</button>
-        <button type="button" role="tab" id="tt-sun" aria-controls="tp-sun" aria-selected="false">日焼け・暑さ</button>
-        <button type="button" role="tab" id="tt-stats" aria-controls="tp-stats" aria-selected="false">記録の統計</button>
-        <button type="button" role="tab" id="tt-tidecal" aria-controls="tp-tidecal" aria-selected="false">潮回り</button>
-        <button type="button" role="tab" id="tt-check" aria-controls="tp-check" aria-selected="false">持ち物</button>
-        <button type="button" role="tab" id="tt-size" aria-controls="tp-size" aria-selected="false">サイズ表</button>
       </div>
-      <div class="subpane" id="tp-depart" role="tabpanel" aria-labelledby="tt-depart" hidden>
-      <section id="toolDepart">
-        <h2>出発時刻の計算 <small id="departSub">選んでいるポイントの予報から逆算</small></h2>
-        <div class="panel tool">
-          <div class="tool-in">
-            <label for="dpDay">日にち<select id="dpDay"><option value="0">今日</option><option value="1" selected>明日</option><option value="2">あさって</option></select></label>
-            <label for="dpTarget">何に合わせる？<select id="dpTarget">
-              <option value="rise">日の出</option>
-              <option value="best">狙い目の時間の始まり</option>
-              <option value="high">満潮</option>
-              <option value="low">干潮</option>
-            </select></label>
-            <label for="dpTravel">移動時間（分）<input id="dpTravel" type="number" min="0" max="600" step="5" value="90"></label>
-            <label for="dpPrep">現地での準備（分）<input id="dpPrep" type="number" min="0" max="120" step="5" value="20"></label>
-          </div>
-          <div class="tool-out" id="dpOut" aria-live="polite"><p class="status">予報データを読み込むと計算します。</p></div>
-        </div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-drive" role="tabpanel" aria-labelledby="tt-drive" hidden>
-      <section id="toolDrive">
-        <h2>ポイントまでの所要時間 <small>地図の印をタップしてポイントを選べます</small></h2>
-        <div class="map-mode" role="tablist" aria-label="地図の種類">
-          <button type="button" role="tab" data-map-mode="google">Googleマップ（ルート）</button>
-          <button type="button" role="tab" data-map-mode="pick">ポイントを選ぶ地図</button>
-        </div>
-        <div class="panel gmap-wrap" id="gmapWrap" hidden>
-          <label class="gmap-dest" for="gmapDest">行き先<select id="gmapDest"></select></label>
-          <iframe id="gmapFrame" class="drive-map" title="Googleマップ" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          <p class="map-legend" id="gmapNote"></p>
-        </div>
-        <div class="panel drive-map-wrap" id="pickMapWrap">
-          <div id="driveMap" class="drive-map" role="application" aria-label="ポイントの地図"></div>
-          <div class="map-legend"><span><i class="fac"></i>駐車場・ショップ</span><span><i class="s5"></i>★4〜5</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span><span><i class="home"></i>出発地</span><span>色はいまの★</span></div>
-        </div>
-        <div class="panel fac-panel"><h3 class="fac-h" id="drFacH"></h3><div id="drFac"></div></div>
-        <div class="panel tool">
-          <div class="tool-in">
-            <label for="drHome">出発地<select id="drHome">
-              <option value="34.7025,135.4959,大阪駅">大阪（梅田）</option>
-              <option value="34.9858,135.7588,京都駅">京都駅</option>
-              <option value="34.6946,135.1955,三ノ宮駅">神戸（三宮）</option>
-              <option value="34.6851,135.8048,近鉄奈良駅">奈良</option>
-              <option value="35.0045,135.8686,大津駅">大津</option>
-              <option value="34.2306,135.1708,和歌山駅">和歌山</option>
-              <option value="34.8268,134.6907,姫路駅">姫路</option>
-              <option value="35.1709,136.8815,名古屋駅">名古屋</option>
-              <option value="34.7303,136.5086,津駅">津</option>
-              <option value="34.4876,136.7091,伊勢市駅">伊勢</option>
-              <option value="36.0623,136.2229,福井駅">福井</option>
-              <option value="here">現在地（このスマホの位置）</option>
-            </select></label>
-            <p class="calc-note" id="drNote">直線距離に道路の遠回りぶん（約1.35倍）を足し、平均時速55kmで計算した目安です。実際の時間は「ルート」から地図アプリで確認できます。目的地は各ポイント近くの駐車場（国府の浜は Red Bee）で、駐車場の位置は <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> のデータです。</p>
-            <button type="button" class="btn ghost" id="drToDepart">選んでいるポイントの時間を「出発時刻」に入れる</button>
-          </div>
-          <div class="tool-out drive-out" id="drOut"></div>
-        </div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-suit" role="tabpanel" aria-labelledby="tt-suit" hidden>
-      <section id="toolSuit">
-        <h2>ウェットスーツ早見表 <small>水温を動かすと、合う格好が変わります</small></h2>
-        <div class="panel tool">
-          <div class="tool-in">
-            <label for="wsTemp">水温 <output id="wsTempOut">22.0℃</output></label>
-            <input id="wsTemp" type="range" min="8" max="30" step="0.5" value="22">
-            <button type="button" class="btn ghost" id="wsNow">いまの水温を入れる</button>
-          </div>
-          <div class="tool-out" id="wsOut"></div>
-        </div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-board" role="tabpanel" aria-labelledby="tt-board" hidden>
+      <div class="subpane" id="p-board" role="tabpanel" aria-labelledby="t-board" hidden>
       <section id="boards">
         <h2>ボードの選び方 <small>種類と浮力（リッター数）の目安</small></h2>
         <div class="panel boards">
@@ -1231,55 +1284,7 @@ main { overflow-x: clip; }
         </div>
       </section>
       </div>
-      <div class="subpane" id="tp-wind" role="tabpanel" aria-labelledby="tt-wind" hidden>
-      <section id="toolWind">
-        <h2>風向きコンパス <small id="windSub">いまの風が、ポイントにとってどの向きか</small></h2>
-        <div class="panel tool">
-          <div class="compass-wrap" id="compass"></div>
-          <div class="tool-out" id="windAll"><p class="status">全ポイントの風を取得しています…</p></div>
-        </div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-sun" role="tabpanel" aria-labelledby="tt-sun" hidden>
-      <section id="toolSun">
-        <h2>日焼け・暑さの目安 <small id="sunSub">紫外線（UV指数）と体感温度から</small></h2>
-        <div class="panel tool">
-          <div class="tool-in">
-            <label for="sunDay">日にち<select id="sunDay"><option value="0">今日</option><option value="1">明日</option><option value="2">あさって</option></select></label>
-            <div id="sunSummary" class="sun-summary"></div>
-          </div>
-          <div class="tool-out" id="sunOut"></div>
-        </div>
-        <p class="spot-src">体感温度をもとにした目安で、熱中症の公式な指標（暑さ指数）ではありません。暑い日は <a href="https://www.wbgt.env.go.jp/" target="_blank" rel="noopener">環境省 熱中症予防情報サイト</a> もあわせて確認してください。</p>
-      </section>
-      </div>
-      <div class="subpane" id="tp-stats" role="tabpanel" aria-labelledby="tt-stats" hidden>
-      <section id="toolStats">
-        <h2>記録の統計 <small>「答え合わせ」の記録から集計</small></h2>
-        <div class="panel stats" id="statsOut"></div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-tidecal" role="tabpanel" aria-labelledby="tt-tidecal" hidden>
-      <section id="toolTideCal">
-        <h2>潮回りカレンダー <small>月齢から計算した潮回り（大潮・中潮・小潮・長潮・若潮）</small></h2>
-        <div class="panel tool-cal" id="tideCal"></div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-check" role="tabpanel" aria-labelledby="tt-check" hidden>
-      <section id="toolCheck">
-        <h2>持ち物チェックリスト <small>チェックはこのスマホに保存されます</small></h2>
-        <div class="panel tool">
-          <ul class="check" id="checkList"></ul>
-          <form class="check-add" id="checkAdd">
-            <label for="checkNew" class="sr">持ち物を追加</label>
-            <input id="checkNew" type="text" maxlength="30" placeholder="持ち物を追加（例：ブーツ）">
-            <button type="submit" class="btn ghost">追加</button>
-          </form>
-          <div class="check-tools"><button type="button" class="btn ghost" id="checkReset">チェックを全部外す</button></div>
-        </div>
-      </section>
-      </div>
-      <div class="subpane" id="tp-size" role="tabpanel" aria-labelledby="tt-size" hidden>
+      <div class="subpane" id="p-size" role="tabpanel" aria-labelledby="t-size" hidden>
       <section id="toolSize">
         <h2>波のサイズ早見表 <small>このサイトでの目安（沖の波高から換算）</small></h2>
         <div class="panel tool-size">
@@ -1303,6 +1308,12 @@ main { overflow-x: clip; }
         </div>
       </section>
       </div>
+      <div class="subpane" id="p-news" role="tabpanel" aria-labelledby="t-news" hidden>
+    <section>
+      <h2>サーフィンニュース <small>開くたびに最新を取得・2週間以内の記事だけ表示</small></h2>
+      <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
+    </section>
+      </div>
     </div>
     <div class="view" id="view-videos" role="tabpanel" aria-labelledby="vt-videos" hidden>
       <section id="videos">
@@ -1316,12 +1327,6 @@ main { overflow-x: clip; }
         <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg" hidden></div>
         <div class="vids" id="vids-adv" role="tabpanel" aria-labelledby="vtab-adv" hidden></div>
       </section>
-    </div>
-    <div class="view" id="view-news" role="tabpanel" aria-labelledby="vt-news" hidden>
-    <section>
-      <h2>サーフィンニュース <small>開くたびに最新を取得・2週間以内の記事だけ表示</small></h2>
-      <div class="panel"><ul class="news" id="news"><li class="status">ニュースを取得しています…</li></ul></div>
-    </section>
     </div>
   </main>
 
@@ -1817,9 +1822,10 @@ function typhoonSwell(h) {
   return null;
 }
 function renderTyphoons() {
+  const near = (TC_DATA || []).filter(tc => angDiff(bearingDeg(SPOT.wx, tc.pos), SPOT.swell) <= 75).length;
   const html = !TC_DATA?.length ? "" : `
-    <div class="panel tc-panel">
-      <div class="tc-head"><b>台風情報</b><a href="https://www.jma.go.jp/bosai/map.html#contents=typhoon" target="_blank" rel="noopener">気象庁の進路予想図 ↗</a></div>
+    <details class="panel tc-panel">
+      <summary class="tc-head"><b>台風情報 ${TC_DATA.length}個${near ? `<span class="tc-chip">${near}個はうねりが届きやすい方角</span>` : ""}</b><span class="tc-open">くわしく</span></summary>
       ${TC_DATA.map(tc => {
         const d = distKm(SPOT.wx, tc.pos), b = bearingDeg(SPOT.wx, tc.pos);
         const facing = angDiff(b, SPOT.swell) <= 75;
@@ -1832,7 +1838,8 @@ function renderTyphoons() {
           </div>
         </div>`;
       }).join("")}
-    </div>`;
+      <a class="tc-link" href="https://www.jma.go.jp/bosai/map.html#contents=typhoon" target="_blank" rel="noopener">気象庁の進路予想図 ↗</a>
+    </details>`;
   document.getElementById("tcList").innerHTML = html;
   document.getElementById("tcToday").innerHTML = html;
 }
@@ -1853,25 +1860,20 @@ function render() {
   const sstDay = byDay[cur.key].map(h => h.sst).filter(v => v != null);
 
   const gearT = cur.sst ?? (sstDay.length ? sstDay[0] : null);
+  const gk = gearT == null ? [] : gearFor(gearT);
   document.getElementById("gear").innerHTML = gearT == null ? "" : `
-  <section>
-    <h2>今日のおすすめの格好 <small>水温と気温から</small></h2>
-    <div class="panel gear">
-      <div class="gear-temp"><span class="label">いまの水温</span><span class="big">${gearT.toFixed(1)}<small>℃</small></span><span class="d">気温 ${Math.round(cur.temp)}℃</span></div>
-      <div class="outfits">${gearFor(gearT).map((k, i) => `
-        <div class="outfit">${suitSVG(k, 66, i === 0)}
-          <div>${i ? '<div class="or">または</div>' : ""}<div class="nm">${GEAR[k].name}</div><div class="ds">${GEAR[k].desc}</div></div>
-        </div>`).join("")}</div>
-      <div class="gear-tip">${gearTip(gearT, today, cur)}</div>
-    </div>
-  </section>`;
+    <div class="panel gear-line">${suitSVG(gk[0], 44, true)}
+      <div><b>今日の格好：${gk.map(k => GEAR[k].name).join(" または ")}</b>
+        <small>水温 ${gearT.toFixed(1)}℃・気温 ${Math.round(cur.temp)}℃。${gearTip(gearT, today, cur)}</small></div>
+      <a href="#" data-goto="suit" class="gear-more">早見表 ›</a>
+    </div>`;
 
   const nextTide = extremes.find(e => e.t > now);
   document.getElementById("now").innerHTML = `
   <section class="panel now" aria-label="現在の状況">
     <div class="verdict">
       <div class="label">${esc(SPOT.name)}・${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
-      ${spotTags(SPOT).length ? `<div class="spot-tags">${spotTags(SPOT).map(t => `<span>${esc(t)}</span>`).join("")}<a href="#" data-sub="guide">ポイントの特徴 ›</a></div>` : ""}
+      ${spotTags(SPOT).length ? `<div class="spot-tags">${spotTags(SPOT).map(t => `<span>${esc(t)}</span>`).join("")}<a href="#" data-goto="info">浜の情報 ›</a></div>` : ""}
       <div class="size-word">${sizeWord(cur.wave)}</div>
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="quick">
@@ -1935,7 +1937,7 @@ function render() {
   renderTideTable(byDay, daily, extremes);
   renderLog();
   if (typeof renderDepart === "function") renderDepart();
-  if (typeof TOOL_RENDER !== "undefined" && currentView === "tools") TOOL_RENDER[currentTool]?.();
+  renderOpenSub();
   scrollActiveChart();
   document.getElementById("facingNote").textContent = `オフショア ＝ ${dirName((facing + 180) % 360)}寄りの風`;
 }
@@ -2483,11 +2485,9 @@ function calcVolume() {
   });
   // in-page link to the guide must not replace the spot hash
   document.addEventListener("click", e => {
-    const sub = e.target.closest("[data-sub]");
-    if (sub) { e.preventDefault(); showSub(sub.dataset.sub); return; }
     if (!e.target.closest("[data-guide]")) return;
     e.preventDefault();
-    showView("learn", { scroll: false });
+    showSub("basics"); showView("learn", { scroll: false });
     document.getElementById("guide").scrollIntoView({ behavior: "smooth" });
   });
 })();
@@ -2524,6 +2524,7 @@ function sizeFactor(spotId) {
 }
 
 function renderLog() {
+  document.getElementById("logSub").textContent = `${SPOT.name}の実際の波を記録して、予報のクセを補正`;
   const c = calibOf(SPOT.id), all = readLogs(), mine = all.filter(l => l.spot === SPOT.id);
   const info = document.getElementById("calibInfo");
   if (c.n < CALIB_MIN) {
@@ -2779,7 +2780,7 @@ function facilitiesHTML(sp) {
       <div class="fac-side">${km != null ? `<span class="fac-time">${f.a ? "約" : ""}${fmtMin(driveMin(km))}</span>` : `<span class="fac-time none">位置未確認</span>`}
         <span class="fac-links"><a href="${gmap}" target="_blank" rel="noopener">地図</a>${f.p ? `<a href="https://www.google.com/maps/dir/?api=1${o?.name ? `&origin=${encodeURIComponent(o.name)}` : ""}&destination=${f.p[0]},${f.p[1]}&travelmode=driving" target="_blank" rel="noopener">ルート</a>` : ""}</span></div>
     </li>`; }).join("")}</ul>
-    <p class="spot-src">時間は${o ? `「${esc(o.name || "現在地")}」から` : ""}の車の目安（「便利」→「所要時間」で出発地を変えられます）。料金・営業時間・サーファーの利用可否は季節で変わるので、当日の現地案内を優先してください。路上や漁港・住宅前への駐車はしないこと。</p>`;
+    <p class="spot-src">時間は${o ? `「${esc(o.name || "現在地")}」から` : ""}の車の目安（「ポイント」→「行き方」で出発地を変えられます）。料金・営業時間・サーファーの利用可否は季節で変わるので、当日の現地案内を優先してください。路上や漁港・住宅前への駐車はしないこと。</p>`;
 }
 
 // --- spot guide ----------------------------------------------------------------------
@@ -2955,50 +2956,47 @@ function renderSpotListCurrent() {
     </button>`).join("") : "";
   document.querySelectorAll("#overview [data-spot], #picks [data-spot]").forEach(b => b.addEventListener("click", () => {
     selectSpot(b.dataset.spot);
-    showSub("today");
-    showView("forecast");
+    goSub("today");
   }));
 }
 
-// --- sub tabs inside the forecast view -------------------------------------------------------
-const SUBS = ["today", "week", "gear", "guide"];
-let currentSub = "today";
+// --- tabs: 5 views, three of them with sub tabs ---------------------------------------------
+const VIEWS = ["list", "forecast", "prep", "learn", "videos"];
+const SUBTABS = {
+  forecast: ["today", "week", "tide", "access", "info"],
+  prep: ["check", "suit", "sun", "log"],
+  learn: ["basics", "board", "size", "news"],
+};
+const viewOfSub = n => Object.keys(SUBTABS).find(v => SUBTABS[v].includes(n));
+const subCur = {};
+// what to (re)draw when a sub tab becomes visible; filled in by the tool code further down
+var SUB_RENDER = {};
+let currentView = "list";
+const subOpen = n => currentView === viewOfSub(n) && subCur[viewOfSub(n)] === n;
+function renderOpenSub() {
+  if (currentView === "list" && typeof listMode !== "undefined" && listMode === "map") renderDriveMap();
+  const v = SUBTABS[currentView] && subCur[currentView]; if (v) SUB_RENDER[v]?.();
+}
 function showSub(name) {
-  if (!SUBS.includes(name)) name = "today";
-  currentSub = name;
-  SUBS.forEach(n => {
-    const on = n === name, t = document.getElementById(`st-${n}`);
+  const view = viewOfSub(name);
+  if (!view) return;
+  subCur[view] = name;
+  SUBTABS[view].forEach(n => {
+    const on = n === name, t = document.getElementById(`t-${n}`);
     t.setAttribute("aria-selected", on);
     t.tabIndex = on ? 0 : -1;
-    document.getElementById(`sp-${n}`).hidden = !on;
+    document.getElementById(`p-${n}`).hidden = !on;
   });
-  try { localStorage.setItem("surf-sub", name); } catch (e) {}
-  scrollActiveChart();
+  try { localStorage.setItem(`surf-sub-${view}`, name); } catch (e) {}
+  if (currentView === view) { scrollActiveChart(); SUB_RENDER[name]?.(); }
 }
+// jump straight to a sub tab (opens its view too)
+function goSub(name) { showSub(name); showView(viewOfSub(name)); }
 // a chart inside a hidden pane has no width yet, so scroll it to "now" when it becomes visible
 function scrollActiveChart() {
-  const box = document.querySelector(`#sp-${currentSub} .chart-box`);
+  const box = document.querySelector(`#p-${subCur.forecast} .chart-box`);
   if (box && box.dataset.nowX) box.scrollLeft = Math.max(0, +box.dataset.nowX - 120);
 }
-(function setupSubs() {
-  SUBS.forEach((n, i) => {
-    const t = document.getElementById(`st-${n}`);
-    t.addEventListener("click", () => showSub(n));
-    t.addEventListener("keydown", e => {
-      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (!d) return;
-      const next = SUBS[(i + d + SUBS.length) % SUBS.length];
-      showSub(next); document.getElementById(`st-${next}`).focus();
-    });
-  });
-  let saved = null;
-  try { saved = localStorage.getItem("surf-sub"); } catch (e) {}
-  showSub(saved || "today");
-})();
-
-// --- tab views ---------------------------------------------------------------------
-const VIEWS = ["list", "forecast", "live", "learn", "tools", "videos", "news"];
-let currentView = "list";
 function showView(name, opts = {}) {
   if (!VIEWS.includes(name)) name = "list";
   currentView = name;
@@ -3011,27 +3009,46 @@ function showView(name, opts = {}) {
   try { localStorage.setItem("surf-view", name); } catch (e) {}
   if (name === "list") loadSpotList();
   if (name === "forecast") scrollActiveChart();
-  if (name === "tools" && typeof TOOL_RENDER !== "undefined") TOOL_RENDER[currentTool]?.();
+  renderOpenSub();
   if (opts.scroll !== false) {
     const top = document.getElementById("main").getBoundingClientRect().top + scrollY - 70;
     if (scrollY > top) scrollTo({ top: Math.max(0, top) });
   }
 }
-(function setupViews() {
+function arrowKeys(list, i, go, idp) {
+  return e => {
+    const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!d) return;
+    const next = list[(i + d + list.length) % list.length];
+    go(next); document.getElementById(idp + next).focus();
+  };
+}
+(function setupTabs() {
+  Object.entries(SUBTABS).forEach(([view, subs]) => {
+    subs.forEach((n, i) => {
+      const t = document.getElementById(`t-${n}`);
+      t.addEventListener("click", () => showSub(n));
+      t.addEventListener("keydown", arrowKeys(subs, i, showSub, "t-"));
+    });
+    let saved = null;
+    try { saved = localStorage.getItem(`surf-sub-${view}`); } catch (e) {}
+    showSub(subs.includes(saved) ? saved : subs[0]);
+  });
   VIEWS.forEach((v, i) => {
     const tab = document.getElementById(`vt-${v}`);
     tab.addEventListener("click", () => showView(v));
-    tab.addEventListener("keydown", e => {
-      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (!d) return;
-      const next = VIEWS[(i + d + VIEWS.length) % VIEWS.length];
-      showView(next); document.getElementById(`vt-${next}`).focus();
-    });
+    tab.addEventListener("keydown", arrowKeys(VIEWS, i, showView, "vt-"));
   });
   let saved = null;
   try { saved = localStorage.getItem("surf-view"); } catch (e) {}
   showView(VIEWS.includes(saved) ? saved : "list", { scroll: false });
 })();
+// links like <a data-goto="suit"> open that sub tab
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-goto]");
+  if (!a) return;
+  e.preventDefault(); goSub(a.dataset.goto);
+});
 
 // --- handy tools -------------------------------------------------------------------------------------
 const store = {
@@ -3101,7 +3118,7 @@ function renderTideCal() {
     }
     return `<div class="cal"><h3>${m.getFullYear()}年${m.getMonth() + 1}月</h3>
       <div class="cal-grid">${WEEK.map(w => `<div class="cal-w">${w}</div>`).join("")}${cells.join("")}</div></div>`;
-  }).join("") + `<p class="spot-src">大潮は満潮と干潮の差が大きく、潮の流れも強め。小潮・長潮は潮の動きが小さめです。実際の満潮・干潮の時刻は「ライブ・潮」タブの潮見表で。</p>`;
+  }).join("") + `<p class="spot-src">大潮は満潮と干潮の差が大きく、潮の流れも強め。小潮・長潮は潮の動きが小さめです。実際の満潮・干潮の時刻は上の潮見表で。</p>`;
 }
 
 // packing checklist
@@ -3147,10 +3164,6 @@ function renderCheck() {
     inp.value = ""; renderCheck();
   });
   document.getElementById("checkReset").addEventListener("click", () => { store.set("check-done", []); renderCheck(); });
-  document.querySelectorAll("[data-jump]").forEach(a => a.addEventListener("click", e => {
-    e.preventDefault();
-    document.getElementById(a.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
-  }));
   renderSuit(); renderTideCal(); renderCheck(); renderDepart();
 })();
 
@@ -3164,12 +3177,15 @@ function drOrigin() {
   const [la, lo, name] = v.split(",");
   return { pos: [+la, +lo], name };
 }
-let mapMode = store.get("drive-map-mode", "google");
-function setMapMode(m) {
-  mapMode = m; store.set("drive-map-mode", m);
-  document.querySelectorAll("[data-map-mode]").forEach(b => b.setAttribute("aria-selected", b.dataset.mapMode === m));
-  document.getElementById("gmapWrap").hidden = m !== "google";
-  document.getElementById("pickMapWrap").hidden = m !== "pick";
+// どこ行く: 表 or 地図
+var listMode = store.get("list-mode", "table");
+function setListMode(m) {
+  listMode = m; store.set("list-mode", m);
+  document.querySelectorAll("[data-list-mode]").forEach(b => b.setAttribute("aria-selected", b.dataset.listMode === m));
+  document.getElementById("listTable").hidden = m !== "table";
+  document.getElementById("listMap").hidden = m !== "map";
+  document.getElementById("listSub").textContent = m === "map" ? "印の色はいまの★。タップでポイントを選べます" : "今日・明日の朝・昼・夕の★（マスをタップで詳しい予報）";
+  if (m === "map" && currentView === "list") renderDriveMap();
 }
 // Google Maps embed (no API key): route from the starting point to the spot or one of its parking/shops
 let gmapSpot = null;
@@ -3188,11 +3204,11 @@ function renderGmap() {
   if (fr.dataset.src !== src) { fr.src = src; fr.dataset.src = src; }
   document.getElementById("gmapNote").innerHTML = `${o ? `${esc(o.name || "現在地")} → ${esc(d.n)} の道順` : esc(d.n)}。
     <a href="https://www.google.com/maps/dir/?api=1${o ? `&origin=${o.pos[0]},${o.pos[1]}` : ""}&destination=${d.p[0]},${d.p[1]}&travelmode=driving" target="_blank" rel="noopener">Googleマップのアプリで開く ↗</a>
-    ・ポイントは「ポイントを選ぶ地図」や上のポイント選択で切り替えられます。`;
+    `;
 }
 function renderDrive() {
-  setMapMode(mapMode);
-  if (mapMode === "google") renderGmap(); else renderDriveMap();
+  document.getElementById("driveSub").textContent = `${SPOT.name}への道順・駐車場・時間`;
+  renderGmap();
   document.getElementById("drFacH").textContent = `${SPOT.name}の駐車場・サーフショップ`;
   document.getElementById("drFac").innerHTML = facilitiesHTML(SPOT);
   const out = document.getElementById("drOut"), o = drOrigin();
@@ -3205,7 +3221,8 @@ function renderDrive() {
       <td><a href="https://www.google.com/maps/dir/?api=1${o.name ? `&origin=${encodeURIComponent(o.name)}` : ""}&destination=${spotPos(r.sp)[0]},${spotPos(r.sp)[1]}&travelmode=driving" target="_blank" rel="noopener">ルート ↗</a></td></tr>`).join("")}
     </tbody></table>`;
 }
-document.querySelectorAll("[data-map-mode]").forEach(b => b.addEventListener("click", () => { setMapMode(b.dataset.mapMode); renderDrive(); }));
+document.querySelectorAll("[data-list-mode]").forEach(b => b.addEventListener("click", () => setListMode(b.dataset.listMode)));
+setListMode(listMode);
 document.getElementById("gmapDest").addEventListener("change", renderGmap);
 function locateHome() {
   if (!navigator.geolocation) { document.getElementById("drNote").textContent = "このブラウザでは位置情報が使えません。出発地をリストから選んでください。"; return; }
@@ -3235,7 +3252,7 @@ const STAR_FILL = n => n >= 4 ? "#2c8c5a" : n === 3 ? "#c98a14" : n === 2 ? "#e8
 async function renderDriveMap() {
   const el = document.getElementById("driveMap");
   try { await loadLeaflet(); } catch (e) { el.innerHTML = `<p class="status err">${esc(e.message)}。下の一覧から選んでください。</p>`; return; }
-  if (currentTool !== "drive" || currentView !== "tools") return;
+  if (currentView !== "list" || listMode !== "map") return;
   if (!driveMap) {
     driveMap = L.map(el, { zoomControl: true, attributionControl: true, tap: true });
     L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
@@ -3245,7 +3262,7 @@ async function renderDriveMap() {
     driveLayer = L.layerGroup().addTo(driveMap);
   }
   driveMap.invalidateSize();
-  if (!SPOT_NOW) loadSpotList().then(() => { if (currentTool === "drive") renderDriveMap(); });
+  if (!SPOT_NOW) loadSpotList().then(() => { if (currentView === "list" && listMode === "map") renderDriveMap(); });
   driveLayer.clearLayers();
   const o = drOrigin(), pts = [];
   SPOTS.forEach((sp, i) => {
@@ -3285,13 +3302,13 @@ async function renderDriveMap() {
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-open-spot]");
   if (!b) return;
-  selectSpot(b.dataset.openSpot); showSub("today"); showView("forecast");
+  selectSpot(b.dataset.openSpot); goSub("today");
 });
 
 // --- tool: stats from the surf log ------------------------------------------------------------------
 function renderStats() {
   const el = document.getElementById("statsOut"), logs = readLogs();
-  if (!logs.length) { el.innerHTML = `<p class="status">まだ記録がありません。「波予報」→「装備・記録」の「答え合わせ」で、入った日の波を記録すると、ここに集計されます。</p>`; return; }
+  if (!logs.length) { el.innerHTML = `<p class="status">まだ記録がありません。上の「答え合わせ」で、入った日の波を記録すると、ここに集計されます。</p>`; return; }
   const now = new Date(), y = now.getFullYear();
   const dates = logs.map(l => new Date(l.t)), days = new Set(logs.map(l => l.t.slice(0, 10)));
   const thisYear = new Set(logs.filter(l => +l.t.slice(0, 4) === y).map(l => l.t.slice(0, 10))).size;
@@ -3365,13 +3382,6 @@ function renderWind() {
       <span><i style="background:var(--good)"></i>オフショア側</span><span><i style="background:var(--ok)"></i>サイド</span><span><i style="background:var(--bad)"></i>オンショア側</span>
       <p class="calc-note">矢印は風が吹いてくる方向から、吹いていく方向へ。砂色の線が海岸線です。</p>
     </div>`;
-  const el = document.getElementById("windAll");
-  if (!SPOT_NOW) { el.innerHTML = `<p class="status">全ポイントの風を取得しています…</p>`; loadSpotList().then(() => { if (currentTool === "wind") renderWind(); }); return; }
-  const rank = { good: 0, calm: 1, ok: 2, bad: 3 };
-  const rows = SPOTS.map((sp, i) => ({ sp, h: SPOT_NOW[i]?.now })).filter(r => r.h).sort((a, b) => rank[a.h.windI.cls] - rank[b.h.windI.cls] || a.h.windSpeed - b.h.windSpeed);
-  el.innerHTML = `<h3 class="tool-h3">全ポイントのいまの風（いい順）</h3><ul class="wind-list">${rows.map(r => `
-    <li><button type="button" data-spot="${r.sp.id}"><span>${esc(r.sp.name)}<small>${esc(r.sp.group)}</small></span><span><span class="pill ${r.h.windI.cls}">${r.h.windI.type}</span> ${r.h.windSpeed.toFixed(0)}m/s</span></button></li>`).join("")}</ul>`;
-  el.querySelectorAll("[data-spot]").forEach(b => b.addEventListener("click", () => { selectSpot(b.dataset.spot); }));
 }
 
 // --- tool: UV and heat ------------------------------------------------------------------------------------
@@ -3402,54 +3412,30 @@ function renderSun() {
     </tbody></table>`;
 }
 
-// --- tool sub tabs -------------------------------------------------------------------------------------------
-const TOOLS = ["depart", "drive", "suit", "board", "wind", "sun", "stats", "tidecal", "check", "size"];
-var currentTool = "depart"; // var: other tabs may look this up before this part of the script runs
-var TOOL_RENDER = { drive: renderDrive, stats: renderStats, wind: renderWind, sun: renderSun, depart: () => renderDepart() };
-function showTool(name) {
-  if (!TOOLS.includes(name)) name = "depart";
-  currentTool = name;
-  TOOLS.forEach(n => {
-    const on = n === name, t = document.getElementById(`tt-${n}`);
-    t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1;
-    document.getElementById(`tp-${n}`).hidden = !on;
-    if (on) t.scrollIntoView({ block: "nearest", inline: "nearest" });
-  });
-  store.set("surf-tool", name);
-  TOOL_RENDER[name]?.();
-}
-(function setupToolTabs() {
-  TOOLS.forEach((n, i) => {
-    const t = document.getElementById(`tt-${n}`);
-    t.addEventListener("click", () => showTool(n));
-    t.addEventListener("keydown", e => {
-      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (!d) return;
-      const next = TOOLS[(i + d + TOOLS.length) % TOOLS.length];
-      showTool(next); document.getElementById(`tt-${next}`).focus();
-    });
-  });
+// --- tool setup -------------------------------------------------------------------------------------------
+Object.assign(SUB_RENDER, { access: () => renderDrive(), log: () => renderStats(), sun: () => renderSun(), today: () => renderWind() });
+(function setupDriveTool() {
   document.getElementById("drHome").value = store.get("drive-home", "34.7025,135.4959,大阪駅");
   document.getElementById("drHome").addEventListener("change", e => { store.set("drive-home", e.target.value); if (driveMap) driveMap._fitted = false; renderDrive(); });
   document.getElementById("drToDepart").addEventListener("click", () => {
     const o = drOrigin(); if (!o) return;
     document.getElementById("dpTravel").value = Math.round(driveMin(distKm(o.pos, spotPos(SPOT))) / 5) * 5;
-    showTool("depart");
+    renderDepart();
+    document.getElementById("toolDepart").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   document.getElementById("sunDay").addEventListener("change", renderSun);
-  showTool(store.get("surf-tool", "depart"));
+  renderOpenSub();
 })();
 
 // --- swipe between tabs (phones) ------------------------------------------------------------
-// 一覧 → 波予報の小タブ（今日・週間・装備・記録・ガイド）→ ライブ・潮 → 学ぶ → 動画 → ニュース を1本の順番として左右に移動
-const SWIPE_ORDER = ["list", ...SUBS.map(n => `forecast:${n}`), "live", "learn", ...TOOLS.map(n => `tools:${n}`), "videos", "news"];
-const swipePos = () => currentView === "forecast" ? `forecast:${currentSub}` : currentView === "tools" ? `tools:${currentTool}` : currentView;
+// どこ行く → ポイントの小タブ → 準備・記録の小タブ → 学ぶの小タブ → 動画 を1本の順番として左右に移動
+const SWIPE_ORDER = VIEWS.flatMap(v => SUBTABS[v] ? SUBTABS[v].map(n => `${v}:${n}`) : [v]);
+const swipePos = () => SUBTABS[currentView] ? `${currentView}:${subCur[currentView]}` : currentView;
 function goSwipe(step) {
   const i = SWIPE_ORDER.indexOf(swipePos()), next = SWIPE_ORDER[i + step];
   if (!next) return;
   const [view, sub] = next.split(":");
-  if (sub && view === "forecast") showSub(sub);
-  if (sub && view === "tools") showTool(sub);
+  if (sub) showSub(sub);
   showView(view);
   const el = document.getElementById(`view-${view}`);
   el.classList.remove("slide-l", "slide-r");
