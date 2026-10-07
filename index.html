@@ -106,6 +106,7 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 /* now panel */
 .now { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr); gap: 22px; padding: 24px; }
 .verdict { display: grid; gap: 6px; align-content: start; }
+.size-set { font-weight: 700; font-size: 15px; color: var(--sea); margin-top: -2px; }
 .size-word { font-family: var(--font-display); font-size: clamp(38px, 8vw, 58px); line-height: 1.05; color: var(--sea); }
 .stars { color: var(--star); font-size: 22px; letter-spacing: 2px; }
 .stars .off { color: var(--line); }
@@ -922,7 +923,7 @@ main { overflow-x: clip; }
             <div class="log-fields">
               <label for="logDate">日付<input id="logDate" type="date" min="2022-01-01"></label>
               <label for="logHour">時間<select id="logHour"></select></label>
-              <label for="logSize">実際のサイズ<select id="logSize"></select></label>
+              <label for="logSize">ふだんの波のサイズ<select id="logSize"></select></label>
               <label for="logFace">波の面<select id="logFace"></select></label>
               <label for="logStars">自分の評価<select id="logStars"><option value="5">★★★★★ 最高</option><option value="4">★★★★ 良い</option><option value="3" selected>★★★ まずまず</option><option value="2">★★ いまいち</option><option value="1">★ 厳しい</option></select></label>
               <label for="logMemo" class="wide">メモ（任意）<input id="logMemo" type="text" maxlength="60" placeholder="例：ダンパー気味、人が多い"></label>
@@ -1305,7 +1306,7 @@ main { overflow-x: clip; }
               <tr><td>トリプル以上</td><td>3.0m〜</td><td>入らない判断も大切</td></tr>
             </tbody>
           </table>
-          <p class="spot-src">サイズは人の体のどこまで波があるかの言い方です。浜の地形によって、沖の波高より大きくも小さくも見えます（「答え合わせ」で補正できます）。</p>
+          <p class="spot-src">この表の波高は、セット（大きめの波）の高さです。予報では、ふだんの波をその約7割として「胸〜肩・セット頭」のように出しています。サイズは人の体のどこまで波があるかの言い方です。浜の地形によって、沖の波高より大きくも小さくも見えます（「答え合わせ」で補正できます）。</p>
         </div>
       </section>
       </div>
@@ -1343,7 +1344,7 @@ main { overflow-x: clip; }
 // wx = 浜の座標（風・天気）, marine = 沖の海洋グリッド, facing = 沖の方角, swell = うねりが入りやすい中心方位
 // jma = 気象庁の府県予報区(office)・一次細分区域(area)・市町村(city)
 const SPOTS = [
-  { id: "kou", name: "国府の浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120, sizeK: 0.6, pin: [34.32815, 136.87525], pinName: "Red Bee（サーフショップ）",
+  { id: "kou", name: "国府の浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120, sizeK: 0.67, pin: [34.32815, 136.87525], pinName: "Red Bee（サーフショップ）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
     tide: { code: "TB", name: "鳥羽", km: 19 },
     cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
@@ -1518,6 +1519,16 @@ function sizeWord(h) {
   if (h < 2.2) return "頭オーバー";
   if (h < 3.0) return "ダブル";
   return "トリプル以上";
+}
+// 予報の波高（有義波高）はセットの大きい波に近い。ふだんの波はその約7割として表示する
+const TYPICAL = 0.7;
+const typWord = h => sizeWord(h * TYPICAL);
+// 「胸〜肩・セット頭オーバー」のような表示（ふだんとセットが同じなら1つだけ）
+function sizeLabel(h) { const t = typWord(h), st = sizeWord(h); return t === st ? t : `${t}・セット${st}`; }
+function sizeRange(lo, hi) {
+  const a = typWord(lo), b = typWord(hi), st = sizeWord(hi);
+  const t = a === b ? a : `${a}〜${b}`;
+  return b === st ? t : `${t}・セット${st}`;
 }
 function windInfo(from, speed, fac = facing) {
   if (speed < 1.5) return { type: "無風", cls: "calm", score: 1 };
@@ -1878,7 +1889,8 @@ function render() {
     <div class="verdict">
       <div class="label">${esc(SPOT.name)}・${md(cur.t)} ${cur.t.getHours()}時ごろ</div>
       ${spotTags(SPOT).length ? `<div class="spot-tags">${spotTags(SPOT).map(t => `<span>${esc(t)}</span>`).join("")}<a href="#" data-goto="info">浜の情報 ›</a></div>` : ""}
-      <div class="size-word">${sizeWord(cur.wave)}</div>
+      <div class="size-word">${typWord(cur.wave)}</div>
+      ${typWord(cur.wave) !== sizeWord(cur.wave) ? `<div class="size-set">セット ${sizeWord(cur.wave)}</div>` : ""}
       <div>${starHTML(cur.stars)} <strong>${STAR_WORD[cur.stars]}</strong></div>
       <div class="quick">
         ${typhoonSwell(cur) ? `<span class="tc-chip">台風うねり</span>` : ""}
@@ -1992,7 +2004,7 @@ function summaryText(h, win) {
   else if (h.wave < 0.3) parts.push("ほぼ波なし");
   if (h.period >= 10 && h.wave >= 0.4) parts.push("周期が長くパワーあり");
   let s = parts.join("、") + "。";
-  if (win) s += ` 今日の狙い目は ${hm(win.from)}〜${hm(win.to)}（${sizeWord(win.peak.wave)}・${win.peak.windI.type}）。`;
+  if (win) s += ` 今日の狙い目は ${hm(win.from)}〜${hm(win.to)}（${sizeLabel(win.peak.wave)}・${win.peak.windI.type}）。`;
   return s;
 }
 
@@ -2002,7 +2014,7 @@ function weekRow(k, list, dd, extremes) {
   const dayH = dd ? list.filter(h => h.t >= dd.rise && h.t <= dd.set) : list;
   const src = dayH.length ? dayH : list;
   const minW = Math.min(...src.map(h => h.wave)), maxW = Math.max(...src.map(h => h.wave));
-  const size = sizeWord(minW) === sizeWord(maxW) ? sizeWord(minW) : `${sizeWord(minW)}〜${sizeWord(maxW)}`;
+  const size = sizeRange(minW, maxW);
   const am = src.filter(h => h.t.getHours() < 11), pm = src.filter(h => h.t.getHours() >= 12);
   const windTop = arr => {
     if (!arr.length) return null;
@@ -2027,7 +2039,7 @@ function weekRow(k, list, dd, extremes) {
     <summary>
       <span class="wk-date">${isToday ? "今日" : md(d)}<small>（${WEEK[d.getDay()]}）</small>${tcSw ? `<span class="tc-chip">台風うねり</span>` : ""}</span>
       <span class="cell s${stars}" aria-label="最高★${stars}">${stars}</span>
-      <span class="wk-size">${win ? sizeWord(win.peak.wave) : size}</span>
+      <span class="wk-size">${win ? sizeLabel(win.peak.wave) : size}</span>
       <span class="wk-wind">${wAm ? `<span class="pill ${wAm.cls}">${wAm.type}</span>` : "—"}</span>
       <span class="wk-win d-only">${win ? `${hm(win.from)}〜${hm(win.to)}` : "—"}</span>
       <span class="wk-wx d-only">${wx}・${dd ? `${Math.round(dd.tmax)}℃` : ""}</span>
@@ -2035,7 +2047,7 @@ function weekRow(k, list, dd, extremes) {
       <span class="wk-chev" aria-hidden="true"></span>
     </summary>
     <div class="wk-body">
-      <div class="best">${win ? `狙い目 <b>${hm(win.from)}〜${hm(win.to)}</b>（${sizeWord(win.peak.wave)}・${win.peak.windI.type}）` : "日中のデータなし"}</div>
+      <div class="best">${win ? `狙い目 <b>${hm(win.from)}〜${hm(win.to)}</b>（${sizeLabel(win.peak.wave)}・${win.peak.windI.type}）` : "日中のデータなし"}</div>
       ${tcSw ? `<div class="tc-note"><span class="tc-chip">台風うねり</span> ${esc(tcSw.cat === "台風" ? `台風${tcSw.num}` : tcSw.cat)}（${esc(tcSw.name)}）の方角から、周期${Math.round(tcHour.period)}秒・${tcHour.swellH.toFixed(1)}mのうねり。予報がぶれやすいので、直前の予報とライブカメラも確認を。</div>` : ""}
       <dl class="kv">
         <dt>サイズ</dt><dd>${size}（${minW.toFixed(1)}–${maxW.toFixed(1)}m）</dd>
@@ -2079,7 +2091,7 @@ function dayCard(k, list, dd, extremes) {
     <h3><span>${md(d)}（${WEEK[d.getDay()]}）</span>${starHTML(peakStars)}</h3>
     <div class="best">${win ? `狙い目 <b>${hm(win.from)}〜${hm(win.to)}</b>` : "日中のデータなし"}</div>
     <dl class="kv">
-      <dt>サイズ</dt><dd>${sizeWord(minW) === sizeWord(maxW) ? sizeWord(minW) : `${sizeWord(minW)}〜${sizeWord(maxW)}`}（${minW.toFixed(1)}–${maxW.toFixed(1)}m）</dd>
+      <dt>サイズ</dt><dd>${sizeRange(minW, maxW)}（${minW.toFixed(1)}–${maxW.toFixed(1)}m）</dd>
       <dt>風 午前</dt><dd>${windSum(am)}</dd>
       <dt>風 午後</dt><dd>${windSum(pm)}</dd>
       <dt>天気</dt><dd>${wx}・${dd ? `${Math.round(dd.tmax)}℃／${Math.round(dd.tmin)}℃・降水 ${dd.popMax ?? "—"}%` : ""}</dd>
@@ -2140,7 +2152,7 @@ function chartSVG(hours, daily, extremes, now) {
   const sh = R.score[1] - R.score[0];
   hours.forEach((h, i) => {
     const bh = Math.max(2, sh * h.score / 100);
-    s += `<rect x="${x(i) + 2}" y="${R.score[1] - bh}" width="${HOUR_W - 4}" height="${bh}" rx="2" fill="${starColor(h.stars)}"><title>${md(h.t)} ${h.t.getHours()}時 ★${h.stars}（${h.score}点）${sizeWord(h.wave)}・${h.windI.type}</title></rect>`;
+    s += `<rect x="${x(i) + 2}" y="${R.score[1] - bh}" width="${HOUR_W - 4}" height="${bh}" rx="2" fill="${starColor(h.stars)}"><title>${md(h.t)} ${h.t.getHours()}時 ★${h.stars}（${h.score}点）${sizeLabel(h.wave)}・${h.windI.type}</title></rect>`;
   });
 
   // wave height area
@@ -2515,7 +2527,8 @@ const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1;
 function calibOf(spotId) {
   const logs = readLogs().filter(l => l.spot === spotId && l.pred?.wave > 0.1);
   const sizeMid = name => (SIZE_CLASSES.find(c => c[0] === name) || [])[1];
-  const ratios = logs.map(l => sizeMid(l.actual.size) / l.pred.wave).filter(r => r > 0);
+  // 記録はふだんの波のサイズなので、沖の波高×TYPICAL と比べる
+  const ratios = logs.map(l => sizeMid(l.actual.size) / (l.pred.wave * TYPICAL)).filter(r => r > 0);
   const starDiff = logs.length ? logs.reduce((s, l) => s + (l.actual.stars - l.pred.stars), 0) / logs.length : 0;
   return { n: ratios.length, factor: ratios.length ? clamp(median(ratios), 0.4, 2) : 1, starDiff };
 }
@@ -2578,7 +2591,7 @@ function snapshot(h) {
   raw.windI = windInfo(raw.windDir, raw.windSpeed);
   raw.score = rate(raw);
   raw.stars = raw.wave >= 2.2 ? Math.min(starsOf(raw.score), 3) : starsOf(raw.score);
-  return { wave: raw.wave, size: sizeWord(raw.wave), stars: raw.stars, wind: raw.windI.type, windSpeed: +raw.windSpeed.toFixed(1),
+  return { wave: raw.wave, size: typWord(raw.wave), stars: raw.stars, wind: raw.windI.type, windSpeed: +raw.windSpeed.toFixed(1),
            period: +raw.period.toFixed(1), swellDir: Math.round(raw.swellDir), tide: raw.tide != null ? Math.round(raw.tide * 100) : null };
 }
 const histCache = {};
@@ -2643,7 +2656,7 @@ function openLogForm() {
   document.getElementById("logHour").value = "";
   fillHours();
   const cur = DATA?.hours.find(h => h.t.getTime() + 3600e3 > now.getTime());
-  if (cur) document.getElementById("logSize").value = sizeWord(cur.wave);
+  if (cur) document.getElementById("logSize").value = typWord(cur.wave);
   document.getElementById("logForm").hidden = false;
   document.getElementById("logOpen").hidden = true;
   document.getElementById("logMsg").textContent = "";
@@ -2932,7 +2945,7 @@ function renderSpotListCurrent() {
   const cell = (sp, k, slot) => {
     const h = SPOT_NOW[SPOTS.indexOf(sp)].slots[k]?.[slot[0]];
     if (!h) return `<td><span class="cell none">—</span></td>`;
-    const label = `${sp.name} ${k === days[0][0] ? "今日" : "明日"} ${dateW(k === days[0][0] ? d0 : d1)}${slot[0]} ★${h.stars} ${sizeWord(h.wave)}・${h.windI.type}（${h.t.getHours()}時ごろ）`;
+    const label = `${sp.name} ${k === days[0][0] ? "今日" : "明日"} ${dateW(k === days[0][0] ? d0 : d1)}${slot[0]} ★${h.stars} ${sizeLabel(h.wave)}・${h.windI.type}（${h.t.getHours()}時ごろ）`;
     return `<td><button type="button" class="cell s${h.stars}${past(k, slot) ? " past" : ""}" data-spot="${sp.id}" title="${esc(label)}" aria-label="${esc(label)}">${h.stars}</button></td>`;
   };
   document.getElementById("overview").innerHTML = `<table class="ov">
@@ -2945,7 +2958,7 @@ function renderSpotListCurrent() {
       ${SPOTS.filter(sp => sp.group === g).map(sp => {
         const n = SPOT_NOW[SPOTS.indexOf(sp)].now;
         return `<tr class="${sp.id === SPOT.id ? "current" : ""}">
-          <th class="ov-name"><button type="button" data-spot="${sp.id}">${esc(sp.name)}<small>${n ? `いま ${sizeWord(n.wave)}・${n.windI.type}` : ""}</small></button></th>
+          <th class="ov-name"><button type="button" data-spot="${sp.id}">${esc(sp.name)}<small>${n ? `いま ${typWord(n.wave)}・${n.windI.type}` : ""}</small></button></th>
           ${days.map(([k]) => SLOTS.map(slot => cell(sp, k, slot)).join("")).join("")}
         </tr>`;
       }).join("")}`).join("")}
@@ -2961,7 +2974,7 @@ function renderSpotListCurrent() {
   for (const c of cands) { if (!seen.has(c.sp.id)) { picks.push(c); seen.add(c.sp.id); } if (picks.length === 3) break; }
   document.getElementById("picks").innerHTML = picks.length ? `<span class="label">おすすめ</span>` + picks.map(c => `
     <button type="button" class="pick-chip" data-spot="${c.sp.id}">
-      <span class="stars">${"★".repeat(c.h.stars)}</span><b>${esc(c.sp.name)}</b><small>${c.when}・${sizeWord(c.h.wave)}・${c.h.windI.type}</small>
+      <span class="stars">${"★".repeat(c.h.stars)}</span><b>${esc(c.sp.name)}</b><small>${c.when}・${sizeLabel(c.h.wave)}・${c.h.windI.type}</small>
     </button>`).join("") : "";
   document.querySelectorAll("#overview [data-spot], #picks [data-spot]").forEach(b => b.addEventListener("click", () => {
     selectSpot(b.dataset.spot);
@@ -3113,7 +3126,7 @@ function renderDepart() {
   if (target === "best") {
     const w = bestWindow(list, dd);
     // not earlier than 15 min before sunrise: before that it is too dark to surf
-    if (w) { at = dd ? new Date(Math.max(w.from, dd.rise.getTime() - 15 * 60e3)) : w.from; what = `狙い目の始まり（${sizeWord(w.peak.wave)}・${w.peak.windI.type}）`; }
+    if (w) { at = dd ? new Date(Math.max(w.from, dd.rise.getTime() - 15 * 60e3)) : w.from; what = `狙い目の始まり（${sizeLabel(w.peak.wave)}・${w.peak.windI.type}）`; }
   }
   if (target === "high" || target === "low") {
     const e = extremes.find(x => toKey(x.t) === k && x.hi === (target === "high") && x.t.getHours() >= 4);
@@ -3313,7 +3326,7 @@ async function renderDriveMap() {
     const km = o ? distKm(o.pos, spotPos(sp)) : null;
     m.bindTooltip(`${sp.name}${now ? ` ★${now.stars}` : ""}`, { direction: "top", offset: [0, -8], permanent: cur, className: "map-tip" });
     m.bindPopup(`<div class="map-pop"><b>${esc(sp.name)}</b><small>${esc(sp.pinName || sp.place)}</small>
-      ${now ? `<span>いま ${sizeWord(now.wave)}・${now.windI.type}・★${now.stars}</span>` : ""}
+      ${now ? `<span>いま ${sizeLabel(now.wave)}・${now.windI.type}・★${now.stars}</span>` : ""}
       ${km != null ? `<span>車で約${fmtMin(driveMin(km))}（${Math.round(km * 1.35)}km）</span>` : ""}
       <button type="button" class="btn" data-open-spot="${sp.id}">この予報を見る</button></div>`);
     m.on("click", () => { if (sp.id !== SPOT.id) selectSpot(sp.id); });
