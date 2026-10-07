@@ -240,8 +240,8 @@ section > h2 small { font-family: var(--font-body); font-size: 12px; font-weight
 .cam-list .go { color: var(--accent); font-size: 13px; white-space: nowrap; }
 
 /* videos */
-.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; gap: 4px; margin-bottom: 12px; }
-.seg button { border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 13px; padding: 6px 16px; border-radius: 99px; }
+.seg { display: inline-flex; max-width: 100%; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; gap: 4px; margin-bottom: 12px; }
+.seg button { flex: none; border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 13px; padding: 6px 16px; border-radius: 99px; }
 .seg button[aria-selected="true"] { background: var(--accent); color: #fff; }
 .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
@@ -1322,12 +1322,14 @@ main { overflow-x: clip; }
         <h2>動画で学ぶ <small>新着は開くたびに最新を取得・タップでページ内再生</small></h2>
         <div class="seg" role="tablist" aria-label="動画の種類">
           <button type="button" role="tab" id="vtab-new" aria-controls="vids-new" aria-selected="true">新着</button>
-          <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="false">定番・初心者向け</button>
-          <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">定番・中上級向け</button>
+          <button type="button" role="tab" id="vtab-beg" aria-controls="vids-beg" aria-selected="false">初心者</button>
+          <button type="button" role="tab" id="vtab-adv" aria-controls="vids-adv" aria-selected="false">中上級</button>
+          <button type="button" role="tab" id="vtab-safe" aria-controls="vids-safe" aria-selected="false">安全・ルール</button>
         </div>
         <div class="vids" id="vids-new" role="tabpanel" aria-labelledby="vtab-new"><p class="status">解説チャンネルの新着動画を取得しています…</p></div>
         <div class="vids" id="vids-beg" role="tabpanel" aria-labelledby="vtab-beg" hidden></div>
         <div class="vids" id="vids-adv" role="tabpanel" aria-labelledby="vtab-adv" hidden></div>
+        <div class="vids" id="vids-safe" role="tabpanel" aria-labelledby="vtab-safe" hidden></div>
       </section>
     </div>
   </main>
@@ -2311,20 +2313,32 @@ heroWave("wave2", 254, 10, 180);
 // --- videos -------------------------------------------------------------------
 const VIDEOS = {
   beg: [
+    { id: "ixBq7vK19Oo", topic: "パドリング", title: "パドリングの教科書｜体の仕組みを使って1km漕ぐ方法", ch: "ヒガシーサー" },
     { id: "u8q6oHtVl4s", topic: "パドリング", title: "プロサーファーが教える正しいパドリングの方法", ch: "Surfing TV", len: "4:11" },
+    { id: "EIhkLgHfCh8", topic: "波選び", title: "【初級編】乗れる波がわからない？テイクオフできる波選び", ch: "ビレッジサーフクラブ" },
+    { id: "Bz833578Lis", topic: "波キャッチ", title: "確実にうねりをつかむために必要なパドル回数・距離・時間", ch: "ビレッジサーフクラブ" },
     { id: "FeluceqWWXc", topic: "テイクオフ", title: "プロから学ぶ4つのコツ テイクオフの方法", ch: "プロサーファー河村カイサ", len: "11:04" },
     { id: "RZiLBYy_wkc", topic: "テイクオフ", title: "見る見る上達するテイクオフのポイント", ch: "90秒でわかる サーフィンの知識", len: "2:04" },
+    { id: "3wz9kmsoU0o", topic: "テイクオフ", title: "立った瞬間に置いていかれるのはなぜ？置いていかれない立ち方のコツ", ch: "ビレッジサーフクラブ" },
+    { id: "AMjGIR1gAz4", topic: "ドルフィンスルー", title: "ドルフィンスルーはこれで完璧 正しい方法", ch: "プロサーファー山中海輝" },
     { id: "9G2pE9ovQTw", topic: "陸トレ", title: "1日4分でできる初心者のためのテイクオフトレーニング", ch: "プロサーファー森下波瑠", len: "4:19" },
     { id: "2QeSVsFeEto", topic: "横に走る", title: "テイクオフの次に見る動画 横に走る方法", ch: "Surfing TV", len: "9:13" },
     { id: "u_ulw0QFdAA", topic: "横に走る", title: "初めてのサーフィンでも横に走ることは可能なのか", ch: "大人のサーフィン理論", len: "13:55" },
   ],
   adv: [
+    { id: "iGkl7jc7lio", topic: "姿勢", title: "上級者のように上手く見える前傾姿勢の作り方", ch: "ビレッジサーフクラブ" },
     { id: "0Wh8K9JMXEs", topic: "ボトムターン", title: "事例で解説 ボトムターンはこれで完璧", ch: "Surfing TV", len: "10:21" },
     { id: "viu4D-Yd53U", topic: "ボトムターン", title: "ボトムターンの仕方（新井洋人プロ）", ch: "Flat Park Film", len: "10:49" },
     { id: "erDZU3IrUMg", topic: "アップス・リップ", title: "横に滑る、リッピング、アップスを水中映像で解説", ch: "プロサーファー河村カイサ", len: "11:58" },
     { id: "-RT0EWLCbEg", topic: "カットバック", title: "初〜中級者が知るべきカットバック成功のコツ", ch: "田中英義", len: "19:01" },
     { id: "dFIdY4oX7bg", topic: "カットバック", title: "カットバック全12種類", ch: "FUNRIDE Surfing", len: "4:46" },
+    { id: "xdSQGy0CLkM", topic: "ドルフィンスルー", title: "ドルフィンスルーの良いイメージとシャドウ【サーフィン上達の方程式】", ch: "Surf Nation Japan" },
     { id: "w6DVFKYeBfA", topic: "スピード（英語）", title: "How to Surf: The Triangle of Speed", ch: "Surf Simply", len: "14:25" },
+  ],
+  safe: [
+    { id: "2KVFc55mcdo", topic: "離岸流", title: "沖に向かう流れ（離岸流）の予防と対応方法", ch: "ビレッジサーフクラブ" },
+    { id: "7QVirD-nnf0", topic: "大きい波の日", title: "波が大きい時、沖へ出る注意点とコツ", ch: "ビレッジサーフクラブ" },
+    { id: "mPMsELI-pRI", topic: "混雑・事故防止", title: "事故やクラッシュが相次ぐ混雑日 海の流れを把握して楽しく", ch: "ビレッジサーフクラブ" },
   ],
 };
 const VIDEO_CHANNELS = [
