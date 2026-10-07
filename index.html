@@ -1343,7 +1343,7 @@ main { overflow-x: clip; }
 // wx = 浜の座標（風・天気）, marine = 沖の海洋グリッド, facing = 沖の方角, swell = うねりが入りやすい中心方位
 // jma = 気象庁の府県予報区(office)・一次細分区域(area)・市町村(city)
 const SPOTS = [
-  { id: "kou", name: "国府の浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120, pin: [34.32815, 136.87525], pinName: "Red Bee（サーフショップ）",
+  { id: "kou", name: "国府の浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120, sizeK: 0.6, pin: [34.32815, 136.87525], pinName: "Red Bee（サーフショップ）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
     tide: { code: "TB", name: "鳥羽", km: 19 },
     cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
@@ -1686,7 +1686,7 @@ function enrich(hours) {
   });
   const f = sizeFactor(SPOT.id);
   hours.forEach(h => {
-    h.wave = h.waveRaw * f; // 記録から求めた補正（記録が少ないときは ×1）
+    h.wave = h.waveRaw * f; // 記録から求めた補正（記録が少ないときは浜ごとの初期補正か ×1）
     h.windI = windInfo(h.windDir, h.windSpeed); h.score = rate(h); h.stars = starsOf(h.score);
     if (h.wave >= 2.2) h.stars = Math.min(h.stars, 3); // 大きすぎる日は上級者向けとして頭打ち
   });
@@ -1893,7 +1893,7 @@ function render() {
     <details class="more"${detailsOpen ? " open" : ""}>
       <summary>詳しい数値（うねり・潮・天気・月齢など）</summary>
       <div class="facts">
-        <div class="fact"><span class="label">波高</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m${cur.swell2H >= 0.3 && cur.swell2P ? `<br>2つ目のうねり ${cur.swell2H.toFixed(1)}m・${Math.round(cur.swell2P)}秒・${dirName(cur.swell2Dir)}から` : ""}</span></div>
+        <div class="fact"><span class="label">波高${cur.wave !== cur.waveRaw ? "（浜の目安）" : ""}</span><span class="v">${cur.wave.toFixed(1)}<small> m</small></span><span class="d">${cur.wave !== cur.waveRaw ? `沖 ${cur.waveRaw.toFixed(1)}m／` : ""}うねり ${cur.swellH.toFixed(1)}m／風波 ${cur.windWave.toFixed(1)}m${cur.swell2H >= 0.3 && cur.swell2P ? `<br>2つ目のうねり ${cur.swell2H.toFixed(1)}m・${Math.round(cur.swell2P)}秒・${dirName(cur.swell2Dir)}から` : ""}</span></div>
         <div class="fact"><span class="label">周期・うねり</span><span class="v">${cur.period.toFixed(1)}<small> 秒</small></span><span class="d">${dirName(cur.swellDir)}から・${cur.period >= 10 ? "まとまったうねり" : cur.period >= 7 ? "標準的" : "風波主体"}</span></div>
         <div class="fact"><span class="label">風</span><span class="v">${cur.windSpeed.toFixed(1)}<small> m/s</small></span><span class="d">${dirName(cur.windDir)}風・最大 ${cur.gust.toFixed(0)}m/s <span class="pill ${cur.windI.cls}">${cur.windI.type}</span></span></div>
         <div class="fact"><span class="label">潮位${DATA.tideJ ? `（${esc(DATA.tideJ.station.name)}）` : ""}</span><span class="v">${cur.tide != null ? (DATA.tideJ ? "" : cur.tide >= 0 ? "+" : "") + Math.round(cur.tide * 100) : "—"}<small> cm</small></span><span class="d">${tideTrend(cur, extremes)}</span></div>
@@ -2524,7 +2524,12 @@ function calibOn(spotId) {
 }
 function sizeFactor(spotId) {
   const c = calibOf(spotId);
-  return c.n >= CALIB_MIN && calibOn(spotId) ? c.factor : 1;
+  if (c.n >= CALIB_MIN && calibOn(spotId)) return c.factor;
+  return spotById(spotId)?.sizeK || 1; // 記録が少ないうちは、ライブカメラなどで確かめた初期補正
+}
+// 遠浅などで沖の波より小さくなる浜の初期補正（記録が3件たまったら記録の補正に置き換わる）
+function baseNote(sp) {
+  return sp.sizeK ? `いまは初期補正（沖の波の約${Math.round(sp.sizeK * 100)}%で表示）を使っています。` : "";
 }
 
 function renderLog() {
@@ -2532,7 +2537,7 @@ function renderLog() {
   const c = calibOf(SPOT.id), all = readLogs(), mine = all.filter(l => l.spot === SPOT.id);
   const info = document.getElementById("calibInfo");
   if (c.n < CALIB_MIN) {
-    info.innerHTML = `<b>${esc(SPOT.name)}の記録 ${c.n}件</b><span>あと${CALIB_MIN - c.n}件記録すると、このポイントのサイズ予報を補正できます。過去に入った日も記録できます。</span>`;
+    info.innerHTML = `<b>${esc(SPOT.name)}の記録 ${c.n}件</b><span>あと${CALIB_MIN - c.n}件記録すると、このポイントのサイズ予報を補正できます。${baseNote(SPOT)}過去に入った日も記録できます。</span>`;
   } else {
     const pct = Math.round((c.factor - 1) * 100);
     const trend = Math.abs(pct) < 8 ? "予報とほぼ同じサイズ" : pct > 0 ? `予報より約${pct}%大きい` : `予報より約${-pct}%小さい`;
