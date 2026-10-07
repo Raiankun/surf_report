@@ -569,6 +569,13 @@ main { overflow-x: clip; }
 .sun-table small { color: var(--muted); }
 
 .drive-map-wrap { overflow: hidden; margin-bottom: 14px; }
+.map-mode { display: flex; gap: 6px; margin-bottom: 8px; }
+.map-mode button { flex: 1; font: inherit; font-size: 13px; font-weight: 700; padding: 8px 10px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer; }
+.map-mode button[aria-selected="true"] { background: var(--sea); border-color: var(--sea); color: #fff; }
+.gmap-wrap { overflow: hidden; margin-bottom: 14px; }
+.gmap-wrap iframe { border: 0; display: block; }
+.gmap-dest { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: 13px; font-weight: 700; }
+.gmap-dest select { flex: 1; min-width: 0; font: inherit; font-weight: 400; }
 .drive-map { height: 380px; width: 100%; background: var(--bg); z-index: 0; }
 .map-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); padding: 8px 12px; }
 .map-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
@@ -1124,7 +1131,16 @@ main { overflow-x: clip; }
       <div class="subpane" id="tp-drive" role="tabpanel" aria-labelledby="tt-drive" hidden>
       <section id="toolDrive">
         <h2>ポイントまでの所要時間 <small>地図の印をタップしてポイントを選べます</small></h2>
-        <div class="panel drive-map-wrap">
+        <div class="map-mode" role="tablist" aria-label="地図の種類">
+          <button type="button" role="tab" data-map-mode="google">Googleマップ（ルート）</button>
+          <button type="button" role="tab" data-map-mode="pick">ポイントを選ぶ地図</button>
+        </div>
+        <div class="panel gmap-wrap" id="gmapWrap" hidden>
+          <label class="gmap-dest" for="gmapDest">行き先<select id="gmapDest"></select></label>
+          <iframe id="gmapFrame" class="drive-map" title="Googleマップ" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <p class="map-legend" id="gmapNote"></p>
+        </div>
+        <div class="panel drive-map-wrap" id="pickMapWrap">
           <div id="driveMap" class="drive-map" role="application" aria-label="ポイントの地図"></div>
           <div class="map-legend"><span><i class="fac"></i>駐車場・ショップ</span><span><i class="s5"></i>★4〜5</span><span><i class="s3"></i>★3</span><span><i class="s2"></i>★2</span><span><i class="s1"></i>★1</span><span><i class="home"></i>出発地</span><span>色はいまの★</span></div>
         </div>
@@ -3148,8 +3164,35 @@ function drOrigin() {
   const [la, lo, name] = v.split(",");
   return { pos: [+la, +lo], name };
 }
+let mapMode = store.get("drive-map-mode", "google");
+function setMapMode(m) {
+  mapMode = m; store.set("drive-map-mode", m);
+  document.querySelectorAll("[data-map-mode]").forEach(b => b.setAttribute("aria-selected", b.dataset.mapMode === m));
+  document.getElementById("gmapWrap").hidden = m !== "google";
+  document.getElementById("pickMapWrap").hidden = m !== "pick";
+}
+// Google Maps embed (no API key): route from the starting point to the spot or one of its parking/shops
+let gmapSpot = null;
+function renderGmap() {
+  const sel = document.getElementById("gmapDest");
+  const dests = [{ n: SPOT.pinName || SPOT.name, p: spotPos(SPOT) }, ...(FACILITIES[SPOT.id] || []).filter(f => f.p && f.p.join() !== spotPos(SPOT).join())];
+  if (gmapSpot !== SPOT.id) {
+    sel.innerHTML = dests.map((d, i) => `<option value="${i}">${esc(d.n)}${i ? "" : `（${esc(SPOT.name)}）`}</option>`).join("");
+    gmapSpot = SPOT.id;
+  }
+  const d = dests[+sel.value] || dests[0], o = drOrigin();
+  const src = o
+    ? `https://maps.google.com/maps?saddr=${o.pos[0]},${o.pos[1]}&daddr=${d.p[0]},${d.p[1]}&dirflg=d&hl=ja&output=embed`
+    : `https://maps.google.com/maps?q=${d.p[0]},${d.p[1]}&z=15&hl=ja&output=embed`;
+  const fr = document.getElementById("gmapFrame");
+  if (fr.dataset.src !== src) { fr.src = src; fr.dataset.src = src; }
+  document.getElementById("gmapNote").innerHTML = `${o ? `${esc(o.name || "現在地")} → ${esc(d.n)} の道順` : esc(d.n)}。
+    <a href="https://www.google.com/maps/dir/?api=1${o ? `&origin=${o.pos[0]},${o.pos[1]}` : ""}&destination=${d.p[0]},${d.p[1]}&travelmode=driving" target="_blank" rel="noopener">Googleマップのアプリで開く ↗</a>
+    ・ポイントは「ポイントを選ぶ地図」や上のポイント選択で切り替えられます。`;
+}
 function renderDrive() {
-  renderDriveMap();
+  setMapMode(mapMode);
+  if (mapMode === "google") renderGmap(); else renderDriveMap();
   document.getElementById("drFacH").textContent = `${SPOT.name}の駐車場・サーフショップ`;
   document.getElementById("drFac").innerHTML = facilitiesHTML(SPOT);
   const out = document.getElementById("drOut"), o = drOrigin();
@@ -3162,6 +3205,8 @@ function renderDrive() {
       <td><a href="https://www.google.com/maps/dir/?api=1${o.name ? `&origin=${encodeURIComponent(o.name)}` : ""}&destination=${spotPos(r.sp)[0]},${spotPos(r.sp)[1]}&travelmode=driving" target="_blank" rel="noopener">ルート ↗</a></td></tr>`).join("")}
     </tbody></table>`;
 }
+document.querySelectorAll("[data-map-mode]").forEach(b => b.addEventListener("click", () => { setMapMode(b.dataset.mapMode); renderDrive(); }));
+document.getElementById("gmapDest").addEventListener("change", renderGmap);
 function locateHome() {
   if (!navigator.geolocation) { document.getElementById("drNote").textContent = "このブラウザでは位置情報が使えません。出発地をリストから選んでください。"; return; }
   navigator.geolocation.getCurrentPosition(p => {
