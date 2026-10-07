@@ -715,6 +715,7 @@ main { overflow-x: clip; }
       <label class="spot-pick" for="spot"><span>ポイント</span><select id="spot"></select></label>
       <div class="meta">
         <span id="updated">読み込み中…</span>
+        <button class="btn ghost" id="share" type="button">共有</button>
         <button class="btn" id="reload" type="button">更新</button>
       </div>
     </div>
@@ -1465,7 +1466,9 @@ SPOTS.sort((a, b) => GROUP_ORDER.indexOf(a.group) - GROUP_ORDER.indexOf(b.group)
 const spotById = id => SPOTS.find(sp => sp.id === id);
 // where you actually drive to: a nearby car park or surf shop (pin) when known, otherwise the beach
 const spotPos = sp => sp.pin || sp.wx;
-let SPOT = spotById(location.hash.slice(1));
+// URL: #<ポイント>/<ページ>（例 #kou/week）。ページだけ共有したいときもこの形
+const [HASH_SPOT, HASH_PAGE] = decodeURIComponent(location.hash.slice(1)).split("/");
+let SPOT = spotById(HASH_SPOT);
 if (!SPOT) { try { SPOT = spotById(localStorage.getItem("surf-spot")); } catch (e) {} }
 if (!SPOT) SPOT = SPOTS[0];
 const DAYS = 7;
@@ -2973,6 +2976,28 @@ const subCur = {};
 // what to (re)draw when a sub tab becomes visible; filled in by the tool code further down
 var SUB_RENDER = {};
 let currentView = "list";
+// page ids used in the URL: list / map / videos / any sub tab name
+function pageId() {
+  if (currentView === "list") return typeof listMode !== "undefined" && listMode === "map" ? "map" : "list";
+  return SUBTABS[currentView] ? subCur[currentView] : currentView;
+}
+function pageLabel() {
+  const id = pageId();
+  if (id === "list") return "どこ行く（表）";
+  if (id === "map") return "どこ行く（地図）";
+  const vt = document.getElementById(`vt-${currentView}`).textContent.trim();
+  return SUBTABS[currentView] ? `${vt}・${document.getElementById(`t-${id}`).textContent.trim()}` : vt;
+}
+function updateHash() {
+  if (!HASH_READY) return;
+  const h = `#${SPOT.id}/${pageId()}`;
+  if (location.hash !== h) history.replaceState(null, "", h);
+}
+var HASH_READY = false; // keep the incoming #spot/page until it has been applied
+function goPage(id) {
+  if (id === "list" || id === "map") { setListMode(id === "map" ? "map" : "table"); showView("list"); return; }
+  if (viewOfSub(id)) goSub(id); else if (VIEWS.includes(id)) showView(id);
+}
 const subOpen = n => currentView === viewOfSub(n) && subCur[viewOfSub(n)] === n;
 function renderOpenSub() {
   if (currentView === "list" && typeof listMode !== "undefined" && listMode === "map") renderDriveMap();
@@ -2989,6 +3014,7 @@ function showSub(name) {
     document.getElementById(`p-${n}`).hidden = !on;
   });
   try { localStorage.setItem(`surf-sub-${view}`, name); } catch (e) {}
+  if (currentView === view) updateHash();
   if (currentView === view) { scrollActiveChart(); SUB_RENDER[name]?.(); }
 }
 // jump straight to a sub tab (opens its view too)
@@ -3008,6 +3034,7 @@ function showView(name, opts = {}) {
     document.getElementById(`view-${v}`).hidden = !on;
   });
   try { localStorage.setItem("surf-view", name); } catch (e) {}
+  updateHash();
   if (name === "list") loadSpotList();
   if (name === "forecast") scrollActiveChart();
   renderOpenSub();
@@ -3190,6 +3217,7 @@ function drOrigin() {
 var listMode = store.get("list-mode", "table");
 function setListMode(m) {
   listMode = m; store.set("list-mode", m);
+  updateHash();
   document.querySelectorAll("[data-list-mode]").forEach(b => b.setAttribute("aria-selected", b.dataset.listMode === m));
   document.getElementById("listTable").hidden = m !== "table";
   document.getElementById("listMap").hidden = m !== "map";
@@ -3532,7 +3560,7 @@ function selectSpot(id) {
   SPOT = next;
   DATA = null;
   try { localStorage.setItem("surf-spot", SPOT.id); } catch (e) {}
-  if (location.hash.slice(1) !== SPOT.id) history.replaceState(null, "", `#${SPOT.id}`);
+  updateHash();
   document.getElementById("now").innerHTML = `<div class="status">${esc(SPOT.name)}の予報を取得しています…</div>`;
   ["chartToday", "week", "gear"].forEach(id => document.getElementById(id).innerHTML = "");
   document.getElementById("tideTable").innerHTML = `<div class="status">潮汐データを取得しています…</div>`;
@@ -3546,7 +3574,10 @@ function selectSpot(id) {
   sel.innerHTML = groups.map(g => `<optgroup label="${esc(g)}">${SPOTS.filter(sp => sp.group === g)
     .map(sp => `<option value="${sp.id}">${esc(sp.name)}</option>`).join("")}</optgroup>`).join("");
   sel.addEventListener("change", e => selectSpot(e.target.value));
-  window.addEventListener("hashchange", () => selectSpot(location.hash.slice(1)));
+  window.addEventListener("hashchange", () => {
+    const [id, page] = decodeURIComponent(location.hash.slice(1)).split("/");
+    selectSpot(id); if (page) goPage(page);
+  });
 })();
 
 document.getElementById("reload").addEventListener("click", refresh);
@@ -3559,6 +3590,18 @@ document.getElementById("facing").addEventListener("change", e => {
   renderSpotGuide();
   spotListAt = 0;
   if (currentView === "list") loadSpotList();
+});
+// open the page named in the shared link, then keep the URL in step with what is on screen
+if (HASH_PAGE) goPage(HASH_PAGE);
+HASH_READY = true;
+updateHash();
+document.getElementById("share").addEventListener("click", async () => {
+  const url = location.href, title = `${SPOT.name}・${pageLabel()}｜波予報`;
+  if (navigator.share) { try { await navigator.share({ title, url }); } catch (e) {} return; }
+  const b = document.getElementById("share");
+  try { await navigator.clipboard.writeText(url); b.textContent = "コピーしました"; }
+  catch (e) { prompt("このリンクをコピーしてください", url); }
+  setTimeout(() => { b.textContent = "共有"; }, 1800);
 });
 applySpot();
 refresh();
