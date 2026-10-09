@@ -1,5 +1,5 @@
 // オフラインでもページ自体は開けるようにする（予報データは常にネットから取得）
-const CACHE = "surf-shell-v10";
+const CACHE = "surf-shell-v11";
 const SHELL = ["./", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
