@@ -1348,20 +1348,20 @@ main { overflow-x: clip; }
 const SPOTS = [
   { id: "kou", name: "国府の浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町国府", wx: [34.33, 136.90], marine: [34.32, 136.92], facing: 110, swell: 120, sizeK: 0.79, pin: [34.32815, 136.87525], pinName: "Red Bee（サーフショップ）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
-    tide: { code: "TB", name: "鳥羽", km: 19 },
+    tide: { code: "TB", name: "鳥羽", km: 19, shift: -30 },
     cam: { embed: "https://player.stadiumtube.com/m/y5qH-tMoMoMGEQibhA52x?autoplay=true", title: "志摩市 国府白浜ライブカメラ",
       links: [["ラスタ前", "https://web.spo.live/event/PVhPiqHlIo", "SpoLive（志摩市）・ライブ映像"], ["メイン〜テトラ前", "https://webcam.mctv.jp/cgi-bin/Get.cgi?n=3", "MCTV・静止画"],
               ["テトラ前", "https://www.bcm-surfpatrol.com/wave-detail/10/114/", "BCM サーフパトロール"], ["ラスタ前（YouTube）", "https://www.youtube.com/@machispodev/streams", "マチスポ"]] } },
   { id: "ichigo", name: "市後浜", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市阿児町志島", wx: [34.3054, 136.886], marine: [34.3054, 136.886], facing: 100, swell: 105, pin: [34.30504, 136.88549], pinName: "市後浜駐車場（浜のすぐそば）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
-    tide: { code: "TB", name: "鳥羽", km: 21 },
+    tide: { code: "TB", name: "鳥羽", km: 21, shift: -30 },
     cam: { title: "市後浜・大王崎のカメラ", links: [["市後浜", "https://cam-image.risesystem.com/api/cameraSnap?cameraId=60", "BCM・静止画"], ["大王埼灯台", "https://camera.mics.kaiho.mlit.go.jp/camstream/daiosaki_lt/", "海上保安庁・ライブ映像（市後浜の南約3km）"]] } },
   { id: "nanbari", name: "南張", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市浜島町南張", wx: [34.297, 136.722], marine: [34.297, 136.722], facing: 165, swell: 180, pin: [34.30481, 136.72074], pinName: "近くの駐車場（浜から約900m）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
-    tide: { code: "TB", name: "鳥羽", km: 22 } },
+    tide: { code: "TB", name: "鳥羽", km: 22, shift: -30 } },
   { id: "jan", name: "ジャン", group: "三重（伊勢志摩）", place: "伊勢志摩・志摩市浜島町（南張の東）", wx: [34.3023, 136.735], marine: [34.3023, 136.735], facing: 165, swell: 180, pin: [34.30481, 136.72074], pinName: "近くの駐車場（浜から約1350m）",
     jma: { office: "240000", officeName: "津地方気象台", area: "240020", areaName: "三重県南部", city: "2421500", cityName: "志摩市" },
-    tide: { code: "TB", name: "鳥羽", km: 21 } },
+    tide: { code: "TB", name: "鳥羽", km: 21, shift: -30 } },
   { id: "omaezaki", name: "御前崎ロングビーチ", group: "東海（静岡・愛知）", place: "静岡県御前崎市", wx: [34.605, 138.196], marine: [34.605, 138.196], facing: 210, swell: 190, pin: [34.61307, 138.1857], pinName: "すすき原駐車場（ロングビーチの市営無料駐車場）",
     jma: { office: "220000", officeName: "静岡地方気象台", area: "220040", areaName: "静岡県西部", city: "2222300", cityName: "御前崎市" },
     tide: { code: "OM", name: "御前崎", km: 2 },
@@ -1762,9 +1762,19 @@ function parseTideTxt(txt) {
   return out;
 }
 const tideCache = {};
+// shift = 観測点との時刻差（分）。鳥羽は湾の中で外海より潮が遅いので、外海の浜は -30（30分早める）
+// 時刻 t の浜の潮位 = 観測点の (t - shift) の潮位。毎時値の間は直線で補う
+function tideLevelAt(code, t, shift = 0) {
+  const s = new Date(t.getTime() - shift * 60e3), base = new Date(s); base.setMinutes(0, 0, 0);
+  const at = d => tideCache[`${code}-${d.getFullYear()}`]?.[toKey(d)]?.hourly[d.getHours()];
+  const a = at(base), b = at(new Date(base.getTime() + 3600e3)), f = s.getMinutes() / 60;
+  if (a == null) return null;
+  return (b == null || !f ? a : a + (b - a) * f) / 100;
+}
 async function loadOfficialTides(spot, hours) {
   if (!spot.tide) return null;
-  const years = [...new Set(hours.map(h => h.t.getFullYear()))];
+  const shift = spot.tide.shift || 0;
+  const years = [...new Set(hours.flatMap(h => [h.t.getFullYear(), new Date(h.t.getTime() - shift * 60e3).getFullYear()]))];
   const days = {};
   for (const y of years) {
     const key = `${spot.tide.code}-${y}`;
@@ -1780,11 +1790,12 @@ async function loadOfficialTides(spot, hours) {
   hours.forEach(h => {
     const d = days[h.key];
     if (!d) { missing++; return; }
-    h.tide = d.hourly[h.t.getHours()] / 100;
+    h.tide = tideLevelAt(spot.tide.code, h.t, shift);
   });
-  [...new Set(hours.map(h => h.key))].forEach(k => {
-    const d = days[k];
-    if (d) extremes.push(...d.highs.map(e => ({ ...e, hi: true })), ...d.lows.map(e => ({ ...e, hi: false })));
+  // ずらすと日をまたぐことがあるので、翌日の分も入れておく
+  [...new Set(hours.flatMap(h => shift ? [h.key, toKey(new Date(h.t.getTime() + 86400e3))] : [h.key]))].forEach(k => {
+    const d = days[k], mv = e => ({ ...e, t: new Date(e.t.getTime() + shift * 60e3) });
+    if (d) extremes.push(...d.highs.map(e => ({ ...mv(e), hi: true })), ...d.lows.map(e => ({ ...mv(e), hi: false })));
   });
   if (missing === hours.length) return null;
   extremes.sort((a, b) => a.t - b.t);
@@ -1979,7 +1990,7 @@ function renderTideTable(byDay, daily, extremes) {
   const official = !!DATA.tideJ;
   const cm = v => official ? `${Math.round(v * 100)}` : `${v >= 0 ? "+" : ""}${Math.round(v * 100)}`;
   document.getElementById("tideSub").textContent = official
-    ? `気象庁 潮位表・${DATA.tideJ.station.name}（ポイントから約${DATA.tideJ.station.km}km）`
+    ? `気象庁 潮位表・${DATA.tideJ.station.name}（ポイントから約${DATA.tideJ.station.km}km）${DATA.tideJ.station.shift ? `・外海向けに${Math.abs(DATA.tideJ.station.shift)}分${DATA.tideJ.station.shift < 0 ? "早めて" : "遅らせて"}補正` : ""}`
     : "海洋モデルの計算値（気象庁の潮位表を取得できなかったため）";
   const rows = Object.keys(byDay).map(k => {
     const d = new Date(k + "T00:00"), age = moonAge(new Date(k + "T12:00")), dd = daily[k];
@@ -2633,13 +2644,13 @@ async function predAt(dateKey, hour) {
   const M = m.hourly, W = w.hourly;
   if (!M || !W || M.wave_height?.[hour] == null || W.wind_speed_10m?.[hour] == null) return null;
   const swellH = M.swell_wave_height[hour] ?? 0;
-  const tideTxt = SPOT.tide && tideCache[`${SPOT.tide.code}-${dateKey.slice(0, 4)}`]?.[dateKey];
+  const tideLvl = SPOT.tide ? tideLevelAt(SPOT.tide.code, new Date(`${dateKey}T${pad(hour)}:00`), SPOT.tide.shift) : null;
   return snapshot({
     wave: M.wave_height[hour],
     period: swellH >= 0.5 * M.wave_height[hour] && M.swell_wave_period[hour] != null ? M.swell_wave_period[hour] : M.wave_period[hour],
     swellDir: M.swell_wave_direction[hour] ?? M.wave_direction[hour],
     windSpeed: W.wind_speed_10m[hour], windDir: W.wind_direction_10m[hour],
-    tide: tideTxt ? tideTxt.hourly[hour] / 100 : null,
+    tide: tideLvl,
   });
 }
 let predToken = 0, currentPred = null;
